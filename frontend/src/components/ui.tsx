@@ -211,7 +211,7 @@ export function Photo({ src, icon, alt, className, iconSize = 40, color = false 
           alt={alt}
           loading="lazy"
           onError={() => setFailed(true)}
-          className={cn('size-full object-cover transition-[filter,scale] duration-700 ease-[cubic-bezier(.16,1,.3,1)]', !color && 'grayscale group-hover:grayscale-0', 'group-hover:scale-[1.04]')}
+          className={cn('size-full object-cover transition-[scale] duration-700 ease-[cubic-bezier(.16,1,.3,1)]', !color && 'group-hover:scale-[1.04]')}
         />
       ) : (
         <AssetIcon name={icon} size={iconSize} weight="thin" className="text-ink/70" />

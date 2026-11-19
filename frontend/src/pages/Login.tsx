@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth'
 
 const demo = [
   { u: 'admin', p: 'admin123' },
+  { u: 'oladejo', p: 'oladejo123' },
   { u: 'manager', p: 'manager123' },
   { u: 'staff', p: 'staff123' },
 ]
@@ -33,7 +34,7 @@ export default function Login() {
 
   return (
     <div className="h-dvh p-2 md:p-3">
-      <div className="mx-auto grid h-full max-w-[1440px] gap-2 overflow-hidden rounded-[1.75rem] bg-white p-2 md:grid-cols-[1.15fr_1fr] md:rounded-[2.25rem]">
+      <div className="grid h-full gap-2 overflow-hidden rounded-[1.75rem] bg-white p-2 md:grid-cols-[1.15fr_1fr] md:rounded-[2.25rem]">
         {/* Visual: React Bits Silk, monochrome */}
         <div className="relative hidden overflow-hidden rounded-[1.4rem] bg-ink md:block md:rounded-[1.75rem]">
           <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />

@@ -246,7 +246,8 @@ class Command(BaseCommand):
                      date_joined=self.at(today - timedelta(days=5 * 365 + 60)))
             u.set_password(password or PASSWORD_DEFAULT)
             u.save()
-            users.append(u)
+            if dept:  # the supervisor account has no department and holds no assets
+                users.append(u)
         admin, manager = users[0], users[1]
         actors = [manager, manager, manager, admin]  # managers do most of the day-to-day work
 

@@ -10,7 +10,7 @@ OLUWAMUREWA, Abiodun (E052852) — Team Leader
 
 ABEGUNDE, Jimmy (E051739)
 
-[SURNAME, Other names] ([MATRIC NUMBER])
+MOSOBALAJE, Opeyemi (E051727)
 
 SUBMITTED TO
 

@@ -39,21 +39,31 @@ function Stat({ label, value, tone = 'paper', delay = 0, to }: { label: string; 
 
 type Upcoming = { id: string; kind: 'care' | 'return'; date: string; title: string; detail: string; overdue: boolean; to: string }
 
-function UpcomingCard({ u, i }: { u: Upcoming; i: number }) {
-  const I = u.kind === 'care' ? Wrench : HandArrowDown
+/** Vertical timeline of what's coming up: maintenance jobs and assets due back. */
+function Timeline({ items }: { items: Upcoming[] }) {
   return (
-    <Reveal delay={i * 0.05} y={14}>
-      <Link to={u.to} className={cx('group block rounded-[1.5rem] p-1.5 transition-transform duration-500 hover:-translate-y-0.5', u.overdue ? 'bg-ink text-white' : 'bg-white')}>
-        <div className="flex items-center justify-between px-3 pb-2 pt-2 text-xs">
-          <span className="flex items-center gap-2 font-medium"><I size={14} />{u.kind === 'care' ? 'Maintenance' : 'Due back'}</span>
-          <span className={u.overdue ? 'text-white/60' : 'text-ash'}>{u.overdue ? 'Overdue · ' : ''}{shortDate(u.date)}</span>
-        </div>
-        <div className={cx('rounded-[1.15rem] px-4 py-3.5', u.overdue ? 'bg-white/[0.07]' : 'bg-mist')}>
-          <p className="text-sm leading-snug">{u.title}</p>
-          <p className={cx('mt-1 truncate text-xs', u.overdue ? 'text-white/50' : 'text-ash')}>{u.detail}</p>
-        </div>
-      </Link>
-    </Reveal>
+    <ol className="relative">
+      <span aria-hidden className="absolute bottom-4 left-[15px] top-4 w-px bg-fog" />
+      {items.map((u, i) => {
+        const I = u.kind === 'care' ? Wrench : HandArrowDown
+        return (
+          <Reveal key={u.id} delay={i * 0.04} y={10}>
+            <li>
+              <Link to={u.to} className="group relative flex gap-3 rounded-[1.1rem] py-2.5 pl-0 pr-2 transition-colors hover:bg-mist">
+                <span className={cx('relative z-10 grid size-[31px] shrink-0 place-items-center rounded-full', u.overdue ? 'bg-ink text-white' : 'bg-white text-ink ring-1 ring-fog')}>
+                  <I size={14} />
+                </span>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className={cx('text-[11px] tabular', u.overdue ? 'font-medium text-ink' : 'text-ash')}>{u.overdue ? 'Overdue · ' : ''}{shortDate(u.date)}</p>
+                  <p className="mt-0.5 truncate text-sm">{u.title}</p>
+                  <p className="truncate text-xs text-ash">{u.kind === 'care' ? 'Maintenance' : 'Due back'} · {u.detail}</p>
+                </div>
+              </Link>
+            </li>
+          </Reveal>
+        )
+      })}
+    </ol>
   )
 }
 
@@ -187,19 +197,21 @@ export default function Overview() {
           </Reveal>
         </div>
 
-        {/* Right column: upcoming */}
-        <aside className="min-w-0">
-          <div className="mb-3 flex items-center justify-between px-1">
-            <h2 className="text-lg font-medium tracking-[-0.03em]">Upcoming</h2>
-            {upcoming.some((u) => u.overdue) && <Warning size={16} weight="fill" />}
-          </div>
-          <div className="space-y-2.5">
-            {!d && [0, 1, 2].map((i) => <Skeleton key={i} className="h-28" />)}
-            {upcoming.map((u, i) => <UpcomingCard key={u.id} u={u} i={i} />)}
-            {d && upcoming.length === 0 && <p className="px-1 text-sm text-ash">Nothing scheduled</p>}
+        {/* Right column: upcoming timeline */}
+        <aside className="min-w-0 space-y-4">
+          <div className="rounded-[1.6rem] bg-white p-1.5">
+            <div className="flex items-center justify-between px-3 pb-1.5 pt-1.5">
+              <h2 className="text-[13px] font-medium text-smoke">Upcoming</h2>
+              {upcoming.some((u) => u.overdue) && <Warning size={14} weight="fill" />}
+            </div>
+            <div className="px-2 pb-1">
+              {!d && [0, 1, 2].map((i) => <Skeleton key={i} className="my-2 h-14 bg-mist" />)}
+              {d && upcoming.length === 0 && <p className="px-1 py-6 text-center text-xs text-ash">Nothing scheduled</p>}
+              <Timeline items={upcoming} />
+            </div>
           </div>
           {d && (
-            <div className="mt-4 rounded-[1.5rem] bg-white p-1.5">
+            <div className="rounded-[1.6rem] bg-white p-1.5">
               <p className="px-3 pb-2 pt-2 text-xs font-medium text-smoke">Status split</p>
               <div className="stack">
                 {d.by_status.map((s) => (

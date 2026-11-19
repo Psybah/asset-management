@@ -12,9 +12,9 @@ ABEGUNDE, Jimmy
 
 E051739
 
-[SURNAME, Other names]
+MOSOBALAJE, Opeyemi
 
-[MATRIC NUMBER]
+E051727
 
 SUBMITTED
 
@@ -40,7 +40,7 @@ This is to certify that this project, **Design and Implementation of a Web-Based
 |---|---|
 | OLUWAMUREWA, Abiodun (Team Leader) | E052852 |
 | ABEGUNDE, Jimmy | E051739 |
-| [SURNAME, Other names] | [MATRIC NUMBER] |
+| MOSOBALAJE, Opeyemi | E051727 |
 
 in the Department of Computer Science, University of Ibadan, and was duly supervised by Prof. B. F. Oladejo.
 
@@ -88,7 +88,7 @@ The roles below are as stated by the Team Leader.
 |---|---|---|---|---|
 | 1 | OLUWAMUREWA, Abiodun | E052852 | Team Leader; Software Implementation | Designed and built the backend API and the frontend application, and tested the system |
 | 2 | ABEGUNDE, Jimmy | E051739 | Research | Sourced, read and synthesised the cited literature (Chapter Two and the literature collection) |
-| 3 | [SURNAME, Other names] | [MATRIC NUMBER] | Compilation of the Write-up | Structured, wrote and formatted the report |
+| 3 | MOSOBALAJE, Opeyemi | E051727 | Compilation of the Write-up | Structured, wrote and formatted the report |
 
 &nbsp;
 
@@ -2001,6 +2001,7 @@ npm run dev
 | Role | Username | Password |
 |---|---|---|
 | Administrator | admin | admin123 |
+| Administrator (project supervisor, Prof. B. F. Oladejo) | oladejo | oladejo123 |
 | Manager | manager | manager123 |
 | Staff (read-only) | staff | staff123 |
 

@@ -68,7 +68,7 @@ export default function Library() {
                   icons={(c.cover_urls?.length ? c.cover_urls : [null]).slice(0, 4).map((src) => (src ? { src } : { node: <AssetIcon name={c.icon} size={40} weight="thin" />, background: '#f4f4f4' }))}
                 />
                 <div className="mt-2 flex w-full max-w-[420px] items-center justify-between px-2 text-xs text-ash">
-                  <button onClick={() => nav(`/assets?category=${c.id}`)} className="hover:text-ink">{c.asset_count} assets · {c.useful_life_years}-year life</button>
+                  <button onClick={() => nav(`/assets?category=${c.id}`)} className="hover:text-ink">{c.asset_count} {c.asset_count === 1 ? "asset" : "assets"} · {c.useful_life_years}-year life</button>
                   {canWrite && c.asset_count === 0 && <button onClick={() => remove(c.id)} aria-label="Remove" className="hover:text-ink"><X size={12} /></button>}
                 </div>
               </div>

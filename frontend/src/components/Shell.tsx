@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth'
 import type { Dashboard } from '@/lib/types'
 import { useData } from '@/lib/useData'
 import { cn } from '@/lib/utils'
+import { Avatar } from './Avatar'
 import { Notch } from './Notch'
 import { ScrollArea } from './SmoothScroll'
 import { spring } from './ui'
@@ -52,14 +53,13 @@ function Dock() {
   const items = nav.filter((n) => !n.manager || canWrite)
   const active = (to: string) => (to === '/' ? pathname === '/' : pathname.startsWith(to))
   return (
-    <Notch edge="bottom" className="left-1/2 -translate-x-1/2 px-2.5 pb-2.5 pt-2.5 md:px-3 md:pt-3">
+    <Notch edge="bottom" className="left-1/2 -translate-x-1/2" bodyClassName="pb-2.5 pt-2.5 md:pt-3">
       <nav className="flex items-center gap-1 md:gap-1.5" onMouseLeave={() => setHover(null)}>
         {items.map(({ to, icon: I, label }) => {
           const on = active(to)
           return (
             <NavLink key={to} to={to} aria-label={label} onMouseEnter={() => setHover(to)} className="relative grid size-10 place-items-center rounded-full md:size-11">
               <span className={cn('absolute inset-0 rounded-full transition-colors duration-300', on ? 'bg-white' : 'bg-white/[0.07] hover:bg-white/15')} />
-              {on && <motion.span layoutId="dock-dot" transition={spring} className="absolute -bottom-1.5 left-1/2 size-1 -translate-x-1/2 rounded-full bg-white" />}
               <I size={18} weight={on ? 'fill' : 'regular'} className={cn('relative', on ? 'text-ink' : 'text-white/70')} />
               <Tip show={hover === to && !on}>{label}</Tip>
             </NavLink>
@@ -125,9 +125,9 @@ function Profile() {
         whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((o) => !o)}
         aria-label="Account"
-        className="grid size-11 place-items-center rounded-full bg-ink text-[13px] font-medium text-white"
+        className="size-11 overflow-hidden rounded-full bg-white p-0.5"
       >
-        {user?.initials}
+        <Avatar name={user?.name} className="size-full" />
       </motion.button>
       <AnimatePresence>
         {open && (
@@ -138,9 +138,12 @@ function Profile() {
             transition={spring}
             className="absolute right-0 top-13 w-60 origin-top-right rounded-[1.4rem] bg-white p-1.5"
           >
-            <div className="rounded-[1.1rem] bg-mist px-4 py-3">
+            <div className="flex items-center gap-3 rounded-[1.1rem] bg-mist px-3 py-3">
+              <Avatar name={user?.name} className="bg-white" />
+              <div className="min-w-0">
               <p className="truncate text-sm font-medium">{user?.name}</p>
               <p className="truncate text-xs capitalize text-ash">{[user?.role, user?.department_name].filter(Boolean).join(' · ')}</p>
+              </div>
             </div>
             <button
               onClick={async () => { await logout(); nav('/login') }}
@@ -158,9 +161,9 @@ function Profile() {
 export function Shell({ children, onSearch }: { children: ReactNode; onSearch: () => void }) {
   return (
     <div className="h-dvh p-2 md:p-3">
-      <div className="relative mx-auto h-full max-w-[1440px] overflow-hidden rounded-[1.75rem] bg-canvas md:rounded-[2.25rem]">
+      <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-canvas md:rounded-[2.25rem]">
         {/* Logo tab dipping in from the frame */}
-        <Notch edge="top" className="left-5 flex h-12 items-center gap-2.5 px-5 md:left-10 md:h-14 md:px-6">
+        <Notch edge="top" className="left-9 md:left-14" bodyClassName="flex h-12 items-center px-2 md:h-14">
           <Link to="/" className="flex items-center gap-2.5">
             <span className="relative grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
             <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>

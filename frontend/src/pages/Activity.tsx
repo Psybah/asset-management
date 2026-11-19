@@ -1,5 +1,6 @@
 import { ArrowsLeftRight, HandArrowDown, HandArrowUp, PencilSimple, Plus, Trash, Wrench, ImageSquare, type Icon } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
+import { Avatar } from '@/components/Avatar'
 import { Page, PageHeader, Panel, Reveal, Skeleton, cx } from '@/components/ui'
 import type { Audit } from '@/lib/types'
 import { useData } from '@/lib/useData'
@@ -37,7 +38,7 @@ export default function Activity() {
                   <div className={cx('flex items-center gap-3 py-2 pl-2 pr-4 transition-colors', strong ? 'bg-ink text-white' : 'bg-mist hover:bg-fog')}>
                     <span className={cx('grid size-9 shrink-0 place-items-center rounded-full', strong ? 'bg-white/10' : 'bg-white')}><I size={15} /></span>
                     <span className="min-w-0 flex-1 text-sm leading-snug">{a.summary}</span>
-                    <span className="hidden shrink-0 text-xs opacity-50 sm:block">{a.actor_name}</span>
+                    <span className="hidden shrink-0 items-center gap-2 text-xs opacity-60 sm:flex">{a.actor_name && <Avatar name={a.actor_name} className="size-6" />}{a.actor_name}</span>
                     <span className="w-11 shrink-0 text-right text-xs opacity-50 tabular">{new Date(a.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 )

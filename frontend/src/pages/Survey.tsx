@@ -27,7 +27,7 @@ function Choice({ options, value, onChange, cols }: { options: Opt[]; value?: st
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
-          className={cn('min-h-10 rounded-full px-4 py-2 text-left text-sm transition-colors duration-200', String(value) === o.value ? 'bg-ink text-white' : 'bg-mist hover:bg-fog')}
+          className={cn('min-h-10 rounded-full px-4 py-2 text-left text-sm transition-colors duration-200', String(value) === o.value ? 'bg-ink text-white' : 'bg-white hover:bg-fog')}
         >
           {o.label}
         </button>
@@ -180,7 +180,7 @@ export default function Survey() {
         </AnimatePresence>
 
         {form && !done && (
-          <div className="sticky bottom-3 mt-6 flex items-center justify-between gap-2">
+          <div className="sticky bottom-3 mt-6 flex items-center justify-between gap-2 rounded-full bg-canvas/90 p-1 backdrop-blur-sm">
             <Button tone="paper" beam={false} disabled={step === 0} onClick={() => setStep((s) => s - 1)}><ArrowLeft size={15} /> Back</Button>
             {err && <p className="flex-1 text-center text-xs text-smoke">{err}</p>}
             {step < steps.length - 1

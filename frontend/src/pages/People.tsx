@@ -1,9 +1,9 @@
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Avatar } from '@/components/Avatar'
 import { Sheet } from '@/components/Sheet'
-import { Empty, Page, PageHeader, Photo, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { Empty, Page, PageHeader, Photo, Reveal, Skeleton, StatusMark } from '@/components/ui'
 import type { Asset, User } from '@/lib/types'
 import { useData } from '@/lib/useData'
 
@@ -17,9 +17,9 @@ export default function People() {
     assets?.forEach((a) => a.assigned_to && m.set(a.assigned_to, [...(m.get(a.assigned_to) ?? []), a]))
     return m
   }, [assets])
-  const list = [...(data ?? [])]
-    .filter((p) => !q || `${p.name} ${p.department_name}`.toLowerCase().includes(q.toLowerCase()))
-    .sort((a, b) => (b.asset_count ?? 0) - (a.asset_count ?? 0))
+  const list = (data ?? [])
+    .filter((p) => !q || `${p.name} ${p.department_name ?? ''} ${p.email}`.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <Page>
@@ -33,41 +33,58 @@ export default function People() {
           </div>
         }
       />
-      {!data ? (
-        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-36" />)}</div>
-      ) : (
-        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-          {list.map((p, i) => {
-            const items = held.get(p.id) ?? []
-            return (
-              <motion.button
-                key={p.id}
-                onClick={() => setSel(p)}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease, delay: Math.min(i, 12) * 0.03 }}
-                className="group rounded-[1.5rem] bg-white p-1.5 text-left transition-transform duration-500 hover:-translate-y-0.5"
-              >
-                <div className="flex items-center gap-3 px-2 pb-2 pt-1.5">
-                  <span className={cx('grid size-9 shrink-0 place-items-center rounded-full text-xs font-medium', items.length ? 'bg-ink text-white' : 'bg-mist')}>{p.initials}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{p.name}</p>
-                    <p className="truncate text-xs capitalize text-ash">{[p.department_name, p.role].filter(Boolean).join(' · ')}</p>
-                  </div>
-                  <span className="text-xs text-ash tabular">{p.asset_count ?? 0}</span>
-                </div>
-                <div className="flex h-16 gap-1 rounded-[1.1rem] bg-mist p-1">
-                  {items.slice(0, 4).map((a) => <Photo key={a.id} src={a.image_url} icon={a.category_icon} alt={a.name} className="h-full w-16 rounded-[0.85rem]" iconSize={20} />)}
-                  {items.length === 0 && <span className="grid flex-1 place-items-center text-[11px] text-ash">Holds nothing</span>}
-                </div>
-              </motion.button>
-            )
-          })}
+
+      <Reveal>
+        <div className="overflow-hidden rounded-[1.6rem] bg-white p-1.5">
+          <div className="no-scrollbar overflow-x-auto">
+            <table className="w-full min-w-[640px] border-separate border-spacing-y-0.5 text-left text-sm">
+              <thead>
+                <tr className="text-xs text-ash">
+                  <th className="px-4 pb-2 pt-2 font-medium">Name</th>
+                  <th className="px-4 pb-2 pt-2 font-medium">Department</th>
+                  <th className="px-4 pb-2 pt-2 font-medium">Role</th>
+                  <th className="px-4 pb-2 pt-2 font-medium">Holding</th>
+                  <th className="px-4 pb-2 pt-2 text-right font-medium">Assets</th>
+                </tr>
+              </thead>
+              <tbody>
+                {!data && Array.from({ length: 6 }).map((_, i) => <tr key={i}><td colSpan={5}><Skeleton className="h-14 rounded-md bg-mist" /></td></tr>)}
+                {list.map((p) => {
+                  const items = held.get(p.id) ?? []
+                  return (
+                    <tr key={p.id} onClick={() => setSel(p)} className="group cursor-pointer [&>td]:bg-mist [&>td]:transition-colors hover:[&>td]:bg-fog">
+                      <td className="rounded-l-md py-2 pl-2 pr-4 group-first:rounded-tl-[1.15rem] group-last:rounded-bl-[1.15rem]">
+                        <div className="flex items-center gap-3">
+                          <Avatar name={p.name} className="bg-white" />
+                          <div className="min-w-0">
+                            <p className="truncate">{p.name}</p>
+                            <p className="truncate text-xs text-ash">{p.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 text-smoke">{p.department_name ?? '—'}</td>
+                      <td className="px-4 capitalize text-smoke">{p.role}</td>
+                      <td className="px-4">
+                        <div className="flex -space-x-2">
+                          {items.slice(0, 4).map((a) => <Photo key={a.id} src={a.image_url} icon={a.category_icon} alt={a.name} className="size-8 rounded-full ring-2 ring-mist" iconSize={14} />)}
+                          {items.length === 0 && <span className="text-xs text-ash">—</span>}
+                        </div>
+                      </td>
+                      <td className="rounded-r-md px-4 text-right tabular group-first:rounded-tr-[1.15rem] group-last:rounded-br-[1.15rem]">{p.asset_count ?? 0}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
+      </Reveal>
 
       <Sheet open={!!sel} onClose={() => setSel(null)} title={sel?.name}>
-        <p className="-mt-3 mb-5 text-xs capitalize text-ash">{[sel?.department_name, sel?.role].filter(Boolean).join(' · ')}</p>
+        <div className="-mt-2 mb-5 flex items-center gap-3">
+          <Avatar name={sel?.name} className="size-12" />
+          <p className="text-xs capitalize text-ash">{[sel?.department_name, sel?.role].filter(Boolean).join(' · ')}</p>
+        </div>
         {sel && (held.get(sel.id) ?? []).length === 0 ? <Empty>Holds nothing</Empty> : (
           <div className="stack">
             {(sel ? held.get(sel.id) ?? [] : []).map((a) => (

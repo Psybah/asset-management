@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AssetForm } from '@/components/AssetForm'
+import { Avatar } from '@/components/Avatar'
 import { Area } from '@/components/charts/area'
 import { AreaChart } from '@/components/charts/area-chart'
 import { Grid } from '@/components/charts/grid'
@@ -135,7 +136,7 @@ export default function AssetDetail() {
               ].map(([k, v]) => (
                 <div key={k} className="flex items-center justify-between gap-4 bg-mist px-4 py-3 text-sm">
                   <span className="text-ash">{k}</span>
-                  <span className="truncate capitalize">{v ?? '—'}</span>
+                  <span className="flex min-w-0 items-center gap-2 truncate capitalize">{k === 'Holder' && v && <Avatar name={String(v)} className="size-6 bg-white" />}{v ?? '—'}</span>
                 </div>
               ))}
             </Panel>

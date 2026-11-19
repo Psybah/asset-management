@@ -61,6 +61,7 @@ cd frontend && npm install && npm run dev
 | Role | Username | Password |
 |---|---|---|
 | Admin | `admin` | `admin123` |
+| Admin (supervisor, Prof. B. F. Oladejo) | `oladejo` | `oladejo123` |
 | Manager | `manager` | `manager123` |
 | Staff (read-only) | `staff` | `staff123` |
 
@@ -80,6 +81,6 @@ See [docs/API.md](docs/API.md).
 |---|---|---|
 | Abiodun Oluwamurewa | E052852 | Team Leader — software implementation |
 | Jimmy Abegunde | E051739 | Research — cited literature |
-| [Name] | [Matric No.] | Compiled the writeup |
+| Opeyemi Mosobalaje | E051727 | Compiled the writeup |
 
 Supervisor: Prof. B. F. Oladejo. Case study: Squad by HabariPay (demo data is illustrative, not the company's records).
