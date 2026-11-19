@@ -21,7 +21,7 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center">
           <motion.div
-            className="absolute inset-0 bg-ink/40 backdrop-blur-md"
+            className="absolute inset-0 bg-ink/35"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -37,12 +37,12 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
             exit={{ y: '100%', opacity: 0 }}
             transition={{ duration: 0.65, ease }}
             data-lenis-prevent
-            className="relative max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-[2.5rem] bg-paper p-6 pb-10 md:max-w-xl md:rounded-[3rem] md:p-10"
+            className="relative max-h-[92dvh] w-full overflow-y-auto overscroll-contain rounded-t-[2rem] bg-paper p-5 pb-8 md:max-w-lg md:rounded-[2rem] md:p-6"
           >
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl tracking-[-0.04em]">{title}</h2>
-              <button onClick={onClose} aria-label="Close" className="grid h-11 w-11 place-items-center rounded-full bg-mist transition-colors hover:bg-fog">
-                <X size={18} />
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-lg font-medium tracking-[-0.03em]">{title}</h2>
+              <button onClick={onClose} aria-label="Close" className="grid size-9 place-items-center rounded-full bg-mist transition-colors hover:bg-fog">
+                <X size={15} />
               </button>
             </div>
             {children}

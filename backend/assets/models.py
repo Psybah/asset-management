@@ -72,6 +72,9 @@ class Asset(models.Model):
     )
     assigned_since = models.DateField(null=True, blank=True)
     notes = models.TextField(blank=True)
+    # Product photo. Several assets of the same model may share one file (the seed does this),
+    # so files are only deleted from storage when no other asset still points at them.
+    image = models.ImageField(upload_to="assets/", blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -92,6 +95,16 @@ class Asset(models.Model):
         if not self.useful_life_years and self.category_id:
             self.useful_life_years = self.category.useful_life_years
         super().save(*args, **kwargs)
+
+    def remove_image(self):
+        """Detach the photo and delete the file if no other asset uses it."""
+        name = self.image.name
+        if not name:
+            return
+        self.image = ""
+        self.save(update_fields=["image", "updated_at"])
+        if not Asset.objects.filter(image=name).exists():
+            self.image.storage.delete(name)
 
     # --- depreciation -------------------------------------------------------
     @property

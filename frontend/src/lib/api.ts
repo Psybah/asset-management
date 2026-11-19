@@ -1,4 +1,5 @@
-export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:8000/api'
+// Same host as the page by default, so phones on the LAN reach the API too.
+export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? `${location.protocol}//${location.hostname}:8000/api`
 
 const KEY = 'ledger.token'
 
@@ -70,6 +71,17 @@ export const api = {
   post: <T>(path: string, body?: unknown) => request<T>('POST', path, body ?? {}),
   patch: <T>(path: string, body: unknown) => request<T>('PATCH', path, body),
   del: (path: string) => request<void>('DELETE', path),
+}
+
+/** Multipart upload of an asset photo. */
+export async function uploadImage<T = import('./types').Asset>(id: number, file: File): Promise<T> {
+  const fd = new FormData()
+  fd.append('image', file)
+  const t = token.get()
+  const res = await fetch(`${API_URL}/assets/${id}/image/`, { method: 'POST', headers: t ? { Authorization: `Token ${t}` } : {}, body: fd })
+  const data = await res.json().catch(() => undefined)
+  if (!res.ok) throw new ApiError(res.status, data)
+  return data as T
 }
 
 export const qrUrl = (id: number) => `${API_URL}/assets/${id}/qr/`

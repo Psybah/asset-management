@@ -1,0 +1,18 @@
+{
+  "name": "ledger-asset-management",
+  "private": true,
+  "description": "Asset management for a corporate office \u2014 Django API + React client",
+  "scripts": {
+    "setup": "npm install && npm --prefix frontend install && cd backend && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/python manage.py migrate && .venv/bin/python manage.py seed",
+    "dev": "concurrently -k -n api,web -c gray,white \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "cd backend && .venv/bin/python manage.py runserver 8000",
+    "dev:web": "npm --prefix frontend run dev",
+    "seed": "cd backend && .venv/bin/python manage.py seed",
+    "test": "cd backend && .venv/bin/python manage.py test",
+    "build": "npm --prefix frontend run build",
+    "dev:lan": "IP=$(ipconfig getifaddr en0 || hostname -I | awk '{print $1}'); echo \"\\n  Open on phones: http://$IP:5173  (survey: http://$IP:5173/survey)\\n\"; FRONTEND_URL=http://$IP:5173 concurrently -k -n api,web -c gray,white \"cd backend && .venv/bin/python manage.py runserver 0.0.0.0:8000\" \"npm --prefix frontend run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

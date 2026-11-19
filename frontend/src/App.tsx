@@ -2,27 +2,24 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { CommandK } from './components/CommandK'
-import { Dock } from './components/Dock'
-import { SmoothScroll } from './components/SmoothScroll'
+import { Shell } from './components/Shell'
 import { useAuth } from './lib/auth'
 import Activity from './pages/Activity'
 import AssetDetail from './pages/AssetDetail'
 import Assets from './pages/Assets'
+import Insights from './pages/Insights'
 import Library from './pages/Library'
 import Login from './pages/Login'
 import Maintenance from './pages/Maintenance'
 import Overview from './pages/Overview'
 import People from './pages/People'
 import Scan from './pages/Scan'
+import Survey from './pages/Survey'
 
 function Splash() {
   return (
     <div className="grid h-dvh place-items-center">
-      <motion.span
-        className="h-4 w-4 rounded-full bg-ink"
-        animate={{ scale: [1, 1.6, 1] }}
-        transition={{ duration: 1.2, repeat: Infinity }}
-      />
+      <motion.span className="size-3 rounded-full bg-white" animate={{ scale: [1, 1.6, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />
     </div>
   )
 }
@@ -40,6 +37,8 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // The usability survey is public: participants don't need an account.
+  if (location.pathname.startsWith('/survey')) return <Survey />
   if (!ready) return <Splash />
 
   if (!user) {
@@ -53,7 +52,7 @@ export default function App() {
   }
 
   return (
-    <SmoothScroll>
+    <Shell onSearch={() => setSearch(true)}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Overview />} />
@@ -63,13 +62,13 @@ export default function App() {
           <Route path="/people" element={<People />} />
           <Route path="/activity" element={<Activity />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/insights" element={<Insights />} />
           <Route path="/scan/:tag" element={<Scan />} />
           <Route path="/login" element={<Navigate to="/" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>
-      <Dock onSearch={() => setSearch(true)} />
       <CommandK open={search} onClose={() => setSearch(false)} />
-    </SmoothScroll>
+    </Shell>
   )
 }

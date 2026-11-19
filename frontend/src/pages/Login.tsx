@@ -2,8 +2,9 @@ import { ArrowRight } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Button, Input, ease } from '../components/ui'
-import { useAuth } from '../lib/auth'
+import Silk from '@/components/bits/Silk'
+import { Button, Field, FieldGroup, ease } from '@/components/ui'
+import { useAuth } from '@/lib/auth'
 
 const demo = [
   { u: 'admin', p: 'admin123' },
@@ -31,69 +32,67 @@ export default function Login() {
   }
 
   return (
-    <div className="relative grid min-h-dvh overflow-hidden md:grid-cols-[1.3fr_1fr]">
-      {/* Left: giant wordmark on ink */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-ink p-10 text-paper md:flex">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex items-center gap-3 text-sm text-paper/50">
-          <span className="h-2.5 w-2.5 rounded-full bg-paper" /> Asset management
-        </motion.div>
+    <div className="h-dvh p-2 md:p-3">
+      <div className="mx-auto grid h-full max-w-[1440px] gap-2 overflow-hidden rounded-[1.75rem] bg-white p-2 md:grid-cols-[1.15fr_1fr] md:rounded-[2.25rem]">
+        {/* Visual: React Bits Silk, monochrome */}
+        <div className="relative hidden overflow-hidden rounded-[1.4rem] bg-ink md:block md:rounded-[1.75rem]">
+          <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />
+          <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-9 text-white">
+            <div className="flex items-center gap-2.5">
+              <span className="grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
+              <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease, delay: 0.3 }}
+              className="max-w-[18ch] text-[2rem] font-medium leading-[1.1] tracking-[-0.04em]"
+            >
+              Every asset, accounted for.
+            </motion.p>
+          </div>
+        </div>
 
-        {/* Orbiting circles */}
-        <div className="pointer-events-none absolute right-[-12%] top-[8%] aspect-square w-[70%]">
-          {[1, 0.72, 0.44].map((s, i) => (
-            <motion.div
-              key={i}
-              className="absolute inset-0 m-auto rounded-full bg-paper/[0.06]"
-              style={{ width: `${s * 100}%`, height: `${s * 100}%` }}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.6, ease, delay: 0.2 + i * 0.12 }}
-            />
-          ))}
-          <motion.div
-            className="absolute inset-0"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+        {/* Form */}
+        <div className="flex flex-col justify-center px-4 py-10 md:px-14">
+          <motion.form
+            onSubmit={(e) => { e.preventDefault(); submit() }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease, delay: 0.1 }}
+            className="mx-auto w-full max-w-sm"
           >
-            <span className="absolute left-1/2 top-0 h-5 w-5 -translate-x-1/2 rounded-full bg-paper" />
-          </motion.div>
-        </div>
+            <div className="mb-8 flex items-center gap-2.5 md:hidden">
+              <span className="grid size-5 place-items-center rounded-full bg-ink"><span className="size-2 rounded-full bg-white" /></span>
+              <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
+            </div>
+            <h1 className="text-2xl font-medium tracking-[-0.03em]">Sign in</h1>
+            <p className="mt-1.5 text-sm text-ash">Use your office account.</p>
 
-        <h1 className="relative -mb-[0.18em] -ml-[0.06em] text-[clamp(6rem,17vw,19rem)] leading-[0.8] tracking-[-0.07em]">
-          {'Ledger'.split('').map((c, i) => (
-            <motion.span key={i} className="inline-block" initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 1.1, ease, delay: 0.1 + i * 0.05 }}>
-              {c}
-            </motion.span>
-          ))}
-        </h1>
-      </div>
+            <FieldGroup className="mt-8">
+              <Field label="Username" autoFocus value={username} onChange={(e) => setU(e.target.value)} autoComplete="username" />
+              <Field label="Password" type="password" value={password} onChange={(e) => setP(e.target.value)} autoComplete="current-password" />
+            </FieldGroup>
 
-      {/* Right: form */}
-      <motion.form
-        onSubmit={(e) => { e.preventDefault(); submit() }}
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease, delay: 0.3 }}
-        className="flex flex-col justify-center gap-3 px-6 py-16 md:px-16"
-      >
-        <h1 className="mb-10 text-7xl tracking-[-0.06em] md:hidden">Ledger</h1>
-        <Input autoFocus placeholder="Username" value={username} onChange={(e) => setU(e.target.value)} autoComplete="username" />
-        <Input placeholder="Password" type="password" value={password} onChange={(e) => setP(e.target.value)} autoComplete="current-password" />
-        <Button type="submit" size="lg" disabled={busy || !username || !password} className="mt-2 w-full justify-between">
-          <span>{busy ? '…' : 'Enter'}</span>
-          <ArrowRight size={20} />
-        </Button>
-        <motion.p animate={{ opacity: err ? 1 : 0, height: err ? 'auto' : 0 }} className="pl-6 text-sm text-smoke">{err}</motion.p>
+            <motion.p initial={false} animate={{ opacity: err ? 1 : 0, height: err ? 'auto' : 0 }} className="overflow-hidden pl-1 pt-2 text-xs text-smoke">{err}</motion.p>
 
-        <div className="mt-10 flex flex-wrap items-center gap-2">
-          <span className="mr-2 pl-6 text-xs text-ash">Demo</span>
-          {demo.map((d) => (
-            <Button key={d.u} type="button" tone="mist" size="sm" onClick={() => { setU(d.u); setP(d.p); submit(d.u, d.p) }}>
-              {d.u}
+            <Button type="submit" size="lg" disabled={busy || !username || !password} className="mt-4 w-full">
+              {busy ? 'Signing in…' : 'Continue'} <ArrowRight size={16} />
             </Button>
-          ))}
+
+            <div className="mt-10">
+              <p className="mb-2 text-xs text-ash">Demo accounts</p>
+              <div className="flex flex-wrap gap-1.5">
+                {demo.map((d) => (
+                  <Button key={d.u} tone="paper" size="sm" beam={false} faceClassName="bg-mist from-mist to-mist" onClick={() => { setU(d.u); setP(d.p); submit(d.u, d.p) }}>
+                    {d.u}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </motion.form>
         </div>
-      </motion.form>
+      </div>
     </div>
   )
 }

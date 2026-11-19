@@ -1,221 +1,218 @@
-import { ArrowUpRight, Warning } from '@phosphor-icons/react'
+import { ArrowUpRight, HandArrowDown, Wrench, Warning } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
-import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { Area, Bars, Ring } from '../components/Charts'
-import { Counter, Page, Reveal, Skeleton, cx, ease } from '../components/ui'
-import { useAuth } from '../lib/auth'
-import { ago, compact, naira, shortDate } from '../lib/format'
-import { AssetIcon } from '../lib/icons'
-import type { Dashboard } from '../lib/types'
-import { useData } from '../lib/useData'
+import { Area } from '@/components/charts/area'
+import { AreaChart } from '@/components/charts/area-chart'
+import { Bar } from '@/components/charts/bar'
+import { BarChart } from '@/components/charts/bar-chart'
+import { BarXAxis } from '@/components/charts/bar-x-axis'
+import { Grid } from '@/components/charts/grid'
+import { Ring } from '@/components/charts/ring'
+import { RingCenter } from '@/components/charts/ring-center'
+import { RingChart } from '@/components/charts/ring-chart'
+import { ChartTooltip } from '@/components/charts/tooltip'
+import { XAxis } from '@/components/charts/x-axis'
+import { Counter, Page, PageHeader, Panel, Photo, Reveal, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { useAuth } from '@/lib/auth'
+import { ago, compact, shortDate } from '@/lib/format'
+import type { Asset, Assignment, Dashboard } from '@/lib/types'
+import { useData } from '@/lib/useData'
 
-function Tile({ children, className, tone = 'mist', delay = 0, to }: { children: ReactNode; className?: string; tone?: 'mist' | 'ink' | 'paper'; delay?: number; to?: string }) {
-  const body = (
-    <motion.div
-      whileHover={{ scale: 0.985 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className={cx(
-        'group relative overflow-hidden rounded-[2.25rem] p-6 md:p-7',
-        tone === 'mist' && 'bg-mist',
-        tone === 'ink' && 'bg-ink text-paper',
-        tone === 'paper' && 'bg-paper',
-        className,
-      )}
-    >
-      {children}
-      {to && <ArrowUpRight size={18} className="absolute right-6 top-6 opacity-0 transition-all duration-500 group-hover:opacity-100" />}
+function Stat({ label, value, tone = 'paper', delay = 0, to }: { label: string; value: number; tone?: 'paper' | 'ink' | 'mist'; delay?: number; to: string }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay }}>
+      <Link
+        to={to}
+        className={cx(
+          'group flex h-28 flex-col items-center justify-center rounded-[1.5rem] transition-colors duration-300',
+          tone === 'ink' && 'bg-ink text-white',
+          tone === 'paper' && 'bg-white hover:bg-white/70',
+          tone === 'mist' && 'bg-canvas outline-2 outline-dashed -outline-offset-2 outline-fog hover:bg-white/50',
+        )}
+      >
+        <span className="text-[2rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} /></span>
+        <span className={cx('mt-2 text-xs', tone === 'ink' ? 'text-white/55' : 'text-smoke')}>{label}</span>
+      </Link>
     </motion.div>
   )
-  return <Reveal delay={delay}>{to ? <Link to={to}>{body}</Link> : body}</Reveal>
 }
 
-const Cap = ({ children, invert }: { children: ReactNode; invert?: boolean }) => (
-  <p className={cx('text-xs', invert ? 'text-paper/50' : 'text-smoke')}>{children}</p>
-)
+type Upcoming = { id: string; kind: 'care' | 'return'; date: string; title: string; detail: string; overdue: boolean; to: string }
+
+function UpcomingCard({ u, i }: { u: Upcoming; i: number }) {
+  const I = u.kind === 'care' ? Wrench : HandArrowDown
+  return (
+    <Reveal delay={i * 0.05} y={14}>
+      <Link to={u.to} className={cx('group block rounded-[1.5rem] p-1.5 transition-transform duration-500 hover:-translate-y-0.5', u.overdue ? 'bg-ink text-white' : 'bg-white')}>
+        <div className="flex items-center justify-between px-3 pb-2 pt-2 text-xs">
+          <span className="flex items-center gap-2 font-medium"><I size={14} />{u.kind === 'care' ? 'Maintenance' : 'Due back'}</span>
+          <span className={u.overdue ? 'text-white/60' : 'text-ash'}>{u.overdue ? 'Overdue · ' : ''}{shortDate(u.date)}</span>
+        </div>
+        <div className={cx('rounded-[1.15rem] px-4 py-3.5', u.overdue ? 'bg-white/[0.07]' : 'bg-mist')}>
+          <p className="text-sm leading-snug">{u.title}</p>
+          <p className={cx('mt-1 truncate text-xs', u.overdue ? 'text-white/50' : 'text-ash')}>{u.detail}</p>
+        </div>
+      </Link>
+    </Reveal>
+  )
+}
 
 export default function Overview() {
   const { user } = useAuth()
   const { data: d } = useData<Dashboard>('/dashboard/')
-  const hour = new Date().getHours()
-  const greet = hour < 12 ? 'Morning' : hour < 17 ? 'Afternoon' : 'Evening'
-
+  const { data: due } = useData<Assignment[]>('/assignments/', { active: true })
+  const { data: assets } = useData<Asset[]>('/assets/', { status: 'assigned' })
   const t = d?.totals
+  const today = new Date().toISOString().slice(0, 10)
+
+  const upcoming: Upcoming[] = [
+    ...(d?.upcoming_maintenance ?? []).map((m) => ({
+      id: `m${m.id}`, kind: 'care' as const, date: m.scheduled_date, title: m.title, detail: `${m.asset_tag} · ${m.asset_name}`, overdue: m.overdue, to: `/assets/${m.asset}`,
+    })),
+    ...(due ?? []).filter((a) => a.due_date).map((a) => ({
+      id: `a${a.id}`, kind: 'return' as const, date: a.due_date!, title: a.asset_name, detail: `${a.asset_tag} · ${a.user_name}`, overdue: a.due_date! < today, to: `/assets/${a.asset}`,
+    })),
+  ].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 7)
+
   const active = t ? t.assets - t.retired : 0
-  const util = t && active ? t.assigned / active : 0
-  const lost = t ? t.purchase_value - t.current_value : 0
+  const trend = (d?.value_trend ?? []).map((v, i, arr) => ({ date: i === arr.length - 1 ? new Date() : new Date(v.year, 11, 31), value: Math.round(v.value) }))
 
   return (
     <Page>
-      <header className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
-        <div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mb-4 pl-1 text-sm text-smoke">
-            {greet}, {user?.name.split(' ')[0]}
-          </motion.p>
-          <h1 className="text-[clamp(3.5rem,11vw,11rem)] leading-[0.85] tracking-[-0.065em]">
-            {t ? <Counter value={t.assets} /> : '—'}
-            <motion.sup initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="ml-2 align-super text-[0.18em] tracking-normal text-ash">assets</motion.sup>
-          </h1>
-        </div>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} className="max-w-[14rem] text-right text-sm text-ash">
-          {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-        </motion.p>
-      </header>
+      <PageHeader
+        eyebrow={new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+        title={`Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, ${user?.name.split(' ')[0] ?? ''}`}
+      />
 
-      {!d ? (
-        <div className="masonry wide">
-          {[280, 180, 340, 220, 260, 200, 300, 180].map((h, i) => <div key={i} style={{ height: h }}><Skeleton className="h-full w-full" /></div>)}
-        </div>
-      ) : (
-        <div className="masonry wide">
-          {/* Book value */}
-          <Tile tone="ink" className="pb-0 md:pb-0">
-            <Cap invert>Book value</Cap>
-            <p className="mt-2 text-5xl tracking-[-0.05em] lg:text-6xl">
-              ₦<Counter value={t!.current_value} format={(n) => compact(n)} />
-            </p>
-            <p className="mt-1 text-xs text-paper/40">of {naira(t!.purchase_value)}</p>
-            <div className="-mx-7 mt-6">
-              <Area invert height={130} data={d.value_trend.map((v) => ({ x: v.year, y: v.value }))} format={(n) => `₦${compact(n)}`} />
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0 space-y-4">
+          {/* Stats */}
+          {!t ? (
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28" />)}</div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
+              <Stat label="Assets" value={t.assets} to="/assets" />
+              <Stat label="In use" value={t.assigned} tone="ink" delay={0.05} to="/assets?status=assigned" />
+              <Stat label="Available" value={t.available} delay={0.1} to="/assets?status=available" />
+              <Stat label="Overdue care" value={t.overdue_maintenance} tone="mist" delay={0.15} to="/maintenance" />
             </div>
-          </Tile>
+          )}
 
-          {/* Utilisation */}
-          <Tile delay={0.05} to="/assets">
-            <div className="flex items-center justify-between">
-              <div>
-                <Cap>In use</Cap>
-                <p className="mt-2 text-6xl tracking-[-0.05em]"><Counter value={util * 100} />%</p>
-              </div>
-              <Ring value={util} size={96} />
-            </div>
-          </Tile>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+            {/* Book value */}
+            <Reveal>
+              <Panel
+                tone="ink"
+                title="Book value"
+                action={t && <span className="text-xs text-white/45">of ₦{compact(t.purchase_value)}</span>}
+                bodyClassName="on-ink flex flex-col px-1 pb-1 pt-4"
+              >
+                <p className="px-4 text-[2rem] font-medium leading-none tracking-[-0.04em]">₦{t ? <Counter value={t.current_value} format={(n) => compact(n)} /> : '—'}</p>
+                {trend.length > 1 ? (
+                  <AreaChart data={trend} xDataKey="date" aspectRatio="auto" className="mt-2 h-48" margin={{ top: 16, right: 16, bottom: 28, left: 16 }}>
+                    <Grid horizontal numTicksRows={3} />
+                    <Area dataKey="value" fill="var(--chart-1)" stroke="var(--chart-1)" fillOpacity={0.18} strokeWidth={2} />
+                    <XAxis numTicks={6} />
+                    <ChartTooltip />
+                  </AreaChart>
+                ) : <div className="h-48" />}
+              </Panel>
+            </Reveal>
 
-          {/* Status split */}
-          <Tile delay={0.1} tone="paper" className="!px-0">
-            <div className="flex h-14 w-full gap-1 overflow-hidden rounded-full">
-              {d.by_status.filter((s) => s.count > 0).map((s, i) => (
-                <motion.div
-                  key={s.status}
-                  initial={{ flexGrow: 0 }}
-                  whileInView={{ flexGrow: s.count }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, ease, delay: 0.2 + i * 0.08 }}
-                  className={cx(
-                    'group/s relative flex min-w-[3.5rem] basis-0 items-center justify-center rounded-full text-xs',
-                    s.status === 'assigned' && 'bg-ink text-paper',
-                    s.status === 'available' && 'bg-mist',
-                    s.status === 'maintenance' && 'grain bg-fog',
-                    s.status === 'retired' && 'bg-fog text-ash',
-                  )}
-                  title={s.status}
-                >
-                  <span className="tabular">{s.count}</span>
-                </motion.div>
-              ))}
-            </div>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 px-2 text-[11px] text-ash">
-              {d.by_status.filter((s) => s.count > 0).map((s) => <span key={s.status} className="capitalize">{s.status}</span>)}
-            </div>
-          </Tile>
-
-          {/* Categories as icon cloud */}
-          <Tile delay={0.15} to="/library">
-            <Cap>Kinds</Cap>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {d.by_category.map((c, i) => {
-                const max = Math.max(...d.by_category.map((x) => x.count))
-                const s = 44 + (c.count / max) * 36
-                return (
-                  <motion.div
-                    key={c.name}
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 + i * 0.04 }}
-                    className="group/c relative grid place-items-center rounded-full bg-paper"
-                    style={{ width: s, height: s }}
-                    title={`${c.name} · ${c.count}`}
+            {/* Status ring */}
+            <Reveal delay={0.05}>
+              <Panel title="Status" bodyClassName="grid place-items-center p-4">
+                {t ? (
+                  <RingChart
+                    size={210}
+                    strokeWidth={11}
+                    ringGap={5}
+                    baseInnerRadius={52}
+                    data={[
+                      { label: 'In use', value: t.assigned, maxValue: active, color: '#0a0a0a' },
+                      { label: 'Available', value: t.available, maxValue: active, color: '#8f8f8f' },
+                      { label: 'Maintenance', value: t.maintenance, maxValue: active, color: '#c7c7c7' },
+                    ]}
                   >
-                    <AssetIcon name={c.icon} size={s * 0.4} />
-                    <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[10px] text-paper">{c.count}</span>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </Tile>
+                    <Ring index={0} />
+                    <Ring index={1} />
+                    <Ring index={2} />
+                    <RingCenter defaultLabel="Active" />
+                  </RingChart>
+                ) : <Skeleton className="size-52 rounded-full!" />}
+              </Panel>
+            </Reveal>
+          </div>
 
-          {/* Overdue care */}
-          <Tile delay={0.2} tone={t!.overdue_maintenance ? 'ink' : 'mist'} to="/maintenance">
-            <div className="flex items-start gap-3">
-              {t!.overdue_maintenance > 0 && <Warning size={20} weight="fill" className="mt-1" />}
-              <div>
-                <p className="text-6xl tracking-[-0.05em]"><Counter value={t!.overdue_maintenance} /></p>
-                <Cap invert={!!t!.overdue_maintenance}>Overdue care</Cap>
-              </div>
-            </div>
-          </Tile>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+            {/* Departments */}
+            <Reveal>
+              <Panel title="By department" bodyClassName="px-1 pt-3">
+                {d ? (
+                  <BarChart data={d.by_department.map((x) => ({ name: x.name.split(' ')[0], count: x.count }))} xDataKey="name" aspectRatio="auto" className="h-56" margin={{ top: 12, right: 12, bottom: 30, left: 12 }} barGap={0.35}>
+                    <Grid horizontal numTicksRows={3} />
+                    <Bar dataKey="count" fill="var(--chart-1)" lineCap="round" />
+                    <BarXAxis showAllLabels />
+                    <ChartTooltip />
+                  </BarChart>
+                ) : <div className="h-56" />}
+              </Panel>
+            </Reveal>
 
-          {/* Departments */}
-          <Tile delay={0.25}>
-            <Cap>By department</Cap>
-            <div className="mt-10">
-              <Bars data={d.by_department.map((x) => ({ label: x.name, value: x.count }))} height={150} />
-            </div>
-            <div className="mt-3 flex justify-between text-[10px] text-ash">
-              {d.by_department.map((x) => <span key={x.name} className="w-0 flex-1 truncate text-center">{x.name.slice(0, 3)}</span>)}
-            </div>
-          </Tile>
-
-          {/* Upcoming care */}
-          <Tile delay={0.3} tone="paper" className="!p-0">
-            <div className="flex flex-col gap-1.5">
-              {d.upcoming_maintenance.slice(0, 5).map((m, i) => (
-                <Reveal key={m.id} delay={0.05 * i} y={12}>
-                  <Link to={`/assets/${m.asset}`} className={cx('flex h-14 items-center justify-between gap-3 rounded-full px-5 text-sm transition-colors', m.overdue ? 'bg-ink text-paper' : 'bg-mist hover:bg-fog')}>
-                    <span className="truncate">{m.title}</span>
-                    <span className={cx('shrink-0 text-xs', m.overdue ? 'text-paper/60' : 'text-ash')}>{shortDate(m.scheduled_date)}</span>
+            {/* Recently assigned — photos */}
+            <Reveal delay={0.05}>
+              <Panel title="In people's hands" action={<Link to="/assets?status=assigned" className="grid size-7 place-items-center rounded-full bg-mist transition-colors hover:bg-fog"><ArrowUpRight size={13} /></Link>} inset={false} bodyClassName="grid grid-cols-3 gap-1.5">
+                {(assets ?? []).slice(0, 6).map((a) => (
+                  <Link key={a.id} to={`/assets/${a.id}`} className="group relative overflow-hidden rounded-[1.1rem]">
+                    <Photo src={a.image_url} icon={a.category_icon} alt={a.name} className="aspect-square" iconSize={28} />
+                    <span className="absolute inset-x-1.5 bottom-1.5 truncate rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-medium backdrop-blur-sm">{a.assigned_to_name?.split(' ')[0]}</span>
                   </Link>
-                </Reveal>
-              ))}
-            </div>
-          </Tile>
-
-          {/* Depreciation */}
-          <Tile delay={0.35}>
-            <Cap>Depreciated</Cap>
-            <p className="mt-2 text-4xl tracking-[-0.04em]">₦<Counter value={lost} format={(n) => compact(n)} /></p>
-            <div className="mt-6 h-2 overflow-hidden rounded-full bg-paper">
-              <motion.div
-                className="h-full rounded-full bg-ink"
-                initial={{ width: 0 }}
-                whileInView={{ width: `${t!.purchase_value ? (lost / t!.purchase_value) * 100 : 0}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.4, ease }}
-              />
-            </div>
-          </Tile>
+                ))}
+                {!assets && [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="aspect-square bg-mist" />)}
+              </Panel>
+            </Reveal>
+          </div>
 
           {/* Activity */}
-          <Tile delay={0.4} tone="ink" to="/activity">
-            <Cap invert>Lately</Cap>
-            <ul className="mt-5 space-y-4">
-              {d.recent_activity.slice(0, 6).map((a) => (
-                <li key={a.id} className="flex gap-3 text-sm">
-                  <span className="w-8 shrink-0 text-paper/40 tabular">{ago(a.timestamp)}</span>
-                  <span className="line-clamp-2 text-paper/90">{a.summary}</span>
-                </li>
+          <Reveal>
+            <Panel title="Recent activity" action={<Link to="/activity" className="text-xs text-ash hover:text-ink">All</Link>} inset={false} bodyClassName="stack">
+              {(d?.recent_activity ?? []).slice(0, 5).map((a) => (
+                <div key={a.id} className="flex items-center gap-4 bg-mist px-4 py-3 text-sm">
+                  <span className="w-8 shrink-0 text-xs text-ash tabular">{ago(a.timestamp)}</span>
+                  <span className="min-w-0 flex-1 truncate">{a.summary}</span>
+                  <span className="hidden shrink-0 text-xs text-ash sm:block">{a.actor_name}</span>
+                </div>
               ))}
-            </ul>
-          </Tile>
-
-          {/* Free */}
-          <Tile delay={0.45} to="/assets?status=available">
-            <p className="text-6xl tracking-[-0.05em]"><Counter value={t!.available} /></p>
-            <Cap>Ready to assign</Cap>
-          </Tile>
+            </Panel>
+          </Reveal>
         </div>
-      )}
+
+        {/* Right column: upcoming */}
+        <aside className="min-w-0">
+          <div className="mb-3 flex items-center justify-between px-1">
+            <h2 className="text-lg font-medium tracking-[-0.03em]">Upcoming</h2>
+            {upcoming.some((u) => u.overdue) && <Warning size={16} weight="fill" />}
+          </div>
+          <div className="space-y-2.5">
+            {!d && [0, 1, 2].map((i) => <Skeleton key={i} className="h-28" />)}
+            {upcoming.map((u, i) => <UpcomingCard key={u.id} u={u} i={i} />)}
+            {d && upcoming.length === 0 && <p className="px-1 text-sm text-ash">Nothing scheduled</p>}
+          </div>
+          {d && (
+            <div className="mt-4 rounded-[1.5rem] bg-white p-1.5">
+              <p className="px-3 pb-2 pt-2 text-xs font-medium text-smoke">Status split</p>
+              <div className="stack">
+                {d.by_status.map((s) => (
+                  <Link key={s.status} to={`/assets?status=${s.status}`} className="flex items-center justify-between bg-mist px-4 py-2.5 text-sm transition-colors hover:bg-fog">
+                    <StatusMark status={s.status} />
+                    <span className="tabular">{s.count}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
     </Page>
   )
 }

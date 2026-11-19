@@ -1,16 +1,19 @@
 import csv
 import io
+import secrets
 from collections import defaultdict
 from datetime import date
 
 import qrcode
+from PIL import Image, ImageOps, UnidentifiedImageError
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import mixins, serializers, viewsets
+from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.decorators import action, api_view, authentication_classes, permission_classes
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -82,6 +85,41 @@ class LocationViewSet(AuditedModelViewSetMixin, viewsets.ModelViewSet):
 
 
 # --------------------------------------------------------------------------- assets
+UPLOAD_FORMATS = {"JPEG", "PNG", "WEBP", "GIF"}
+UPLOAD_MAX_SIDE = 1600
+
+
+def process_image_upload(upload):
+    """Validate an uploaded photo and re-encode it (strips EXIF/GPS, caps size at 1600px).
+
+    Returns (ContentFile, extension). Raises ValidationError for non-images or files over the limit.
+    """
+    limit = settings.ASSET_IMAGE_MAX_BYTES
+    if upload.size > limit:
+        raise ValidationError({"image": [f"Image must be {limit // (1024 * 1024)} MB or smaller."]})
+    try:
+        with Image.open(upload) as probe:
+            fmt = probe.format
+            probe.verify()
+        upload.seek(0)
+        with Image.open(upload) as img:
+            img = ImageOps.exif_transpose(img)
+            img.thumbnail((UPLOAD_MAX_SIDE, UPLOAD_MAX_SIDE))
+            has_alpha = img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info)
+            out = io.BytesIO()
+            if has_alpha:
+                img.convert("RGBA").save(out, format="PNG", optimize=True)
+                ext = "png"
+            else:
+                img.convert("RGB").save(out, format="JPEG", quality=85, optimize=True)
+                ext = "jpg"
+    except (UnidentifiedImageError, Image.DecompressionBombError, OSError, ValueError, SyntaxError):
+        raise ValidationError({"image": ["Upload a valid image (JPEG, PNG, WebP or GIF)."]})
+    if fmt not in UPLOAD_FORMATS:
+        raise ValidationError({"image": ["Upload a valid image (JPEG, PNG, WebP or GIF)."]})
+    return ContentFile(out.getvalue()), ext
+
+
 class CheckoutSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.filter(is_active=True))
     due_date = serializers.DateField(required=False, allow_null=True)
@@ -128,8 +166,10 @@ class AssetViewSet(viewsets.ModelViewSet):
                       asset=asset, title="Details updated")
 
     def perform_destroy(self, instance):
-        pk, label = instance.pk, f"{instance.tag} {instance.name}"
+        pk, label, photo = instance.pk, f"{instance.tag} {instance.name}", instance.image.name
         instance.delete()
+        if photo and not Asset.objects.filter(image=photo).exists():
+            instance.image.storage.delete(photo)
         audit.log(self.request.user, "delete", "asset", pk, f"{self.request.user.name} deleted {label}")
 
     def _respond(self, asset):
@@ -150,6 +190,33 @@ class AssetViewSet(viewsets.ModelViewSet):
         response = HttpResponse(buf.getvalue(), content_type="image/png")
         response["Cache-Control"] = "public, max-age=3600"
         return response
+
+    @action(detail=True, methods=["post", "delete"])
+    def image(self, request, pk=None):
+        """POST multipart `image` to set/replace the photo; DELETE to remove it (manager+)."""
+        asset = self.get_object()
+        actor = request.user
+        if request.method == "DELETE":
+            if not asset.image:
+                return Response({"detail": "This asset has no photo."}, status=status.HTTP_400_BAD_REQUEST)
+            asset.remove_image()
+            audit.log(actor, "update", "asset", asset.pk, f"{actor.name} removed the photo of {asset.tag} {asset.name}",
+                      asset=asset, title="Photo removed")
+            return self._respond(asset)
+
+        upload = request.FILES.get("image")
+        if upload is None:
+            raise ValidationError({"image": ["No file was submitted (multipart field “image”)."]})
+        content, ext = process_image_upload(upload)
+        previous = asset.image.name
+        asset.image.save(f"{asset.tag.lower()}-{secrets.token_hex(4)}.{ext}", content, save=False)
+        asset.save(update_fields=["image", "updated_at"])
+        if previous and not Asset.objects.filter(image=previous).exists():
+            asset.image.storage.delete(previous)
+        audit.log(actor, "update", "asset", asset.pk,
+                  f"{actor.name} {'replaced' if previous else 'added'} the photo of {asset.tag} {asset.name}",
+                  asset=asset, title="Photo updated" if previous else "Photo added")
+        return self._respond(asset)
 
     @action(detail=True)
     def depreciation(self, request, pk=None):

@@ -1,14 +1,34 @@
+from django.db.models import Case, When
 from rest_framework import serializers
 
 from .models import Asset, Assignment, AuditLog, Category, Location, Maintenance
 
 
+def media_url(context, name):
+    """Absolute URL of a stored asset photo (relative if there is no request in the context)."""
+    if not name:
+        return None
+    url = Asset._meta.get_field("image").storage.url(str(name))
+    request = (context or {}).get("request")
+    return request.build_absolute_uri(url) if request else url
+
+
 class CategorySerializer(serializers.ModelSerializer):
     asset_count = serializers.IntegerField(read_only=True)
+    cover_urls = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ["id", "name", "icon", "useful_life_years", "asset_count"]
+        fields = ["id", "name", "icon", "useful_life_years", "asset_count", "cover_urls"]
+
+    def get_cover_urls(self, obj):
+        """Up to four distinct asset photos from this category (active assets first) for folder tiles."""
+        names = (
+            Asset.objects.filter(category=obj).exclude(image="")
+            .order_by(Case(When(status=Asset.Status.RETIRED, then=1), default=0), "tag")
+            .values_list("image", flat=True)
+        )
+        return [media_url(self.context, name) for name in list(dict.fromkeys(names))[:4]]
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -28,6 +48,7 @@ class AssetSerializer(serializers.ModelSerializer):
     current_value = serializers.SerializerMethodField()
     accumulated_depreciation = serializers.SerializerMethodField()
     useful_life_years = serializers.IntegerField(required=False, allow_null=True, min_value=1)
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Asset
@@ -37,9 +58,12 @@ class AssetSerializer(serializers.ModelSerializer):
             "depreciation_method", "useful_life_years",
             "location", "location_name", "department", "department_name",
             "status", "condition", "assigned_to", "assigned_to_name", "assigned_since",
-            "current_value", "accumulated_depreciation", "notes", "created_at", "updated_at",
+            "current_value", "accumulated_depreciation", "notes", "image_url", "created_at", "updated_at",
         ]
         read_only_fields = ["tag", "assigned_to", "assigned_since", "created_at", "updated_at"]
+
+    def get_image_url(self, obj):
+        return media_url(self.context, obj.image.name)
 
     def get_current_value(self, obj):
         return float(obj.current_value)

@@ -1,12 +1,11 @@
-import { ArrowsLeftRight, HandArrowDown, HandArrowUp, PencilSimple, Plus, Trash, Wrench, type Icon } from '@phosphor-icons/react'
+import { ArrowsLeftRight, HandArrowDown, HandArrowUp, PencilSimple, Plus, Trash, Wrench, ImageSquare, type Icon } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
-import { Page, Reveal, Skeleton, Title, cx } from '../components/ui'
-import type { Audit } from '../lib/types'
-import { useData } from '../lib/useData'
+import { Page, PageHeader, Panel, Reveal, Skeleton, cx } from '@/components/ui'
+import type { Audit } from '@/lib/types'
+import { useData } from '@/lib/useData'
 
 const icons: Record<string, Icon> = {
-  create: Plus, update: PencilSimple, delete: Trash, checkout: HandArrowUp, checkin: HandArrowDown,
-  dispose: Trash, maintenance: Wrench,
+  create: Plus, update: PencilSimple, delete: Trash, checkout: HandArrowUp, checkin: HandArrowDown, dispose: Trash, maintenance: Wrench, image: ImageSquare,
 }
 
 function dayKey(s: string) {
@@ -25,31 +24,29 @@ export default function Activity() {
 
   return (
     <Page>
-      <div className="mb-14"><Title>Activity</Title></div>
-      {!data && <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 !rounded-full" />)}</div>}
-      <div className="space-y-16">
+      <PageHeader eyebrow="Audit trail" title="Activity" />
+      {!data && <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14" />)}</div>}
+      <div className="space-y-4">
         {[...groups.entries()].map(([day, items]) => (
-          <section key={day} className="grid gap-4 md:grid-cols-[14rem_1fr] md:gap-10">
-            <Reveal><h2 className="text-2xl tracking-[-0.04em] text-ash md:sticky md:top-10">{day}</h2></Reveal>
-            <div className="flex flex-col gap-1.5">
-              {items.map((a, i) => {
+          <Reveal key={day}>
+            <Panel title={day} action={<span className="text-xs text-ash tabular">{items.length}</span>} inset={false} bodyClassName="stack">
+              {items.map((a) => {
                 const I = icons[a.action] ?? ArrowsLeftRight
+                const strong = a.action === 'dispose' || a.action === 'delete'
                 const body = (
-                  <div className={cx('flex min-h-16 items-center gap-4 rounded-full py-2 pl-2 pr-6 transition-colors', a.action === 'dispose' || a.action === 'delete' ? 'bg-ink text-paper' : 'bg-mist hover:bg-fog')}>
-                    <span className={cx('grid h-12 w-12 shrink-0 place-items-center rounded-full', a.action === 'dispose' || a.action === 'delete' ? 'bg-paper/10' : 'bg-paper')}><I size={18} /></span>
-                    <span className="min-w-0 flex-1 text-[15px] leading-snug">{a.summary}</span>
+                  <div className={cx('flex items-center gap-3 py-2 pl-2 pr-4 transition-colors', strong ? 'bg-ink text-white' : 'bg-mist hover:bg-fog')}>
+                    <span className={cx('grid size-9 shrink-0 place-items-center rounded-full', strong ? 'bg-white/10' : 'bg-white')}><I size={15} /></span>
+                    <span className="min-w-0 flex-1 text-sm leading-snug">{a.summary}</span>
                     <span className="hidden shrink-0 text-xs opacity-50 sm:block">{a.actor_name}</span>
-                    <span className="w-12 shrink-0 text-right text-xs opacity-50 tabular">{new Date(a.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="w-11 shrink-0 text-right text-xs opacity-50 tabular">{new Date(a.timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 )
-                return (
-                  <Reveal key={a.id} delay={Math.min(i, 10) * 0.03} y={14}>
-                    {a.entity === 'asset' && a.entity_id && a.action !== 'delete' ? <Link to={`/assets/${a.entity_id}`}>{body}</Link> : body}
-                  </Reveal>
-                )
+                return a.entity === 'asset' && a.entity_id && a.action !== 'delete'
+                  ? <Link key={a.id} to={`/assets/${a.entity_id}`}>{body}</Link>
+                  : <div key={a.id}>{body}</div>
               })}
-            </div>
-          </section>
+            </Panel>
+          </Reveal>
         ))}
       </div>
     </Page>

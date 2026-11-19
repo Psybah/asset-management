@@ -14,8 +14,11 @@ export function compact(n: number | null | undefined) {
 export const date = (s?: string | null) =>
   s ? new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'
 
-export const shortDate = (s?: string | null) =>
-  s ? new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'
+export const shortDate = (s?: string | null) => {
+  if (!s) return '—'
+  const d = new Date(s)
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' })
+}
 
 export function ago(s: string) {
   const diff = (Date.now() - new Date(s).getTime()) / 1000

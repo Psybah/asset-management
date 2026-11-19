@@ -14,7 +14,7 @@ export interface User {
   asset_count?: number
 }
 
-export interface Category { id: number; name: string; icon: string; useful_life_years: number; asset_count: number }
+export interface Category { id: number; name: string; icon: string; useful_life_years: number; asset_count: number; cover_urls?: string[] }
 export interface Location { id: number; name: string; floor: string; asset_count: number }
 export interface Department { id: number; name: string; asset_count: number }
 
@@ -44,6 +44,7 @@ export interface Asset {
   current_value: number
   accumulated_depreciation: number
   notes: string
+  image_url?: string | null
   created_at: string
   updated_at: string
 }

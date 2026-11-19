@@ -1,14 +1,18 @@
 import Lenis from 'lenis'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 
 export const lenis: { current: Lenis | null } = { current: null }
 
-export function SmoothScroll({ children }: { children: ReactNode }) {
+/** Smooth-scrolls the app's inner container (the page scrolls inside the frame, not the window). */
+export function ScrollArea({ children, className }: { children: ReactNode; className?: string }) {
+  const wrapper = useRef<HTMLDivElement>(null)
+  const content = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
 
   useEffect(() => {
-    const l = new Lenis({ lerp: 0.09, smoothWheel: true })
+    if (!wrapper.current || !content.current) return
+    const l = new Lenis({ wrapper: wrapper.current, content: content.current, lerp: 0.1, smoothWheel: true })
     lenis.current = l
     let raf = 0
     const loop = (t: number) => { l.raf(t); raf = requestAnimationFrame(loop) }
@@ -18,5 +22,9 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
 
   useEffect(() => { lenis.current?.scrollTo(0, { immediate: true }) }, [pathname])
 
-  return <>{children}</>
+  return (
+    <div ref={wrapper} className={className} style={{ overflowY: 'auto' }}>
+      <div ref={content}>{children}</div>
+    </div>
+  )
 }

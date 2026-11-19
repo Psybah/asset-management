@@ -4,17 +4,13 @@
 
 BY
 
-ABIODUN, Oluwamurewa
+OLUWAMUREWA, Abiodun
 
 E052852
 
 ABEGUNDE, Jimmy
 
-[MATRIC NUMBER]
-
-[SURNAME, Other names]
-
-[MATRIC NUMBER]
+E051739
 
 [SURNAME, Other names]
 
@@ -42,19 +38,18 @@ This is to certify that this project, **Design and Implementation of a Web-Based
 
 | Name | Matriculation Number |
 |---|---|
-| ABIODUN, Oluwamurewa (Team Leader) | E052852 |
-| ABEGUNDE, Jimmy | [MATRIC NUMBER] |
-| [SURNAME, Other names] | [MATRIC NUMBER] |
+| OLUWAMUREWA, Abiodun (Team Leader) | E052852 |
+| ABEGUNDE, Jimmy | E051739 |
 | [SURNAME, Other names] | [MATRIC NUMBER] |
 
-in the Department of Computer Science, University of Ibadan, and was duly supervised by [SUPERVISOR NAME].
+in the Department of Computer Science, University of Ibadan, and was duly supervised by Prof. B. F. Oladejo.
 
 &nbsp;
 
 &nbsp;
 
 …………………………………………                …………………………
-[SUPERVISOR NAME (Title Lastname Initials)]                Date
+Prof. B. F. Oladejo                Date
 (Supervisor)
 
 &nbsp;
@@ -75,48 +70,46 @@ This project work is dedicated to the Almighty God, the giver of life and wisdom
 
 We acknowledge the sustaining power of the Almighty God, who gave us the wisdom, strength and understanding to complete this work.
 
-We sincerely appreciate our supervisor, [SUPERVISOR NAME], for the guidance, patience and constructive criticism that shaped this project from proposal to completion.
+We sincerely appreciate our supervisor, Prof. B. F. Oladejo, for the guidance, patience and constructive criticism that shaped this project from proposal to completion.
 
 We thank the Head of Department, [HOD NAME], and all the academic and non-academic staff of the Department of Computer Science, University of Ibadan, for the knowledge and support they gave us throughout our stay in the department.
 
-We are grateful to the staff of [CASE-STUDY OFFICE / ORGANISATION NAME] who shared their asset records and workflows with us and who took part in the usability evaluation.
+We are grateful to Squad by HabariPay, where our Team Leader is an intern, for the opportunity to observe a working fintech office at first hand, and to the members of staff who took part in the usability evaluation.
 
 Finally, we thank our families, friends and classmates for their encouragement, and each member of the team for the commitment and cooperation that made this group project a success.
 
 # TEAM MEMBERS' PARTICIPATION
 
-*To be completed and signed by the Team Leader only. The roles and percentages below are suggestions and are **to be confirmed by the Team Leader**.*
+The roles below are as stated by the Team Leader.
 
 **Table i: Team members' participation**
 
-| S/N | Name | Matric No. | Role | Contribution | % |
-|---|---|---|---|---|---|
-| 1 | ABIODUN, Oluwamurewa | E052852 | Team Lead; Backend Development and Project Management | Coordinated the team and work plan; designed the database and REST API; implemented the asset register, check-out/check-in, maintenance, depreciation and audit modules; integrated front end and back end | [__] (to be confirmed by Team Leader) |
-| 2 | ABEGUNDE, Jimmy | [MATRIC NUMBER] | Frontend / User Interface Development | Designed the user interface; implemented the React pages (dashboard, asset register, asset detail, QR scan page, maintenance and reports) | [__] (to be confirmed by Team Leader) |
-| 3 | [SURNAME, Other names] | [MATRIC NUMBER] | Documentation and Literature Review | Literature search and review (Chapter Two), requirements gathering, UML diagrams, compilation of the proposal and final report | [__] (to be confirmed by Team Leader) |
-| 4 | [SURNAME, Other names] | [MATRIC NUMBER] | Testing and Evaluation | Wrote and ran functional test cases, administered the SUS questionnaire, analysed the usability results (Chapter Four) | [__] (to be confirmed by Team Leader) |
-| | **Total** | | | | **100%** |
+| S/N | Name | Matric No. | Role | Contribution |
+|---|---|---|---|---|
+| 1 | OLUWAMUREWA, Abiodun | E052852 | Team Leader; Software Implementation | Designed and built the backend API and the frontend application, and tested the system |
+| 2 | ABEGUNDE, Jimmy | E051739 | Research | Sourced, read and synthesised the cited literature (Chapter Two and the literature collection) |
+| 3 | [SURNAME, Other names] | [MATRIC NUMBER] | Compilation of the Write-up | Structured, wrote and formatted the report |
 
 &nbsp;
 
 …………………………………………                …………………………
-ABIODUN, Oluwamurewa (Team Leader)                Date
+OLUWAMUREWA, Abiodun (Team Leader)                Date
 
 # ABSTRACT
 
 Corporate offices hold a large share of their capital in physical assets such as computers, printers, furniture, network equipment and vehicles. Yet many offices, particularly in Nigeria, still record these assets in paper registers and spreadsheets. As a result, nobody can say reliably where an asset is or who holds it. Maintenance is missed, depreciation and book values are calculated by hand and are often wrong, and changes to records leave no audit trail. This project set out to replace such manual practice with one secure, central platform for managing the full asset lifecycle.
 
-The system was developed with an Agile, incremental approach. Requirements were gathered by reviewing existing registers, the literature and existing tools such as Snipe-IT. The design was modelled in UML (use case, class, sequence and activity diagrams) and an entity–relationship model. The system has a three-tier architecture: a React single-page front end, a RESTful application programming interface built with Django REST Framework and token authentication, and a relational database. Each asset receives an auto-generated tag and a QR code label that opens the asset's record when scanned with a smartphone. Depreciation is computed with the straight-line and declining-balance methods recognised by IAS 16, and access is controlled by three roles: administrator, manager and staff.
+The system was developed with an Agile, incremental approach. The case study is Squad by HabariPay, a Lagos fintech whose operator, HabariPay Limited, is a subsidiary of Guaranty Trust Holding Company Plc (GTCO). Requirements were informed by the Team Leader's direct observation of the office during an internship there, by the literature and by existing tools such as Snipe-IT. The design was modelled in UML (use case, class, sequence and activity diagrams) and an entity–relationship model. The system has a three-tier architecture: a React single-page front end, a RESTful application programming interface built with Django REST Framework and token authentication, and a relational database. Each asset receives an auto-generated tag and a QR code label that opens the asset's record when scanned with a smartphone. Depreciation is computed with the straight-line and declining-balance methods recognised by IAS 16, and access is controlled by three roles: administrator, manager and staff.
 
 The resulting system provides:
 
-- an asset register with search and filters, and QR labels with a scan page;
+- an asset register with photographs, search and filters, and QR labels with a scan page;
 - check-out/check-in with full custody history;
 - preventive and corrective maintenance scheduling with overdue detection;
 - automatic depreciation schedules and current book values;
 - a disposal workflow, an audit trail, a dashboard and CSV reports.
 
-The system was verified against 26 functional test cases, of which 25 passed when executed and the remaining one (scanning a printed label with a physical phone) is pending *[Team: update after TC9]*. A System Usability Scale survey of [NUMBER] office users gave a mean score of [SUS SCORE], which is [ABOVE/BELOW] the commonly cited benchmark of 68. *[Placeholders: replace with the real test and survey results before submission.]* The system shows that a low-cost, web-based, QR-enabled solution can significantly improve accountability, maintenance and financial accuracy in managing office assets.
+The system was verified against 28 functional test cases. At the time of writing, 25 had passed and none had failed. Three are pending: scanning a printed label with a physical phone (TC9), and the tests of the asset photograph and survey features added in the final increment (TC27 and TC28) *[Team: update after TC9, TC27 and TC28]*. A System Usability Scale survey of [NUMBER] staff of Squad by HabariPay, collected through an in-app survey page, gave a mean score of [SUS SCORE], which is [ABOVE/BELOW] the commonly cited benchmark of 68. *[Placeholders: replace with the real test and survey results before submission.]* The system shows that a low-cost, web-based, QR-enabled solution can significantly improve accountability, maintenance and financial accuracy in managing office assets.
 
 **Keywords:** asset management, QR code, web application, depreciation, Django REST Framework, React, System Usability Scale
 
@@ -288,7 +281,7 @@ This project addresses these problems with a central, web-based, role-secured as
 3. implement check-out/check-in of assets to named staff with a complete assignment history, and preventive/corrective maintenance scheduling with automatic detection of overdue jobs;
 4. implement automatic computation of current book value and full depreciation schedules using the straight-line and declining-balance methods recognised by IAS 16;
 5. enforce role-based access control (administrator, manager, staff), record every change in an audit trail, and provide a summary dashboard and downloadable CSV reports;
-6. evaluate the system through functional test cases and a System Usability Scale (SUS) survey of at least 20 office users, with a target mean SUS score of at least 68.
+6. evaluate the system through functional test cases and a System Usability Scale (SUS) survey of at least 20 staff of the case-study organisation, with a target mean SUS score of at least 68.
 
 ### 1.4 JUSTIFICATION
 
@@ -307,13 +300,16 @@ The system manages the physical (tangible) assets of a single corporate office. 
 
 - user authentication and three roles: administrator, manager and staff;
 - reference data: asset categories (with default useful lives), locations and departments;
-- an asset register with automatic tags, purchase details, location, department, status, condition and custodian;
+- an asset register with automatic tags, purchase details, location, department, status, condition, custodian and a photograph of each asset;
 - QR code generation for each asset and a scan page that resolves a tag to its record;
 - check-out to and check-in from staff, with due dates, notes and return condition;
 - preventive and corrective maintenance records with cost, vendor, status and overdue detection;
 - depreciation by straight-line and (double) declining-balance, with schedules and current book value;
 - disposal of assets by sale, donation, scrapping or loss;
-- an audit log of all actions, a per-asset timeline, a dashboard and CSV export of the register.
+- an audit log of all actions, a per-asset timeline, a dashboard and CSV export of the register;
+- an in-app usability survey page, open without login, and an endpoint that summarises the survey results.
+
+The case-study organisation is Squad by HabariPay in Lagos (Section 3.2.1). The system was designed around the needs of an office like it, but it is an academic project: it has not been adopted or endorsed by the company, and the data in the demonstration system is illustrative seed data modelled on a fintech office, not the company's real records.
 
 The following are outside the scope of this project:
 
@@ -330,11 +326,11 @@ All money values are in Nigerian Naira (NGN).
 
 The project followed an Agile, incremental development methodology (Beck et al., 2001; Abrahamsson et al., 2002). The steps were:
 
-1. **Requirements gathering:** review of existing registers and spreadsheets, informal interviews with administrative and IT staff, review of existing tools (Snipe-IT and spreadsheets) and of the literature.
+1. **Requirements gathering:** direct observation of how a fast-growing fintech office handles its equipment, made by the Team Leader during an internship at the case-study organisation, Squad by HabariPay (Section 3.2.1); review of existing tools (Snipe-IT and spreadsheets); and review of the literature.
 2. **System design:** a three-tier client–server architecture; UML use case, class, sequence and activity diagrams; an entity–relationship model; and a REST API contract.
 3. **Incremental implementation:** a back end in Python with Django and Django REST Framework, and a front end in React with TypeScript. Development ran in five increments, each reviewed before the next began.
 4. **Testing:** functional test cases comparing expected and actual results, including unit tests of the depreciation calculations.
-5. **Evaluation:** a System Usability Scale (SUS) questionnaire (Brooke, 1996) given to office users after a set of tasks.
+5. **Evaluation:** a System Usability Scale (SUS) questionnaire (Brooke, 1996), completed by staff of the case-study organisation on an in-app survey page after a set of tasks.
 
 Chapter Three describes the methodology in detail.
 
@@ -343,7 +339,7 @@ Chapter Three describes the methodology in detail.
 The rest of this report is organised as follows:
 
 - **Chapter Two** reviews the relevant literature: asset management concepts and ISO 55000, IT asset management, identification technologies, depreciation accounting, existing systems and related academic works. It ends by identifying the research gap.
-- **Chapter Three** presents the methodology: requirements, architecture, UML models, database and API design.
+- **Chapter Three** presents the methodology: the case-study organisation, requirements, architecture, UML models, database and API design, and the evaluation plan.
 - **Chapter Four** describes the implementation, testing and usability evaluation, and discusses the results.
 - **Chapter Five** summarises the work, draws conclusions and makes recommendations for future work.
 
@@ -660,13 +656,13 @@ This project fills that gap. It designs, implements and evaluates an open, low-c
 
 ## METHODOLOGY
 
-This chapter describes how the system was developed and designed. Section 3.1 explains the development methodology. Section 3.2 sets out the requirements, Section 3.3 the architecture, and Section 3.4 the UML models. Sections 3.5 and 3.6 cover the database and API design, and Section 3.7 the plan for evaluating the system.
+This chapter describes how the system was developed and designed. Section 3.1 explains the development methodology. Section 3.2 introduces the case-study organisation and sets out the requirements, Section 3.3 the architecture, and Section 3.4 the UML models. Sections 3.5 and 3.6 cover the database and API design, and Section 3.7 the plan for evaluating the system.
 
 ### 3.1 DEVELOPMENT METHODOLOGY
 
 The project adopted an **Agile, incremental** development methodology. The Agile Manifesto values "individuals and interactions over processes and tools", "working software over comprehensive documentation", "customer collaboration over contract negotiation" and "responding to change over following a plan" (Beck et al., 2001). Abrahamsson et al. (2002) characterise a method as agile when development is incremental (small releases with rapid cycles), cooperative (customer and developers working closely together), straightforward (easy to learn and modify) and adaptive (able to accommodate late changes).
 
-These properties suit a student team project for three reasons. The requirements were refined as we learnt more about office practice, the team needed working software early for supervisor feedback, and the team members worked on the front end, the back end and the documentation in parallel.
+These properties suit a student team project for three reasons. The requirements were refined as we learnt more about office practice, the team needed working software early for supervisor feedback, and the team members worked in parallel on the software, the literature review and the report.
 
 The work was organised into five increments plus a final evaluation increment. Each increment involved:
 
@@ -702,16 +698,28 @@ flowchart LR
 
 ### 3.2 REQUIREMENTS ANALYSIS
 
-#### 3.2.1 Requirements gathering
+#### 3.2.1 Case study organisation
 
-Requirements were gathered from four sources:
+The case study for this project is **Squad by HabariPay**, where the Team Leader is currently an intern. Squad is a payment platform for businesses in Africa. It is a product of HabariPay Limited, a subsidiary of Guaranty Trust Holding Company Plc (GTCO), and HabariPay is licensed by the Central Bank of Nigeria (Guaranty Trust Holding Company Plc, n.d.; HabariPay Limited, n.d.). GTCO unveiled Squad as its new payments unit on 1 June 2022 (Eleanya, 2022). HabariPay grew out of Habari, a mobile app that GTBank launched in 2018, and received final approval from the Central Bank of Nigeria to operate as a wholly owned payments subsidiary (Akintaro, 2023). Its products include a payment gateway, payment links, SquadPOS, virtual accounts, USSD and an e-commerce storefront (Guaranty Trust Holding Company Plc, 2024; HabariPay Limited, n.d.). The business grew quickly after launch: Akintaro (2023) reports that Squad became profitable in its first month and crossed ₦200 billion in monthly transactions in January 2023. GTCO's press releases about Squad are datelined Lagos (Guaranty Trust Holding Company Plc, 2024), and the office used for this study is in Lagos.
 
-- informal interviews with administrative, finance and IT staff, who are the people who record, value and maintain assets;
-- examination of existing asset spreadsheets and paper registers;
-- hands-on review of an existing open-source tool, Snipe-IT (Grokability, n.d.);
-- the literature reviewed in Chapter Two.
+A fast-growing fintech office of this kind is a good case for an asset management system for four reasons:
 
-#### 3.2.2 Stakeholders and users
+1. **Many portable, high-value IT assets.** The equipment of a technology company is dominated by laptops, monitors, phones and other test devices. These items are small, expensive, easy to move and quick to lose value, which makes custody tracking and declining-balance depreciation especially relevant (Section 2.4).
+2. **Distributed staff.** Staff in a modern fintech may work across floors, offices or remotely, so an item's location and custodian cannot be checked simply by looking around one room. A QR label linked to a live record addresses this.
+3. **Growth and turnover.** A growing team means frequent issuing of equipment to new joiners and recovery from leavers, which is exactly the check-out/check-in workflow of the system.
+4. **Regulated environment.** As a licensed payments company within a financial services group, the organisation operates in an environment where controls and audit trails matter.
+
+The system was developed as an academic project. It has not been adopted or endorsed by the company, and none of the company's internal data is used in it. The demonstration system is loaded with illustrative seed data modelled on a fintech office, with the departments Engineering, Product & Design, Operations, Compliance & Risk, Finance, Growth & Partnerships and People & Culture.
+
+#### 3.2.2 Requirements gathering
+
+Requirements were drawn from three sources:
+
+- **Direct observation.** During an internship at Squad by HabariPay, the Team Leader observed how a fintech office issues, uses and returns equipment such as laptops, monitors and test devices. These observations informed the requirements alongside the literature. *[Team: add the names/roles of any staff consulted and what they said.]*
+- **Existing tools.** Hands-on review of an existing open-source tool, Snipe-IT (Grokability, n.d.), and of spreadsheet-based registers in general.
+- **Literature.** The literature reviewed in Chapter Two, which supplied the lifecycle, depreciation, identification and usability requirements.
+
+#### 3.2.3 Stakeholders and users
 
 The system has three classes of user, implemented as roles:
 
@@ -719,7 +727,7 @@ The system has three classes of user, implemented as roles:
 - **Manager:** for example the facilities, admin or IT officer. Creates and edits assets, checks assets out and in, manages maintenance and disposes of assets.
 - **Staff:** ordinary employees. Can view the register, their own assignments and asset details (for example after scanning a QR label), but cannot change data.
 
-#### 3.2.3 Functional requirements
+#### 3.2.4 Functional requirements
 
 Table 3.1 lists the functional requirements, that is, what the system must do.
 
@@ -748,8 +756,10 @@ Table 3.1 lists the functional requirements, that is, what the system must do.
 | FR19 | The system shall display a timeline of all events for each asset. | Medium |
 | FR20 | The system shall display a dashboard of totals, value, status breakdown, assets by category and department, value trend, upcoming maintenance and recent activity. | Medium |
 | FR21 | The system shall export the (optionally filtered) asset register as a CSV file. | Medium |
+| FR22 | The system shall allow managers to upload a photograph for each asset, show it on the register and asset detail pages, and group assets into category folders that display their photographs. | Medium |
+| FR23 | The system shall provide a survey page that can be opened without logging in and records the ten SUS items, respondent demographics, task completion and comments, and an endpoint that computes the results (number of responses, mean, median and standard deviation of SUS scores, per-item response distributions and task completion rates). | Medium |
 
-#### 3.2.4 Non-functional requirements
+#### 3.2.5 Non-functional requirements
 
 Table 3.2 lists the non-functional requirements, that is, the qualities the system must have.
 
@@ -760,7 +770,7 @@ Table 3.2 lists the non-functional requirements, that is, the qualities the syst
 | NFR1 | Usability | The interface shall be simple enough for office staff with basic computer skills; target mean SUS score ≥ 68. |
 | NFR2 | Responsiveness | The interface shall work on desktop and mobile browsers; the QR scan page shall be usable on a smartphone. |
 | NFR3 | Performance | Common pages (register, asset detail, dashboard) shall load within 3 seconds on the office network for a register of several thousand assets; a scanned QR label shall open the asset record within 5 seconds. |
-| NFR4 | Security | Passwords shall be stored hashed; all API requests except login and QR images shall require a valid token; role permissions shall be enforced on the server. |
+| NFR4 | Security | Passwords shall be stored hashed; all API requests except login, QR and photograph images, and survey submission shall require a valid token; role permissions shall be enforced on the server. |
 | NFR5 | Integrity | Status transitions (check-out, check-in, disposal) shall be atomic database transactions; invalid transitions shall be rejected. |
 | NFR6 | Accountability | No change to asset data shall occur without an audit log entry. |
 | NFR7 | Accuracy | Money shall be handled as fixed-point decimals rounded to two places (kobo); depreciation shall never take book value below salvage value. |
@@ -768,7 +778,7 @@ Table 3.2 lists the non-functional requirements, that is, the qualities the syst
 | NFR9 | Portability | The system shall run on any operating system with Python and a modern browser and use only open-source components. |
 | NFR10 | Availability | The system shall be deployable on a single office server or low-cost cloud host. |
 
-#### 3.2.5 User roles and permissions
+#### 3.2.6 User roles and permissions
 
 Table 3.3 summarises the permissions of each role.
 
@@ -782,10 +792,12 @@ Table 3.3 summarises the permissions of each role.
 | Check out / check in assets | ✓ | ✓ | ✗ |
 | Schedule and update maintenance | ✓ | ✓ | ✗ |
 | Dispose of assets | ✓ | ✓ | ✗ |
+| Upload asset photographs | ✓ | ✓ | ✗ |
 | Manage categories, locations, departments | ✓ | ✓ | ✗ |
 | Manage user accounts and roles (administration site) | ✓ | ✗ | ✗ |
+| Complete the usability survey (/survey; also open to evaluation participants without an account) | ✓ | ✓ | ✓ |
 
-Table 3.3 shows that every role can see the whole register, which supports transparency. Only managers and administrators can change data, and only administrators can manage user accounts.
+Table 3.3 shows that every role can see the whole register, which supports transparency. Only managers and administrators can change data, and only administrators can manage user accounts. The survey page is the one deliberate exception to login: evaluation participants can complete it without an account.
 
 ### 3.3 SYSTEM ARCHITECTURE
 
@@ -1182,6 +1194,7 @@ Table 3.4 extends Django's standard user model with a `role` and a home `departm
 | condition | Varchar(10) | new / good / fair / poor | Physical condition |
 | assigned_to_id | Integer | Foreign key → User, nullable | Current custodian |
 | assigned_since | Date | Nullable | Date of current check-out |
+| image | Image (file path) | Nullable | Photograph of the asset |
 | notes | Text | | Free-text notes |
 | created_at, updated_at | DateTime | | Record timestamps |
 
@@ -1253,13 +1266,13 @@ Overdue status is derived rather than stored: a job is overdue when its status i
 | Category | useful_life_years | Integer, default 5 | Default useful life for assets in the category |
 | Location | name | Varchar(100), unique | e.g. Head Office – 2nd Floor |
 | Location | floor | Varchar(20) | Floor |
-| Department | name | Varchar(100), unique | e.g. Finance, ICT, Human Resources |
+| Department | name | Varchar(100), unique | e.g. Engineering, Finance, Compliance & Risk |
 
 Tables 3.6 to 3.10 hold the history and reference data around the asset. The design keeps history append-only: assignments are closed by setting `checked_in_at` rather than being deleted, and audit entries are never edited. This preserves a complete, verifiable record, in line with the assurance principle of ISO 55000.
 
 ### 3.6 API DESIGN
 
-The back end exposes a REST API under `/api/`. Table 3.11 lists its main endpoints. All requests except login and QR images carry the header `Authorization: Token <key>`. Read requests are open to every authenticated user, while write requests need the manager or admin role. Otherwise the server responds with HTTP 403.
+The back end exposes a REST API under `/api/`. Table 3.11 lists its main endpoints. All requests except login, QR and photograph images, and survey submission carry the header `Authorization: Token <key>`. Read requests are open to every authenticated user, while write requests need the manager or admin role. Otherwise the server responds with HTTP 403.
 
 **Table 3.11: Summary of REST API endpoints**
 
@@ -1284,6 +1297,11 @@ The back end exposes a REST API under `/api/`. Table 3.11 lists its main endpoin
 | GET | /audit/?limit= | Audit log, newest first |
 | GET | /dashboard/ | Aggregated dashboard data |
 | GET | /reports/assets.csv | CSV export of the (filtered) register |
+| POST (multipart) | /assets/{id}/image/ | Upload or replace an asset's photograph |
+| POST | /survey/ | Submit a survey response (no token required) |
+| GET | /survey/results/ | Computed SUS results: n, mean, median, standard deviation, per-item distributions and task completion |
+
+*[Team: confirm the photograph-upload and survey endpoint paths in Table 3.11 against the final code.]*
 
 ### 3.7 EVALUATION DESIGN
 
@@ -1291,9 +1309,11 @@ The system was evaluated in two ways:
 
 1. **Functional testing.** Each functional requirement in Table 3.1 was mapped to one or more test cases with defined inputs and expected results. The test cases were executed against the running system and the actual results recorded (Section 4.5). The depreciation module was also tested on its own with known worked examples (Table 2.2).
 2. **Usability evaluation.** The System Usability Scale (Brooke, 1996) was used.
-   - **Participants:** about [NUMBER] office staff from [CASE-STUDY OFFICE / ORGANISATION NAME].
+   - **Participants:** about [NUMBER] members of staff of Squad by HabariPay, the case-study organisation (Section 3.2.1).
+   - **Dates:** [DATES OF EVALUATION].
    - **Procedure:** each participant first completed seven representative tasks: log in, search for an asset, scan a QR label, check an asset out and in, schedule maintenance, view depreciation, and export a report. They then completed the questionnaire in Appendix B.
-   - **Analysis:** responses were scored using the standard SUS method. The results are reported as frequency tables, item means and an overall mean SUS score, and interpreted against the average of 68 (Sauro, 2011) and the adjective scale of Bangor et al. (2009).
+   - **Instrument delivery:** the questionnaire was built into the system as a survey page at `/survey`, which opens without logging in. It records the respondent's demographics (Section A), task completion (Section B), the ten SUS items (Section C) and the adjective rating and comments (Section D). Each submission is stored in the database, so no responses have to be typed in by hand.
+   - **Analysis:** a results endpoint computes the number of responses (n), the mean, median and standard deviation of the SUS scores, the distribution of responses to each item, and the task completion rates. Each SUS score is computed with the standard method (Equation 4.1). The results are reported as frequency tables, item means and an overall mean SUS score, and interpreted against the average of 68 (Sauro, 2011) and the adjective scale of Bangor et al. (2009).
 
 
 # CHAPTER FOUR
@@ -1313,14 +1333,18 @@ Table 4.1 lists the tools and technologies used to implement the system and the 
 | Back-end language | Python 3 | Readable, widely taught, rich ecosystem; the team's strongest language |
 | Web framework | Django 6.1 | Mature "batteries-included" framework with an ORM, migrations, authentication, password hashing and an admin site (Django Software Foundation, n.d.) |
 | API framework | Django REST Framework 3.18 | Serializers, viewsets, routers, token authentication and permission classes for building Web APIs quickly (Django REST framework, n.d.) |
-| QR generation | `qrcode` 8.2 with Pillow | Generates standard QR symbols (ISO/IEC, 2024) as PNG images on the server |
+| QR generation and images | `qrcode` 8.2 with Pillow | Generates standard QR symbols (ISO/IEC, 2024) as PNG images on the server; Pillow also handles uploaded asset photographs |
 | Database | SQLite (development); PostgreSQL via `dj-database-url` (deployment) | Zero-configuration local database; the same code runs on a production database by changing one URL |
 | Cross-origin support | django-cors-headers | Allows the SPA served from a different origin to call the API |
 | Front-end library | React 19 with TypeScript | Component-based UI (Meta Platforms, n.d.); static typing catches errors early |
 | Build tool | Vite | Fast development server and optimised production builds |
 | Styling | Tailwind CSS 4 | Utility-first CSS for a consistent, responsive design |
 | Routing | React Router 7 | Client-side routes, including the `/scan/:tag` route opened by QR labels |
-| Icons and charts | Phosphor Icons; custom chart components | Category icons and dashboard visualisations |
+| UI components | shadcn/ui conventions; texture buttons and floating-label inputs | Accessible, consistent components that live in the project's own source code; one small design system for buttons and form fields |
+| Charts | Bklit UI (a shadcn/ui chart registry built on visx) | Dashboard charts (assets by category and department, book-value trend) |
+| Icons and visual details | Phosphor Icons; 21st.dev "Icon Folder" component; React Bits animated background | Category icons; category folders that show asset photographs; animated background on the login page |
+| Seed photographs | Images from Wikimedia Commons under free licences | Realistic photographs for the illustrative fintech-office seed data |
+| Developer workflow | Single root command `npm run dev` | Starts the Django API and the Vite development server together |
 | Version control | Git and GitHub | Collaboration, history and code submission ([GITHUB REPOSITORY LINK]) |
 | Hardware used | [e.g. laptop specification: processor, RAM, OS] | Development and testing machine(s) |
 
@@ -1328,7 +1352,7 @@ Table 4.1 shows that the system uses only free and open-source components. No li
 
 ### 4.2 MODULE IMPLEMENTATION
 
-The back end is a Django project with two applications:
+The back end is a Django project whose main applications are:
 
 - **`accounts`:** users, roles, departments and authentication.
 - **`assets`:** categories, locations, assets, assignments, maintenance, disposals, the audit log, depreciation, the dashboard and reports.
@@ -1353,6 +1377,8 @@ The register endpoint supports:
 - exact filters on status, category, department, location and custodian (FR6).
 
 Every create, update and delete writes an audit entry.
+
+**Asset photographs.** A manager can upload a photograph for each asset. The image is stored as a file and its path is kept in the asset's `image` field (Table 3.5). The photograph appears on the register and the asset detail page. The register can also be browsed as category "folders", each showing the photographs of the assets in that category, which makes it easy to recognise an item by sight (FR22). The photographs in the demonstration data come from Wikimedia Commons and are used under free licences.
 
 #### 4.2.3 QR code module
 
@@ -1417,7 +1443,13 @@ A helper function `audit.log()` is called by every service and every create, upd
 - the next five maintenance jobs;
 - the eight most recent audit entries (FR20).
 
-`GET /api/reports/assets.csv` streams the register as a CSV file named with the current date. It accepts the same filters as the register, so a manager can export, for example, only the ICT department's laptops (FR21).
+`GET /api/reports/assets.csv` streams the register as a CSV file named with the current date. It accepts the same filters as the register, so a manager can export, for example, only the Engineering department's laptops (FR21).
+
+#### 4.2.9 Usability survey module
+
+The questionnaire in Appendix B is also built into the system as a survey page at `/survey`. The page opens without logging in, so evaluation participants do not need an account. It records the respondent's demographics, whether each of the seven tasks was completed, the ten SUS items, the adjective rating and the open-ended comments, and stores each submission in the database.
+
+A results endpoint computes each respondent's SUS score with Equation 4.1 and returns the number of responses (n), the mean, median and standard deviation of the scores, the distribution of responses to each SUS item, and the task completion rates (FR23). These figures feed Tables 4.5 to 4.11 directly, which removes the transcription errors that can occur when paper questionnaires are typed into a spreadsheet.
 
 ### 4.3 KEY ALGORITHMS
 
@@ -1488,13 +1520,13 @@ Both are computed when needed rather than stored, so they cannot become inconsis
 
 ### 4.4 USER INTERFACE
 
-This section presents the main screens of the implemented system. *[Screenshots to be inserted by the team. Replace each placeholder below with a screenshot of the running system, keeping the caption underneath.]*
+This section presents the main screens of the implemented system. The interface follows shadcn/ui component conventions, with a small design system of textured buttons and floating-label input fields so that every form looks and behaves the same way. The screens show the illustrative seed data modelled on a fintech office (Section 3.2.1), not the case-study organisation's real records. *[Team: retake the screenshots with the current interface and seed data; keep the figure numbers and captions below.]*
 
 ![Figure 4.1](figures/fig-4-1.png)
 
 *Figure 4.1: Login page*
 
-Figure 4.1 shows the login page. The user enters a username and password. Demonstration accounts are provided for each role (Appendix A).
+Figure 4.1 shows the login page, which has an animated background from the React Bits collection. The user enters a username and password. Demonstration accounts are provided for each role (Appendix A).
 
 ![Figure 4.2](figures/fig-4-2.png)
 
@@ -1504,14 +1536,14 @@ The dashboard in Figure 4.2 gives management an at-a-glance view of the asset ba
 
 - total assets, purchase value and current book value;
 - counts by status and the number of overdue maintenance jobs;
-- charts by category and department, and the book-value trend;
+- charts by category and department, and the book-value trend, built with Bklit UI chart components;
 - upcoming maintenance and recent activity.
 
 ![Figure 4.3](figures/fig-4-3.png)
 
 *Figure 4.3: Asset register with search and filters*
 
-Figure 4.3 shows the asset register. Each row shows the tag, name, category, custodian, location, status and current value. The search box and filters narrow the list instantly.
+Figure 4.3 shows the asset register. Each row shows the asset's photograph, tag, name, category, custodian, location, status and current value. The search box and filters narrow the list instantly. The register can also be viewed as category folders (built on the 21st.dev "Icon Folder" component) that show the photographs of the assets inside each category.
 
 ![Figure 4.4](figures/fig-4-4.png)
 
@@ -1519,7 +1551,7 @@ Figure 4.3 shows the asset register. Each row shows the tag, name, category, cus
 
 The asset detail page in Figure 4.4 brings together:
 
-- the asset's details and QR code;
+- the asset's photograph, details and QR code;
 - its current custodian and value;
 - its depreciation schedule;
 - its full timeline of events.
@@ -1564,7 +1596,7 @@ Figure 4.9 shows the asset register exported as CSV and opened in a spreadsheet 
 
 The system was tested against the functional requirements of Table 3.1. Table 4.3 lists the test cases, the expected result of each and the actual result observed.
 
-The tests were executed on 19 November 2026 against the running system (Django development server with the seeded demonstration data). TC1–TC8, TC10–TC16 and TC21–TC25 were run through the REST API with a scripted HTTP client, TC17–TC20 by running the depreciation module directly, and TC26 in a browser at smartphone size. TC9 requires a printed label and a physical phone.
+The tests were executed on 19 November 2026 against the running system (Django development server with the seeded demonstration data). TC1–TC8, TC10–TC16 and TC21–TC25 were run through the REST API with a scripted HTTP client, TC17–TC20 by running the depreciation module directly, and TC26 in a browser at smartphone size. TC9 requires a printed label and a physical phone. These tests used the earlier generic-office version of the seed data (for example an IT department), which explains the department names in TC25; the seed data was later re-themed as a fintech office. TC27 and TC28 cover the asset photograph and survey features added in the final increment and are still to be run. *[Team: re-run TC24–TC25 on the fintech seed data if the figures should match the new screenshots.]*
 
 **Table 4.3: Functional test cases and results**
 
@@ -1596,11 +1628,13 @@ The tests were executed on 19 November 2026 against the running system (Django d
 | TC24 | FR20 | Open the dashboard | Totals equal the counts and sums in the register | Dashboard assets 63 = register 63; status counts match: True; purchase value ₦234,000,000 = register sum ₦234,000,000 | PASS |
 | TC25 | FR21 | Export CSV with filter department = ICT | CSV downloaded containing only ICT assets | HTTP 200, text/csv; charset=utf-8; 17 rows, all department = IT: True | PASS |
 | TC26 | NFR2 | Open the register and asset pages on a smartphone browser | Layout adapts to the small screen; all actions usable | Verified in Chrome device emulation at 390×844 px: grids collapse to 1–2 columns, navigation fits the screen, dialogs open as bottom sheets. [Team: confirm on a physical phone] | PASS |
+| TC27 | FR22 | Manager uploads a photograph for an asset; open the register, the asset detail page and the category folder | Photograph shown in all three places; staff account cannot upload | [TO BE RECORDED] | [PASS/FAIL] |
+| TC28 | FR23, NFR4 | Submit a completed questionnaire at /survey without logging in, then request the survey results | Response saved; n increases by one; mean, median, SD, item distributions and task completion include the new response | [TO BE RECORDED] | [PASS/FAIL] |
 
-Table 4.3 covers every functional requirement and the key non-functional requirements for security, integrity, accuracy and responsiveness.
+Table 4.3 covers every functional requirement (FR1–FR23) and the key non-functional requirements for security, integrity, accuracy and responsiveness.
 
 - TC17 to TC20 confirm that the depreciation module reproduces the hand-computed results and respects the salvage constraint.
-- 25 of the 26 test cases passed on first execution and none failed; TC9 (physical QR scan) is pending. *[Team: update once TC9 has been run on a phone.]*
+- Of the original 26 test cases, 25 passed on first execution and none failed; TC9 (physical QR scan) is pending, as are TC27 and TC28 for the features added in the final increment. *[Team: update once TC9, TC27 and TC28 have been run.]*
 - Access control behaved as designed: requests without a token were rejected (TC3), and a staff account could read but not modify data (TC4).
 - State rules held: an assigned asset could not be checked out again (TC11), and a retired asset could not be disposed of twice (TC22).
 
@@ -1610,9 +1644,10 @@ Table 4.3 covers every functional requirement and the key non-functional require
 
 Usability was measured with the System Usability Scale (Brooke, 1996).
 
-- **Participants:** [NUMBER] staff of [CASE-STUDY OFFICE / ORGANISATION NAME], with roles ranging from administrative and finance officers to IT support staff.
-- **Procedure:** each participant was given a short introduction and an account. They then performed the seven tasks in Section B of the questionnaire (Appendix B): log in, search for an asset, scan a QR label, check an asset out and in, schedule maintenance, view the depreciation schedule, and export a CSV report. Finally they completed the ten SUS items and the adjective rating item.
-- **Dates:** the evaluation took place on [DATES OF EVALUATION].
+- **Participants:** [NUMBER] members of staff of Squad by HabariPay, the case-study organisation (Section 3.2.1). *[Team: describe the participants' departments and roles from the demographic data; do not estimate.]*
+- **Procedure:** each participant was given a short introduction and an account. They then performed the seven tasks in Section B of the questionnaire (Appendix B): log in, search for an asset, scan a QR label, check an asset out and in, schedule maintenance, view the depreciation schedule, and export a CSV report. Finally they opened the in-app survey page (`/survey`, no login needed) and recorded their demographics, task completion, the ten SUS items, the adjective rating and their comments.
+- **Analysis:** the results endpoint described in Section 4.2.9 computed n, the mean, median and standard deviation of the SUS scores, the per-item response distributions and the task completion rates.
+- **Dates:** the evaluation was conducted with staff at Squad by HabariPay on [DATES OF EVALUATION].
 
 #### 4.6.2 SUS items and scoring
 
@@ -1643,7 +1678,7 @@ For example, the responses 4, 2, 5, 1, 4, 2, 5, 2, 4, 1 give (3 + 4 + 3 + 4 + 3)
 
 #### 4.6.3 Results
 
-> **IMPORTANT — PLACEHOLDER DATA:** All numbers in Tables 4.5 to 4.11 below are **placeholders** marked "[ ]". They are **not real results**. Replace them with the actual responses collected with the questionnaire in Appendix B before submission, and rewrite the discussion to match.
+> **IMPORTANT — PLACEHOLDER DATA:** All numbers in Tables 4.5 to 4.11 below are **placeholders** marked "[ ]". They are **not real results**. Replace them with the actual figures returned by the survey results endpoint (Section 4.2.9) for the responses collected at `/survey` before submission, and rewrite the discussion to match.
 
 **Table 4.5: Demographic profile of respondents (PLACEHOLDER — replace with real data)**
 
@@ -1723,6 +1758,7 @@ Table 4.9 identifies the strongest and weakest aspects of usability. *[Team: nam
 |---|---|
 | Number of respondents (N) | [ ] |
 | Mean SUS score | [ ] |
+| Median SUS score | [ ] |
 | Standard deviation | [ ] |
 | Minimum / maximum score | [ ] / [ ] |
 | Respondents scoring above 68 | [ ] ([ ]%) |
@@ -1801,14 +1837,14 @@ This project set out to design and implement a web-based asset management system
 
 The review identified a gap: no low-cost, open system combines QR identification, custody tracking, maintenance management, IAS 16-aligned depreciation, disposal and a full audit trail for a Nigerian corporate office.
 
-**Chapter Three** described the Agile, incremental methodology, the functional and non-functional requirements, the three-tier REST architecture, and the UML models: use case, class, sequence, activity and state diagrams. It also presented the entity–relationship diagram, the database tables and the API design.
+**Chapter Three** introduced the case-study organisation, Squad by HabariPay, and described the Agile, incremental methodology, the functional and non-functional requirements, the three-tier REST architecture, and the UML models: use case, class, sequence, activity and state diagrams. It also presented the entity–relationship diagram, the database tables and the API design.
 
 **Chapter Four** described the implementation with Django, Django REST Framework and React:
 
-- the authentication, register, QR, check-out/check-in, maintenance, disposal, audit, dashboard and reporting modules;
+- the authentication, register (with asset photographs), QR, check-out/check-in, maintenance, disposal, audit, dashboard, reporting and survey modules;
 - the depreciation algorithm, whose output matched the hand-computed example exactly;
 - the functional test cases;
-- the usability evaluation with the System Usability Scale.
+- the usability evaluation with the System Usability Scale, administered to staff of the case-study organisation through the in-app survey page.
 
 ### 5.2 CONCLUSION
 
@@ -1832,7 +1868,7 @@ On this basis, the aim of the project, to design and implement a web-based asset
 **Future work.** The following extensions are recommended:
 
 1. **RFID integration.** Add passive or active RFID tags and readers at exits and storerooms. This would allow automatic, bulk and hands-free detection of asset movement, as in Evizal et al. (2013), for high-value or high-risk items, while keeping QR labels for general items.
-2. **Native mobile application.** Develop an Android/iOS app on the existing REST API, with offline scanning for stock-taking in areas with poor connectivity, batch verification, and photo capture of asset condition.
+2. **Native mobile application.** Develop an Android/iOS app on the existing REST API, with offline scanning for stock-taking in areas with poor connectivity, batch verification, and in-app camera capture of condition photographs at check-in.
 3. **ERP and accounting integration.** Integrate with the organisation's accounting or ERP system so that acquisitions, depreciation journals and disposals post automatically to the general ledger, removing the need for CSV reconciliation.
 4. **Predictive maintenance.** Use the accumulated maintenance history (frequency, cost and downtime per asset and category) to predict failures and to recommend the best replacement time. In the longer term, Internet of Things (IoT) sensors on equipment such as generators and air-conditioners could feed this, in line with the Fourth Industrial Revolution technologies discussed by Gambo and Musonda (2021).
 5. **Notifications.** Send e-mail or SMS reminders for overdue returns and maintenance, and alerts when an asset reaches the end of its useful life.
@@ -1845,6 +1881,8 @@ On this basis, the aim of the project, to design and implement a web-based asset
 Abrahamsson, P., Salo, O., Ronkainen, J., and Warsta, J. (2002). *Agile software development methods: Review and analysis* (VTT Publications 478). Espoo: VTT Technical Research Centre of Finland. Retrieved from https://arxiv.org/abs/1709.08439
 
 Agboola, F. F., Malgwi, Y. M., Mahmud, M. A., and Oguntoye, J. P. (2022). Development of a web-based platform for automating an inventory management of a small and medium enterprise. *FUDMA Journal of Sciences, 6*(5), 57–65. https://doi.org/10.33003/fjs-2022-0605-1064
+
+Akintaro, S. (2023, May 2). GTCO's fintech business, Squad, crossed N200 billion transactions in January 2023. *Nairametrics*. Retrieved November 19, 2026, from https://nairametrics.com/2023/05/02/gtcos-fintech-business-squad-crossed-n200-billion-transactions-in-january-2023/
 
 Al-Shatri, O. A., Al-Hejji, A. A., Safran, S. A., and Saglab, W. A. (2024). Digital transformation in IT asset management process. *International Journal of Innovative Science and Research Technology, 9*(6), 1232–1239. https://doi.org/10.38124/ijisrt/IJISRT24JUN509
 
@@ -1868,6 +1906,8 @@ Django Software Foundation. (n.d.). Django documentation (Version 6.1). Retrieve
 
 Elaskari, S., Imran, M., Elaskri, A., and Almasoudi, A. (2021). Using barcode to track student attendance and assets in higher education institutions. *Procedia Computer Science, 184*, 226–233. https://doi.org/10.1016/j.procs.2021.04.005
 
+Eleanya, F. (2022, June 1). GTCO names Squad as new fintech unit. *BusinessDay*. Retrieved November 19, 2026, from https://businessday.ng/technology/article/gtco-names-squadco-as-new-fintech-unit/
+
 Evizal, Rahman, T. A., and Rahim, S. K. A. (2013). Active RFID technology for asset tracking and management system. *TELKOMNIKA (Telecommunication Computing Electronics and Control), 11*(1), 137–146. https://doi.org/10.12928/telkomnika.v11i1.898
 
 Fielding, R. T. (2000). *Architectural styles and the design of network-based software architectures* (Doctoral dissertation, University of California, Irvine). Retrieved from https://ics.uci.edu/~fielding/pubs/dissertation/top.htm
@@ -1875,6 +1915,12 @@ Fielding, R. T. (2000). *Architectural styles and the design of network-based so
 Gambo, N., and Musonda, I. (2021). Effect of the fourth industrial revolution on road transport asset management practice in Nigeria. *Journal of Construction in Developing Countries, 26*(1), 19–43. https://doi.org/10.21315/jcdc2021.26.1.2
 
 Grokability, Inc. (n.d.). Snipe-IT: Free open source IT asset management. Retrieved November 19, 2026, from https://snipeitapp.com/ (source code: https://github.com/grokability/snipe-it)
+
+Guaranty Trust Holding Company Plc. (n.d.). Squad by HabariPay. Retrieved November 19, 2026, from https://www.gtcoplc.com/what-we-do/digital-payments
+
+Guaranty Trust Holding Company Plc. (2024, January 14). HabariPay's Squad launches Take on Squad Hackathon 1.0 for young innovators [Press release]. Retrieved November 19, 2026, from https://www.gtcoplc.com/what-we-think/press-releases/habaripays-squad-launches-take-on-squad-hackathon-1-0-for-young-innovators
+
+HabariPay Limited. (n.d.). Squad – About. Retrieved November 19, 2026, from https://squadco.com/about/
 
 Hamma, H. (2008). *Improving the management of assets in the Nigerian federal colleges of education* (Doctoral thesis, University of Leeds). Retrieved from White Rose eTheses Online: https://etheses.whiterose.ac.uk/217/
 
@@ -1929,7 +1975,8 @@ python -m venv .venv
 source .venv/bin/activate        (Windows: .venv\Scripts\activate)
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py seed            (loads demonstration data and accounts)
+python manage.py seed            (loads the illustrative fintech-office seed data,
+                                  photographs and accounts)
 python manage.py runserver       (API at http://localhost:8000/api/)
 ```
 
@@ -1940,6 +1987,14 @@ cd frontend
 npm install
 npm run dev                      (application at the URL printed by Vite)
 ```
+
+**Both servers with one command:** once the back end has been set up as above (its virtual environment must be in `backend/.venv`) and `npm install` has been run in the project root, the following command, run from the project root, starts the Django API and the Vite front end together. *[Team: confirm against the final README; the root package also offers `npm run setup` for the one-time installation.]*
+
+```text
+npm run dev
+```
+
+**Seed data:** the seed command loads illustrative data modelled on a fintech office, with the departments Engineering, Product & Design, Operations, Compliance & Risk, Finance, Growth & Partnerships and People & Culture. It is not the case-study organisation's real data. The asset photographs come from Wikimedia Commons under free licences. *[Team: list the source page and licence of each seed photograph here, or point to the file in the repository that records them.]*
 
 **Demonstration accounts (created by the seed command):**
 
@@ -1953,7 +2008,7 @@ These passwords are for demonstration only. Change them before any real deployme
 
 ## APPENDIX B: USABILITY QUESTIONNAIRE
 
-The full questionnaire given to participants appears in the separate file `sus-questionnaire.md`. Insert the printed questionnaire here in the final bound copy. It contains:
+The full questionnaire appears in the separate file `sus-questionnaire.md`; insert it here in the final bound copy. Participants completed the same questions on the system's survey page (`/survey`, no login needed). It contains:
 
 - **Section A:** respondent demographics;
 - **Section B:** seven evaluation tasks;

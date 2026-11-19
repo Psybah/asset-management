@@ -34,24 +34,27 @@ asset-management/
 
 ## Run locally
 
-**Backend** (terminal 1):
+Requirements: Python 3.12+ and Node 20+.
 
 ```bash
-cd backend
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py seed          # demo data
-python manage.py runserver     # http://localhost:8000
+npm run setup     # first time: installs everything, migrates, seeds demo data
+npm run dev       # starts the API (http://localhost:8000) and the web app (http://localhost:5173) together
 ```
 
-**Frontend** (terminal 2):
+Other root commands: `npm run seed` (reset demo data; survey responses are kept), `npm test` (backend tests), `npm run build` (production build of the web app).
+
+The usability survey for participants is at http://localhost:5173/survey (no login). To let colleagues on the same Wi-Fi answer it from their phones, open `http://<your-laptop-ip>:5173/survey` and run the API with `cd backend && .venv/bin/python manage.py runserver 0.0.0.0:8000`.
+
+<details><summary>Running the two servers separately</summary>
 
 ```bash
-cd frontend
-npm install
-npm run dev                    # http://localhost:5173
+cd backend && python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && python manage.py migrate && python manage.py seed
+python manage.py runserver
+# second terminal
+cd frontend && npm install && npm run dev
 ```
+</details>
 
 ### Demo accounts
 
@@ -75,7 +78,8 @@ See [docs/API.md](docs/API.md).
 
 | Name | Matric No. | Role |
 |---|---|---|
-| Abiodun Oluwamurewa | E052852 | Team Leader |
-| Jimmy Abegunde | — | |
-| — | — | |
-| — | — | |
+| Abiodun Oluwamurewa | E052852 | Team Leader — software implementation |
+| Jimmy Abegunde | E051739 | Research — cited literature |
+| [Name] | [Matric No.] | Compiled the writeup |
+
+Supervisor: Prof. B. F. Oladejo. Case study: Squad by HabariPay (demo data is illustrative, not the company's records).

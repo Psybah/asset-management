@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "accounts",
     "assets",
+    "survey",
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,11 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Uploaded asset photos (served by Django itself only when DEBUG is on).
+MEDIA_URL = "/media/"
+MEDIA_ROOT = Path(os.environ.get("MEDIA_ROOT", BASE_DIR / "media"))
+ASSET_IMAGE_MAX_BYTES = 5 * 1024 * 1024
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS — the Vite dev server by default; extra origins via CORS_ALLOWED_ORIGINS.
@@ -107,6 +113,14 @@ CORS_ALLOWED_ORIGINS = sorted(
     }
 )
 
+# Development only: let phones on the same Wi-Fi reach the API (survey, QR scans).
+if DEBUG:
+    ALLOWED_HOSTS = [*ALLOWED_HOSTS, "*"]
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^http://(192\.168|10)\.\d{1,3}\.\d{1,3}(\.\d{1,3})?:5173$",
+        r"^http://172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}:5173$",
+    ]
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
@@ -118,4 +132,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": None,
     "COERCE_DECIMAL_TO_STRING": False,
     "DATE_FORMAT": "%Y-%m-%d",
+    # Public survey submissions are rate-limited per client IP.
+    "DEFAULT_THROTTLE_RATES": {"survey": os.environ.get("SURVEY_THROTTLE_RATE", "30/hour")},
 }

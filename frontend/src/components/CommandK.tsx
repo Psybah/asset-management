@@ -1,13 +1,15 @@
 import { ArrowUpRight, MagnifyingGlass } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../lib/api'
-import { AssetIcon } from '../lib/icons'
-import type { Asset } from '../lib/types'
+import { api } from '@/lib/api'
+import type { Asset } from '@/lib/types'
+import { cn } from '@/lib/utils'
 import { lenis } from './SmoothScroll'
-import { StatusMark, ease } from './ui'
+import { Photo, StatusMark, ease } from './ui'
 
+/** ⌘K asset search. A light dim, no blur — the page stays readable behind it. */
 export function CommandK({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [q, setQ] = useState('')
   const [results, setResults] = useState<Asset[]>([])
@@ -26,27 +28,27 @@ export function CommandK({ open, onClose }: { open: boolean; onClose: () => void
   useEffect(() => {
     if (!q.trim()) { setResults([]); return }
     const t = setTimeout(() => {
-      api.get<Asset[]>('/assets/', { search: q }).then((r) => { setResults(r.slice(0, 7)); setIdx(0) }).catch(() => {})
-    }, 160)
+      api.get<Asset[]>('/assets/', { search: q }).then((r) => { setResults(r.slice(0, 6)); setIdx(0) }).catch(() => {})
+    }, 150)
     return () => clearTimeout(t)
   }, [q])
 
   const go = (a: Asset) => { onClose(); nav(`/assets/${a.id}`) }
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex justify-center px-4 pt-[14vh]">
-          <motion.div className="absolute inset-0 bg-paper/70 backdrop-blur-xl" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
+        <div className="fixed inset-0 z-50 flex justify-center px-4 pt-[12vh]">
+          <motion.div className="absolute inset-0 bg-ink/15" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.97 }}
+            initial={{ opacity: 0, y: -12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.98 }}
-            transition={{ duration: 0.5, ease }}
-            className="relative w-full max-w-2xl"
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.4, ease }}
+            className="relative h-fit w-full max-w-xl rounded-[1.75rem] bg-white p-1.5"
           >
-            <div className="flex h-20 items-center gap-4 rounded-full bg-ink px-8 text-paper">
-              <MagnifyingGlass size={22} className="opacity-50" />
+            <div className="flex h-13 items-center gap-3 rounded-[1.35rem] bg-mist px-4">
+              <MagnifyingGlass size={17} className="text-ash" />
               <input
                 ref={inputRef}
                 value={q}
@@ -57,36 +59,33 @@ export function CommandK({ open, onClose }: { open: boolean; onClose: () => void
                   if (e.key === 'ArrowUp') { e.preventDefault(); setIdx((i) => Math.max(i - 1, 0)) }
                   if (e.key === 'Enter' && results[idx]) go(results[idx])
                 }}
-                placeholder="Tag, name, serial"
-                className="h-full flex-1 bg-transparent text-xl tracking-[-0.02em] placeholder:text-paper/30"
+                placeholder="Search by tag, name or serial"
+                className="h-full flex-1 bg-transparent text-[15px] placeholder:text-ash"
               />
-              <kbd className="rounded-full bg-paper/10 px-3 py-1 text-[11px] text-paper/50">esc</kbd>
+              <kbd className="rounded-full bg-white px-2.5 py-1 text-[10px] font-medium text-ash">esc</kbd>
             </div>
-            <div className="mt-3 flex flex-col gap-1.5">
-              <AnimatePresence initial={false}>
+            {results.length > 0 && (
+              <div className="stack mt-1.5">
                 {results.map((a, i) => (
-                  <motion.button
+                  <button
                     key={a.id}
-                    layout
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0, transition: { delay: i * 0.03 } }}
-                    exit={{ opacity: 0 }}
                     onMouseEnter={() => setIdx(i)}
                     onClick={() => go(a)}
-                    className={`flex h-16 items-center gap-4 rounded-full pl-3 pr-6 text-left transition-colors duration-200 ${i === idx ? 'bg-mist' : 'bg-paper'}`}
+                    className={cn('group flex items-center gap-3 py-1.5 pl-1.5 pr-4 text-left transition-colors', i === idx ? 'bg-fog' : 'bg-mist')}
                   >
-                    <span className="grid h-11 w-11 place-items-center rounded-full bg-paper"><AssetIcon name={a.category_icon} size={20} /></span>
-                    <span className="flex-1 truncate text-[15px]">{a.name}</span>
-                    <span className="hidden text-xs text-ash sm:block">{a.tag}</span>
-                    <StatusMark status={a.status} onPaper />
-                    <ArrowUpRight size={16} className={i === idx ? 'opacity-100' : 'opacity-0'} />
-                  </motion.button>
+                    <Photo src={a.image_url} icon={a.category_icon} alt="" className="size-10 shrink-0 rounded-full" iconSize={16} />
+                    <span className="min-w-0 flex-1 truncate text-sm">{a.name}</span>
+                    <span className="hidden text-xs text-ash tabular sm:block">{a.tag}</span>
+                    <StatusMark status={a.status} />
+                    <ArrowUpRight size={14} className={i === idx ? 'opacity-100' : 'opacity-0'} />
+                  </button>
                 ))}
-              </AnimatePresence>
-            </div>
+              </div>
+            )}
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   )
 }

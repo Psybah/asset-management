@@ -8,3 +8,4 @@ node_modules/
 dist/
 .claude/settings.local.json
 deliverables/
+backend/media/

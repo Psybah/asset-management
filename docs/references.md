@@ -14,6 +14,10 @@ Agboola, F. F., Malgwi, Y. M., Mahmud, M. A., and Oguntoye, J. P. (2022). Develo
 - In-text: (Agboola et al., 2022)
 - Local file: `09_Agboola_2022_WebInventorySME.pdf`
 
+Akintaro, S. (2023, May 2). GTCO's fintech business, Squad, crossed N200 billion transactions in January 2023. *Nairametrics*. Retrieved November 19, 2026, from https://nairametrics.com/2023/05/02/gtcos-fintech-business-squad-crossed-n200-billion-transactions-in-january-2023/
+- In-text: (Akintaro, 2023)
+- Local file: NO PDF (news web page). Used for the case-study description (Section 3.2.1): Habari origins (2018), CBN approval of HabariPay, Squad profitable in its first month and ₦200 billion monthly transactions in January 2023.
+
 Al-Shatri, O. A., Al-Hejji, A. A., Safran, S. A., and Saglab, W. A. (2024). Digital transformation in IT asset management process. *International Journal of Innovative Science and Research Technology, 9*(6), 1232–1239. https://doi.org/10.38124/ijisrt/IJISRT24JUN509
 - In-text: (Al-Shatri et al., 2024)
 - Local file: `08_AlShatri_2024_DigitalTransformationITAM.pdf`
@@ -59,6 +63,10 @@ Elaskari, S., Imran, M., Elaskri, A., and Almasoudi, A. (2021). Using barcode to
 - In-text: (Elaskari et al., 2021)
 - Local file: NO PDF. The paper is open access, but ScienceDirect blocked automated download. **To do:** download it in a browser from the DOI link and save it as `14_Elaskari_2021_BarcodeAssetsHEI.pdf`.
 
+Eleanya, F. (2022, June 1). GTCO names Squad as new fintech unit. *BusinessDay*. Retrieved November 19, 2026, from https://businessday.ng/technology/article/gtco-names-squadco-as-new-fintech-unit/
+- In-text: (Eleanya, 2022)
+- Local file: NO PDF (news web page). Used for the launch of Squad as GTCO's payments unit on 1 June 2022.
+
 Evizal, Rahman, T. A., and Rahim, S. K. A. (2013). Active RFID technology for asset tracking and management system. *TELKOMNIKA (Telecommunication Computing Electronics and Control), 11*(1), 137–146. https://doi.org/10.12928/telkomnika.v11i1.898
 - In-text: (Evizal et al., 2013)
 - Local file: `07_Evizal_2013_ActiveRFIDAssetTracking.pdf`
@@ -74,6 +82,18 @@ Gambo, N., and Musonda, I. (2021). Effect of the fourth industrial revolution on
 Grokability, Inc. (n.d.). Snipe-IT: Free open source IT asset management. Retrieved November 19, 2026, from https://snipeitapp.com/ (source code: https://github.com/grokability/snipe-it)
 - In-text: (Grokability, n.d.)
 - Local file: NO PDF (web page / software repository)
+
+Guaranty Trust Holding Company Plc. (n.d.). Squad by HabariPay. Retrieved November 19, 2026, from https://www.gtcoplc.com/what-we-do/digital-payments
+- In-text: (Guaranty Trust Holding Company Plc, n.d.)
+- Local file: NO PDF (official web page). States that Squad is a product of HabariPay Ltd, a subsidiary of GTCO Plc.
+
+Guaranty Trust Holding Company Plc. (2024, January 14). HabariPay's Squad launches Take on Squad Hackathon 1.0 for young innovators [Press release]. Retrieved November 19, 2026, from https://www.gtcoplc.com/what-we-think/press-releases/habaripays-squad-launches-take-on-squad-hackathon-1-0-for-young-innovators
+- In-text: (Guaranty Trust Holding Company Plc, 2024)
+- Local file: NO PDF (official press release). Used for the product list (SquadPOS, payment links, virtual accounts, USSD, e-commerce storefront) and the Lagos dateline.
+
+HabariPay Limited. (n.d.). Squad – About. Retrieved November 19, 2026, from https://squadco.com/about/
+- In-text: (HabariPay Limited, n.d.)
+- Local file: NO PDF (official web page). States that Squad is a product of HabariPay Limited, a subsidiary of Guaranty Trust Holding Company, and that HabariPay is licensed by the Central Bank of Nigeria.
 
 Hamma, H. (2008). *Improving the management of assets in the Nigerian federal colleges of education* (Doctoral thesis, University of Leeds). Retrieved from White Rose eTheses Online: https://etheses.whiterose.ac.uk/217/
 - In-text: (Hamma, 2008)
@@ -142,4 +162,4 @@ Yaqin, M. A., Ariyanto, S. A., Amtini, L. S., and Zhalianti, F. N. (2024). Devel
 
 ---
 
-**Summary:** 33 references; 17 PDFs in `literature/`. Two more open-access PDFs (Elaskari et al., 2021; Bangor et al., 2009) need to be downloaded by hand; see the notes above. The rest are standards, books, paywalled articles or web pages, cited but not in the zip.
+**Summary:** 38 references (33 from the literature review and methodology, plus 5 public sources on the case-study organisation, Squad by HabariPay); 17 PDFs in `literature/`. Two more open-access PDFs (Elaskari et al., 2021; Bangor et al., 2009) need to be downloaded by hand; see the notes above. The rest are standards, books, paywalled articles or web pages, cited but not in the zip. The five case-study sources are web pages; if the department wants them in the literature folder, save each as a PDF from the browser.

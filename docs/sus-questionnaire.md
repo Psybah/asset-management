@@ -7,6 +7,8 @@ Dear Respondent,
 
 We are final-year students of the Department of Computer Science, University of Ibadan. As part of our B.Sc. project we have built a web-based asset management system that keeps an office's asset register, prints QR code labels, records check-out and check-in, schedules maintenance and calculates depreciation. Please use the system to complete the short tasks in Section B, then answer the questions below.
 
+The same questionnaire is built into the system as a survey page at `/survey` (no login needed); you may answer it there or on paper, but not both.
+
 The questionnaire takes about 10 minutes. Taking part is voluntary and anonymous: please do not write your name. Your answers will be used only for this academic project.
 
 Thank you for your time.
@@ -20,7 +22,7 @@ Questionnaire No.: ______ Date: ____ / ____ / ______
 Please tick (✓) one box for each question.
 
 **A1. Department / unit**
-☐ Administration / Facilities ☐ Finance / Accounts ☐ IT / ICT ☐ Human Resources ☐ Operations ☐ Other: ____________
+☐ Engineering ☐ Product & Design ☐ Operations ☐ Compliance & Risk ☐ Finance ☐ Growth & Partnerships ☐ People & Culture ☐ Other: ____________
 
 **A2. Your role in relation to office assets**
 ☐ I manage or record assets (e.g. store officer, admin officer, IT support)
@@ -111,8 +113,8 @@ Thank you for taking part.
 3. **Raw sum:** add the ten item scores (range 0–40)
 4. **SUS score:** raw sum × 2.5 (range 0–100)
 5. **Report:**
-   - the mean SUS score and standard deviation across all respondents;
-   - the distribution of each item (Response | Frequency | Percentage), as in Tables 4.5–4.7 of the write-up;
+   - the mean, median and standard deviation of the SUS scores across all respondents;
+   - the distribution of each item (Response | Frequency | Percentage), as in Tables 4.6–4.8 of the write-up;
    - the task completion rates from Section B;
    - the D1 adjective ratings.
 6. **Interpretation:** compare the mean with the commonly cited average of 68 (Sauro, 2011).
@@ -125,5 +127,7 @@ Thank you for taking part.
 - Even items: (5−2) + (5−1) + (5−2) + (5−2) + (5−1) = 17
 - SUS = (17 + 17) × 2.5 = **85.0**
 
-**Enter responses into a spreadsheet:** one row per questionnaire, columns Q1–Q10. Use the formula
+**Online responses:** responses submitted at `/survey` are stored by the system, and its survey results endpoint computes n, the mean, median and standard deviation of the SUS scores, the per-item distributions and the task completion rates automatically. Only paper questionnaires need to be entered by hand.
+
+**Enter paper responses into a spreadsheet:** one row per questionnaire, columns Q1–Q10. Use the formula
 `=((Q1-1)+(5-Q2)+(Q3-1)+(5-Q4)+(Q5-1)+(5-Q6)+(Q7-1)+(5-Q8)+(Q9-1)+(5-Q10))*2.5`

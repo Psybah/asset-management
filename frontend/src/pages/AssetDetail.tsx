@@ -1,34 +1,23 @@
 import { ArrowLeft, HandArrowDown, HandArrowUp, PencilSimple, Printer, QrCode, Trash, Wrench } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AssetForm } from '../components/AssetForm'
-import { Area } from '../components/Charts'
-import { Sheet } from '../components/Sheet'
-import { useToast } from '../components/Toast'
-import { Button, Counter, Field, IconButton, Input, Page, Reveal, Select, Skeleton, StatusMark, cx, ease } from '../components/ui'
-import { api, qrUrl } from '../lib/api'
-import { useAuth } from '../lib/auth'
-import { ago, compact, date, label, naira, today } from '../lib/format'
-import { AssetIcon } from '../lib/icons'
-import type { Asset, DepRow, TimelineItem, User } from '../lib/types'
-import { invalidate, useData } from '../lib/useData'
+import { AssetForm } from '@/components/AssetForm'
+import { Area } from '@/components/charts/area'
+import { AreaChart } from '@/components/charts/area-chart'
+import { Grid } from '@/components/charts/grid'
+import { ChartTooltip } from '@/components/charts/tooltip'
+import { XAxis } from '@/components/charts/x-axis'
+import { Sheet } from '@/components/Sheet'
+import { useToast } from '@/components/Toast'
+import { Button, Counter, Field, FieldGroup, IconButton, Page, Panel, Photo, Reveal, SelectField, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { api, qrUrl } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
+import { ago, compact, date, label, naira, today } from '@/lib/format'
+import type { Asset, DepRow, TimelineItem, User } from '@/lib/types'
+import { invalidate, useData } from '@/lib/useData'
 
 type Action = 'edit' | 'checkout' | 'checkin' | 'care' | 'dispose' | null
-
-function Stat({ k, v, delay = 0 }: { k: string; v: ReactNode; delay?: number }) {
-  return (
-    <Reveal delay={delay} y={16}>
-      <p className="text-xs text-ash">{k}</p>
-      <p className="mt-1 truncate text-lg tracking-[-0.02em]">{v ?? '—'}</p>
-    </Reveal>
-  )
-}
-
-const dot: Record<TimelineItem['type'], string> = {
-  created: 'bg-ink', checkout: 'bg-ink', checkin: 'bg-paper ring-2 ring-ink ring-inset', maintenance: 'grain bg-fog',
-  disposal: 'bg-ash', update: 'bg-fog',
-}
 
 export default function AssetDetail() {
   const { id } = useParams()
@@ -46,7 +35,6 @@ export default function AssetDetail() {
 
   const open = (x: Action, init: Record<string, string> = {}) => { setForm(init); setAct(x) }
   const set = (k: string) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [k]: e.target.value }))
-
   const run = async (fn: () => Promise<unknown>, msg: string) => {
     setBusy(true)
     try { await fn(); invalidate(); reload(); setAct(null); toast(msg) } catch (e) { toast((e as Error).message) } finally { setBusy(false) }
@@ -55,207 +43,204 @@ export default function AssetDetail() {
   if (!a) {
     return (
       <Page>
-        <div className="grid gap-10 md:grid-cols-2">
-          <Skeleton className="aspect-square !rounded-full" />
-          <div className="space-y-4 pt-10"><Skeleton className="h-6 w-24" /><Skeleton className="h-24 w-3/4" /><Skeleton className="h-40" /></div>
+        <div className="grid gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+          <Skeleton className="aspect-square" />
+          <div className="space-y-3"><Skeleton className="h-10 w-2/3" /><Skeleton className="h-40" /><Skeleton className="h-60" /></div>
         </div>
       </Page>
     )
   }
 
   const pct = a.purchase_cost ? a.current_value / a.purchase_cost : 0
+  const series = dep && dep.length ? [{ date: new Date(dep[0].year, 0, 1), value: dep[0].opening }, ...dep.map((r) => ({ date: new Date(r.year + 1, 0, 1), value: r.closing }))] : []
   const printLabel = () => {
     const w = window.open('', '_blank', 'width=420,height=520')
     if (!w) return
-    w.document.write(`<html><head><title>${a.tag}</title><style>body{font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0}div{text-align:center}img{width:220px;height:220px}p{margin:4px 0;letter-spacing:-.01em}</style></head><body><div><img src="${qrUrl(a.id)}" onload="setTimeout(()=>print(),200)"/><p style="font-size:22px">${a.tag}</p><p style="color:#888;font-size:13px">${a.name}</p></div></body></html>`)
+    w.document.write(`<html><head><title>${a.tag}</title><style>body{font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0}div{text-align:center}img{width:220px;height:220px}p{margin:4px 0}</style></head><body><div><img src="${qrUrl(a.id)}" onload="setTimeout(()=>print(),200)"/><p style="font-size:22px">${a.tag}</p><p style="color:#888;font-size:13px">${a.name}</p></div></body></html>`)
     w.document.close()
   }
 
   return (
     <Page>
-      <motion.button
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        onClick={() => (history.length > 2 ? nav(-1) : nav('/assets'))}
-        className="mb-8 flex h-11 items-center gap-2 rounded-full bg-mist pl-3 pr-5 text-sm transition-colors hover:bg-fog"
-      >
-        <ArrowLeft size={16} /> Back
-      </motion.button>
+      <button onClick={() => (history.length > 2 ? nav(-1) : nav('/assets'))} className="mb-5 flex h-9 items-center gap-1.5 rounded-full bg-white pl-3 pr-4 text-xs font-medium transition-colors hover:bg-white/70">
+        <ArrowLeft size={14} /> Assets
+      </button>
 
-      <section className="grid items-start gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-16">
-        {/* Flip disc: icon ↔ QR */}
-        <div className="md:sticky md:top-10" style={{ perspective: 1400 }}>
-          <motion.button
-            onClick={() => setFlip((f) => !f)}
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1, rotateY: flip ? 180 : 0 }}
-            transition={{ duration: 1, ease }}
+      <section className="grid items-start gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        {/* Photo ↔ QR flip card */}
+        <div className="md:sticky md:top-4" style={{ perspective: 1400 }}>
+          <motion.div
+            animate={{ rotateY: flip ? 180 : 0 }}
+            transition={{ duration: 0.9, ease }}
             style={{ transformStyle: 'preserve-3d' }}
-            aria-label="Flip to QR"
-            className="relative mx-auto block aspect-square w-full max-w-[560px]"
+            className="relative aspect-[4/5] w-full"
           >
-            <span className={cx('absolute inset-0 grid place-items-center rounded-full [backface-visibility:hidden]', a.status === 'assigned' ? 'bg-ink text-paper' : 'bg-mist')}>
-              <AssetIcon name={a.category_icon} size={180} weight="thin" />
-              <span className="absolute bottom-[12%] flex items-center gap-1.5 text-xs opacity-40"><QrCode size={14} /> tap</span>
-            </span>
-            <span className="absolute inset-0 grid place-items-center rounded-full bg-mist [backface-visibility:hidden] [transform:rotateY(180deg)]">
-              <img src={qrUrl(a.id)} alt={`QR ${a.tag}`} className="w-[48%] mix-blend-multiply" />
-              <span className="absolute bottom-[14%] text-sm tabular">{a.tag}</span>
-            </span>
-          </motion.button>
+            <div className="absolute inset-0 flex flex-col rounded-[1.75rem] bg-white p-1.5 [backface-visibility:hidden]">
+              <div className="flex items-center justify-between px-3 pb-2 pt-1.5">
+                <span className="text-xs text-ash tabular">{a.tag}</span>
+                <button onClick={() => setFlip(true)} aria-label="Show QR code" className="flex h-7 items-center gap-1.5 rounded-full bg-mist px-3 text-[11px] font-medium hover:bg-fog"><QrCode size={13} /> QR</button>
+              </div>
+              <Photo src={a.image_url} icon={a.category_icon} alt={a.name} color className="flex-1 rounded-[1.35rem]" iconSize={120} />
+            </div>
+            <div className="absolute inset-0 flex flex-col rounded-[1.75rem] bg-white p-1.5 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+              <div className="flex items-center justify-between px-3 pb-2 pt-1.5">
+                <span className="text-xs text-ash">Scan to open</span>
+                <button onClick={() => setFlip(false)} className="flex h-7 items-center rounded-full bg-mist px-3 text-[11px] font-medium hover:bg-fog">Photo</button>
+              </div>
+              <div className="grid flex-1 place-items-center rounded-[1.35rem] bg-mist">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={qrUrl(a.id)} alt={`QR ${a.tag}`} className="w-48 mix-blend-multiply" />
+                  <span className="text-sm font-medium tabular">{a.tag}</span>
+                  <Button tone="paper" size="sm" beam={false} onClick={printLabel}><Printer size={14} /> Print label</Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        <div className="min-w-0">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mb-5 flex items-center gap-3">
-            <StatusMark status={a.status} onPaper />
-            <span className="text-sm text-ash tabular">{a.tag}</span>
-          </motion.div>
-          <h1 className="overflow-hidden text-[clamp(2.75rem,6vw,6rem)] leading-[0.92] tracking-[-0.055em]">
-            <motion.span className="block" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 1, ease, delay: 0.1 }}>{a.name}</motion.span>
-          </h1>
-
-          {/* Value */}
-          <Reveal delay={0.2} className="mt-10 flex items-end gap-6">
-            <p className="text-6xl tracking-[-0.05em] md:text-7xl">₦<Counter value={a.current_value} format={(n) => compact(n)} /></p>
-            <div className="mb-3 flex-1">
-              <div className="h-1.5 overflow-hidden rounded-full bg-mist">
-                <motion.div className="h-full rounded-full bg-ink" initial={{ width: 0 }} animate={{ width: `${pct * 100}%` }} transition={{ duration: 1.5, ease, delay: 0.4 }} />
-              </div>
-              <p className="mt-2 text-xs text-ash">{Math.round(pct * 100)}% of {naira(a.purchase_cost)}</p>
+        <div className="min-w-0 space-y-4">
+          <div className="rounded-[1.75rem] bg-white p-5 md:p-6">
+            <div className="mb-3 flex items-center gap-2">
+              <StatusMark status={a.status} onPaper />
+              <span className="text-xs text-ash">{a.category_name}</span>
             </div>
-          </Reveal>
-
-          {/* Actions */}
-          {canWrite && a.status !== 'retired' && (
-            <Reveal delay={0.3} className="mt-10 flex flex-wrap gap-2">
-              {a.status === 'available' && <Button onClick={() => open('checkout')}><HandArrowUp size={18} /> Assign</Button>}
-              {a.status === 'assigned' && <Button onClick={() => open('checkin', { condition: a.condition })}><HandArrowDown size={18} /> Return</Button>}
-              <Button tone="mist" onClick={() => open('care', { kind: 'preventive', scheduled_date: today() })}><Wrench size={18} /> Care</Button>
-              <IconButton label="Edit" onClick={() => open('edit')}><PencilSimple size={18} /></IconButton>
-              <IconButton label="Print label" onClick={printLabel}><Printer size={18} /></IconButton>
-              <IconButton label="Dispose" onClick={() => open('dispose', { method: 'scrapped' })}><Trash size={18} /></IconButton>
-            </Reveal>
-          )}
-
-          {/* Facts */}
-          <div className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-3">
-            <Stat k="Holder" v={a.assigned_to_name} />
-            <Stat k="Since" v={a.assigned_since ? date(a.assigned_since) : null} delay={0.03} />
-            <Stat k="Department" v={a.department_name} delay={0.06} />
-            <Stat k="Location" v={a.location_name} delay={0.09} />
-            <Stat k="Kind" v={a.category_name} delay={0.12} />
-            <Stat k="Condition" v={<span className="capitalize">{a.condition}</span>} delay={0.15} />
-            <Stat k="Serial" v={a.serial_number || null} delay={0.18} />
-            <Stat k="Vendor" v={a.vendor || null} delay={0.21} />
-            <Stat k="Bought" v={date(a.purchase_date)} delay={0.24} />
+            <h1 className="overflow-hidden text-2xl font-medium leading-tight tracking-[-0.03em] md:text-[1.75rem]">
+              <motion.span className="block" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease }}>{a.name}</motion.span>
+            </h1>
+            <div className="mt-6 flex items-end gap-5">
+              <p className="text-[2rem] font-medium leading-none tracking-[-0.04em]">₦<Counter value={a.current_value} format={(n) => compact(n)} /></p>
+              <div className="mb-1 flex-1">
+                <div className="h-1.5 overflow-hidden rounded-full bg-mist">
+                  <motion.div className="h-full rounded-full bg-ink" initial={{ width: 0 }} animate={{ width: `${pct * 100}%` }} transition={{ duration: 1.2, ease, delay: 0.3 }} />
+                </div>
+                <p className="mt-1.5 text-[11px] text-ash">{Math.round(pct * 100)}% of {naira(a.purchase_cost)}</p>
+              </div>
+            </div>
+            {canWrite && a.status !== 'retired' && (
+              <div className="mt-6 flex flex-wrap gap-1.5">
+                {a.status === 'available' && <Button onClick={() => open('checkout')}><HandArrowUp size={16} /> Assign</Button>}
+                {a.status === 'assigned' && <Button onClick={() => open('checkin', { condition: a.condition })}><HandArrowDown size={16} /> Return</Button>}
+                <Button tone="paper" beam={false} faceClassName="from-mist to-mist" onClick={() => open('care', { kind: 'preventive', scheduled_date: today() })}><Wrench size={16} /> Maintenance</Button>
+                <IconButton label="Edit" onClick={() => open('edit')} faceClassName="from-mist to-mist"><PencilSimple size={16} /></IconButton>
+                <IconButton label="Dispose" onClick={() => open('dispose', { method: 'scrapped' })} faceClassName="from-mist to-mist"><Trash size={16} /></IconButton>
+              </div>
+            )}
           </div>
 
-          {/* Depreciation */}
-          {dep && dep.length > 1 && (
-            <Reveal className="mt-16 rounded-[2.5rem] bg-mist p-7 pb-0">
-              <div className="flex items-baseline justify-between">
-                <p className="text-xs text-smoke">{a.depreciation_method === 'straight_line' ? 'Straight line' : 'Declining balance'} · {a.useful_life_years} yrs</p>
-                <p className="text-xs text-ash">−{naira(a.accumulated_depreciation)}</p>
-              </div>
-              <div className="-mx-7 mt-8">
-                <Area height={150} data={[{ x: dep[0].year - 1, y: dep[0].opening }, ...dep.map((r) => ({ x: r.year, y: r.closing }))]} format={(n) => `₦${compact(n)}`} />
-              </div>
+          <Reveal>
+            <Panel title="Details" inset={false} bodyClassName="stack">
+              {[
+                ['Holder', a.assigned_to_name], ['Since', a.assigned_since ? date(a.assigned_since) : null], ['Department', a.department_name],
+                ['Location', a.location_name], ['Condition', a.condition], ['Serial', a.serial_number || null], ['Vendor', a.vendor || null], ['Purchased', date(a.purchase_date)],
+              ].map(([k, v]) => (
+                <div key={k} className="flex items-center justify-between gap-4 bg-mist px-4 py-3 text-sm">
+                  <span className="text-ash">{k}</span>
+                  <span className="truncate capitalize">{v ?? '—'}</span>
+                </div>
+              ))}
+            </Panel>
+          </Reveal>
+
+          {series.length > 1 && (
+            <Reveal>
+              <Panel
+                title={`Depreciation · ${a.depreciation_method === 'straight_line' ? 'straight line' : 'declining balance'} · ${a.useful_life_years} yrs`}
+                action={<span className="text-xs text-ash">−{naira(a.accumulated_depreciation)}</span>}
+                bodyClassName="px-1 pt-3"
+              >
+                <AreaChart data={series} xDataKey="date" aspectRatio="auto" className="h-52" margin={{ top: 16, right: 16, bottom: 28, left: 16 }}>
+                  <Grid horizontal numTicksRows={3} />
+                  <Area dataKey="value" fill="var(--chart-1)" stroke="var(--chart-1)" fillOpacity={0.12} strokeWidth={2} />
+                  <XAxis numTicks={series.length} />
+                  <ChartTooltip />
+                </AreaChart>
+              </Panel>
             </Reveal>
           )}
 
-          {/* Timeline */}
           {tl && tl.length > 0 && (
-            <div className="mt-16">
-              <ol className="relative ml-2">
-                <span className="absolute bottom-3 left-[5px] top-3 w-px bg-fog" />
-                {tl.map((t, i) => (
-                  <Reveal key={t.id} delay={Math.min(i, 8) * 0.04} y={14}>
-                    <li className="relative flex gap-6 pb-8">
-                      <span className={cx('relative mt-1.5 h-[11px] w-[11px] shrink-0 rounded-full', dot[t.type])} />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[15px]">{t.title}</p>
-                        {t.detail && <p className="mt-0.5 text-sm text-smoke">{t.detail}</p>}
-                      </div>
-                      <span className="shrink-0 text-xs text-ash tabular" title={new Date(t.timestamp).toLocaleString()}>{ago(t.timestamp)}</span>
-                    </li>
-                  </Reveal>
+            <Reveal>
+              <Panel title="History" inset={false} bodyClassName="stack">
+                {tl.map((t) => (
+                  <div key={t.id} className="flex gap-4 bg-mist px-4 py-3">
+                    <span className={cx('mt-1.5 size-2 shrink-0 rounded-full', t.type === 'checkout' || t.type === 'created' ? 'bg-ink' : t.type === 'disposal' ? 'bg-ash' : 'bg-fog ring-1 ring-ash')} />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm">{t.title}</p>
+                      {t.detail && <p className="mt-0.5 text-xs text-ash">{t.detail}</p>}
+                    </div>
+                    <span className="shrink-0 text-xs text-ash tabular" title={new Date(t.timestamp).toLocaleString()}>{ago(t.timestamp)}</span>
+                  </div>
                 ))}
-              </ol>
-            </div>
+              </Panel>
+            </Reveal>
           )}
         </div>
       </section>
 
-      {/* Sheets */}
       <AssetForm open={act === 'edit'} onClose={() => setAct(null)} asset={a} onSaved={() => reload()} />
 
       <Sheet open={act === 'checkout'} onClose={() => setAct(null)} title="Assign">
-        <div className="space-y-4">
-          <Field label="To">
-            <Select value={form.user ?? ''} onChange={set('user')}>
-              <option value="">—</option>
-              {people?.map((p) => <option key={p.id} value={p.id}>{p.name}{p.department_name ? ` · ${p.department_name}` : ''}</option>)}
-            </Select>
-          </Field>
-          <Field label="Due back (optional)"><Input type="date" value={form.due_date ?? ''} onChange={set('due_date')} /></Field>
-          <Field label="Note"><Input value={form.note ?? ''} onChange={set('note')} /></Field>
-        </div>
-        <Button size="lg" className="mt-8 w-full" disabled={busy || !form.user}
+        <FieldGroup>
+          <SelectField label="Assign to" value={form.user ?? ''} onChange={set('user')}>
+            <option value="">Choose a person…</option>
+            {people?.map((p) => <option key={p.id} value={p.id}>{p.name}{p.department_name ? ` · ${p.department_name}` : ''}</option>)}
+          </SelectField>
+          <Field label="Due back (optional)" type="date" value={form.due_date ?? ''} onChange={set('due_date')} />
+          <Field label="Note" value={form.note ?? ''} onChange={set('note')} />
+        </FieldGroup>
+        <Button size="lg" className="mt-5 w-full" disabled={busy || !form.user}
           onClick={() => run(() => api.post(`/assets/${a.id}/checkout/`, { user: Number(form.user), due_date: form.due_date || null, note: form.note ?? '' }), 'Assigned')}>
           Assign
         </Button>
       </Sheet>
 
       <Sheet open={act === 'checkin'} onClose={() => setAct(null)} title="Return">
-        <div className="space-y-4">
-          <Field label="Condition">
-            <Select value={form.condition ?? 'good'} onChange={set('condition')}>
-              {['new', 'good', 'fair', 'poor'].map((c) => <option key={c} value={c}>{c}</option>)}
-            </Select>
-          </Field>
-          <Field label="Note"><Input value={form.note ?? ''} onChange={set('note')} /></Field>
-        </div>
-        <Button size="lg" className="mt-8 w-full" disabled={busy}
+        <FieldGroup>
+          <SelectField label="Condition on return" value={form.condition ?? 'good'} onChange={set('condition')}>
+            {['new', 'good', 'fair', 'poor'].map((c) => <option key={c} value={c}>{c}</option>)}
+          </SelectField>
+          <Field label="Note" value={form.note ?? ''} onChange={set('note')} />
+        </FieldGroup>
+        <Button size="lg" className="mt-5 w-full" disabled={busy}
           onClick={() => run(() => api.post(`/assets/${a.id}/checkin/`, { condition: form.condition, note: form.note ?? '' }), 'Returned')}>
           Return
         </Button>
       </Sheet>
 
-      <Sheet open={act === 'care'} onClose={() => setAct(null)} title="Care">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-          <Field label="What" className="col-span-2"><Input value={form.title ?? ''} onChange={set('title')} placeholder="Quarterly service" /></Field>
-          <Field label="Type">
-            <Select value={form.kind} onChange={set('kind')}>
+      <Sheet open={act === 'care'} onClose={() => setAct(null)} title="Schedule maintenance">
+        <FieldGroup>
+          <Field label="What needs doing" value={form.title ?? ''} onChange={set('title')} />
+          <div className="grid grid-cols-2 gap-0.5">
+            <SelectField label="Type" value={form.kind} onChange={set('kind')}>
               <option value="preventive">Preventive</option>
               <option value="corrective">Corrective</option>
-            </Select>
-          </Field>
-          <Field label="When"><Input type="date" value={form.scheduled_date ?? ''} onChange={set('scheduled_date')} /></Field>
-          <Field label="Vendor"><Input value={form.vendor ?? ''} onChange={set('vendor')} /></Field>
-          <Field label="Cost ₦"><Input inputMode="numeric" value={form.cost ?? ''} onChange={set('cost')} /></Field>
-        </div>
-        <Button size="lg" className="mt-8 w-full" disabled={busy || !form.title}
+            </SelectField>
+            <Field label="Date" type="date" value={form.scheduled_date ?? ''} onChange={set('scheduled_date')} />
+          </div>
+          <div className="grid grid-cols-2 gap-0.5">
+            <Field label="Vendor" value={form.vendor ?? ''} onChange={set('vendor')} />
+            <Field label="Cost (₦)" inputMode="numeric" value={form.cost ?? ''} onChange={set('cost')} />
+          </div>
+        </FieldGroup>
+        <Button size="lg" className="mt-5 w-full" disabled={busy || !form.title}
           onClick={() => run(() => api.post('/maintenance/', { asset: a.id, title: form.title, kind: form.kind, scheduled_date: form.scheduled_date, vendor: form.vendor ?? '', cost: form.cost ? Number(form.cost) : null, status: 'scheduled', notes: '' }), 'Scheduled')}>
           Schedule
         </Button>
       </Sheet>
 
       <Sheet open={act === 'dispose'} onClose={() => setAct(null)} title="Dispose">
-        <div className="space-y-4">
-          <Field label="How">
-            <Select value={form.method} onChange={set('method')}>
-              {['sold', 'donated', 'scrapped', 'lost'].map((m) => <option key={m} value={m}>{label(m)}</option>)}
-            </Select>
-          </Field>
-          <Field label="Why"><Input value={form.reason ?? ''} onChange={set('reason')} /></Field>
-          <Field label="Recovered ₦"><Input inputMode="numeric" value={form.value ?? ''} onChange={set('value')} /></Field>
-        </div>
-        <Button size="lg" className="mt-8 w-full" disabled={busy || !form.reason}
+        <FieldGroup>
+          <SelectField label="Method" value={form.method} onChange={set('method')}>
+            {['sold', 'donated', 'scrapped', 'lost'].map((m) => <option key={m} value={m}>{label(m)}</option>)}
+          </SelectField>
+          <Field label="Reason" value={form.reason ?? ''} onChange={set('reason')} />
+          <Field label="Amount recovered (₦)" inputMode="numeric" value={form.value ?? ''} onChange={set('value')} />
+        </FieldGroup>
+        <Button size="lg" className="mt-5 w-full" disabled={busy || !form.reason}
           onClick={() => run(() => api.post(`/assets/${a.id}/dispose/`, { method: form.method, reason: form.reason, value: form.value ? Number(form.value) : null }), 'Retired')}>
           Retire asset
         </Button>
       </Sheet>
-
     </Page>
   )
 }

@@ -1,51 +1,65 @@
+import { MagnifyingGlass } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Sheet } from '../components/Sheet'
-import { Empty, Page, Skeleton, StatusMark, Title, cx } from '../components/ui'
-import { AssetIcon } from '../lib/icons'
-import type { Asset, User } from '../lib/types'
-import { useData } from '../lib/useData'
+import { Sheet } from '@/components/Sheet'
+import { Empty, Page, PageHeader, Photo, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import type { Asset, User } from '@/lib/types'
+import { useData } from '@/lib/useData'
 
-/** People as a bubble field — bubble size ∝ assets held. */
 export default function People() {
   const { data } = useData<User[]>('/people/')
+  const { data: assets } = useData<Asset[]>('/assets/', { status: 'assigned' })
   const [sel, setSel] = useState<User | null>(null)
-  const { data: held } = useData<Asset[]>(sel ? '/assets/' : null, { assigned_to: sel?.id })
-  const max = Math.max(1, ...(data ?? []).map((p) => p.asset_count ?? 0))
-  const sorted = [...(data ?? [])].sort((a, b) => (b.asset_count ?? 0) - (a.asset_count ?? 0))
+  const [q, setQ] = useState('')
+  const held = useMemo(() => {
+    const m = new Map<number, Asset[]>()
+    assets?.forEach((a) => a.assigned_to && m.set(a.assigned_to, [...(m.get(a.assigned_to) ?? []), a]))
+    return m
+  }, [assets])
+  const list = [...(data ?? [])]
+    .filter((p) => !q || `${p.name} ${p.department_name}`.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => (b.asset_count ?? 0) - (a.asset_count ?? 0))
 
   return (
     <Page>
-      <div className="mb-12"><Title>People</Title></div>
+      <PageHeader
+        eyebrow={data ? `${data.length} people` : '…'}
+        title="People"
+        actions={
+          <div className="flex h-11 items-center gap-2.5 rounded-full bg-white px-4">
+            <MagnifyingGlass size={15} className="text-ash" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find someone" className="w-36 bg-transparent text-sm placeholder:text-ash" />
+          </div>
+        }
+      />
       {!data ? (
-        <div className="flex flex-wrap gap-3">{Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} className="h-32 w-32 !rounded-full" />)}</div>
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-36" />)}</div>
       ) : (
-        <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
-          {sorted.map((p, i) => {
-            const n = p.asset_count ?? 0
-            const size = 96 + (n / max) * 120
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {list.map((p, i) => {
+            const items = held.get(p.id) ?? []
             return (
               <motion.button
                 key={p.id}
                 onClick={() => setSel(p)}
-                initial={{ opacity: 0, scale: 0.3 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 + i * 0.03 }}
-                whileHover={{ scale: 1.06 }}
-                whileTap={{ scale: 0.95 }}
-                className={cx('group relative flex flex-col items-center justify-center rounded-full', i === 0 ? 'bg-ink text-paper' : 'bg-mist hover:bg-fog')}
-                style={{ width: size, height: size }}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease, delay: Math.min(i, 12) * 0.03 }}
+                className="group rounded-[1.5rem] bg-white p-1.5 text-left transition-transform duration-500 hover:-translate-y-0.5"
               >
-                <span className="text-[clamp(1.1rem,2vw,1.75rem)] tracking-[-0.03em]">{p.initials}</span>
-                <span className={cx('mt-1 max-w-[80%] truncate text-[11px] opacity-0 transition-opacity group-hover:opacity-100', i === 0 ? 'text-paper/60' : 'text-smoke')}>
-                  {p.name.split(' ')[0]}
-                </span>
-                {n > 0 && (
-                  <span className={cx('absolute right-[8%] top-[8%] grid h-7 min-w-7 place-items-center rounded-full px-2 text-[11px] tabular', i === 0 ? 'bg-paper text-ink' : 'bg-ink text-paper')}>
-                    {n}
-                  </span>
-                )}
+                <div className="flex items-center gap-3 px-2 pb-2 pt-1.5">
+                  <span className={cx('grid size-9 shrink-0 place-items-center rounded-full text-xs font-medium', items.length ? 'bg-ink text-white' : 'bg-mist')}>{p.initials}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{p.name}</p>
+                    <p className="truncate text-xs capitalize text-ash">{[p.department_name, p.role].filter(Boolean).join(' · ')}</p>
+                  </div>
+                  <span className="text-xs text-ash tabular">{p.asset_count ?? 0}</span>
+                </div>
+                <div className="flex h-16 gap-1 rounded-[1.1rem] bg-mist p-1">
+                  {items.slice(0, 4).map((a) => <Photo key={a.id} src={a.image_url} icon={a.category_icon} alt={a.name} className="h-full w-16 rounded-[0.85rem]" iconSize={20} />)}
+                  {items.length === 0 && <span className="grid flex-1 place-items-center text-[11px] text-ash">Holds nothing</span>}
+                </div>
               </motion.button>
             )
           })}
@@ -53,17 +67,18 @@ export default function People() {
       )}
 
       <Sheet open={!!sel} onClose={() => setSel(null)} title={sel?.name}>
-        <p className="-mt-6 mb-8 text-sm text-ash capitalize">{[sel?.department_name, sel?.role].filter(Boolean).join(' · ')}</p>
-        {held && held.length === 0 && <Empty>Holds nothing</Empty>}
-        <div className="flex flex-col gap-1.5">
-          {held?.map((a) => (
-            <Link key={a.id} to={`/assets/${a.id}`} onClick={() => setSel(null)} className="flex h-16 items-center gap-4 rounded-full bg-mist pl-2 pr-5 transition-colors hover:bg-fog">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-paper"><AssetIcon name={a.category_icon} size={20} /></span>
-              <span className="flex-1 truncate">{a.name}</span>
-              <StatusMark status={a.status} />
-            </Link>
-          ))}
-        </div>
+        <p className="-mt-3 mb-5 text-xs capitalize text-ash">{[sel?.department_name, sel?.role].filter(Boolean).join(' · ')}</p>
+        {sel && (held.get(sel.id) ?? []).length === 0 ? <Empty>Holds nothing</Empty> : (
+          <div className="stack">
+            {(sel ? held.get(sel.id) ?? [] : []).map((a) => (
+              <Link key={a.id} to={`/assets/${a.id}`} onClick={() => setSel(null)} className="group flex items-center gap-3 bg-mist py-1.5 pl-1.5 pr-4 transition-colors hover:bg-fog">
+                <Photo src={a.image_url} icon={a.category_icon} alt="" className="size-11 shrink-0 rounded-full" iconSize={16} />
+                <span className="min-w-0 flex-1 truncate text-sm">{a.name}</span>
+                <StatusMark status={a.status} />
+              </Link>
+            ))}
+          </div>
+        )}
       </Sheet>
     </Page>
   )
