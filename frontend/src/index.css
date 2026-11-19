@@ -1,0 +1,60 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0a0a0a;
+  --color-paper: #ffffff;
+  --color-mist: #f3f3f3;
+  --color-fog: #e8e8e8;
+  --color-ash: #a3a3a3;
+  --color-smoke: #6b6b6b;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Design rules: black & white, no borders, no shadows, pill radii, max weight 500. */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-paper text-ink font-sans font-normal;
+    letter-spacing: -0.011em;
+  }
+  b, strong, h1, h2, h3, h4, h5, h6, th { font-weight: 500; }
+  * { box-shadow: none !important; }
+  ::selection { background: #0a0a0a; color: #fff; }
+  input, select, textarea, button { font: inherit; outline: none; }
+  button { cursor: pointer; }
+  input::placeholder, textarea::placeholder { color: var(--color-ash); }
+  input[type='date']::-webkit-calendar-picker-indicator { opacity: 0.35; cursor: pointer; }
+  :focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; border-radius: 9999px; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility tabular { font-variant-numeric: tabular-nums; }
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+.masonry { column-gap: 12px; columns: 2; }
+.masonry.wide { columns: 1; }
+@media (min-width: 640px) { .masonry.wide { columns: 2; } }
+@media (min-width: 900px) { .masonry, .masonry.wide { columns: 3; column-gap: 14px; } }
+@media (min-width: 1200px) { .masonry { columns: 5; column-gap: 16px; } .masonry.wide { columns: 4; } }
+@media (min-width: 1700px) { .masonry { columns: 6; } .masonry.wide { columns: 5; } }
+.masonry > * { break-inside: avoid; margin-bottom: 12px; }
+@media (min-width: 768px) { .masonry > * { margin-bottom: 14px; } }
+@media (min-width: 1200px) { .masonry > * { margin-bottom: 16px; } }
+
+.grain {
+  background-image: radial-gradient(#0a0a0a 0.6px, transparent 0.6px);
+  background-size: 7px 7px;
+}

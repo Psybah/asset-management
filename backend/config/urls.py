@@ -1,0 +1,30 @@
+from django.contrib import admin
+from django.urls import include, path, re_path
+from rest_framework.routers import DefaultRouter
+
+from accounts import views as account_views
+from assets import views as asset_views
+
+router = DefaultRouter()
+router.register("categories", asset_views.CategoryViewSet, basename="category")
+router.register("locations", asset_views.LocationViewSet, basename="location")
+router.register("departments", account_views.DepartmentViewSet, basename="department")
+router.register("people", account_views.PersonViewSet, basename="person")
+router.register("assets", asset_views.AssetViewSet, basename="asset")
+router.register("assignments", asset_views.AssignmentViewSet, basename="assignment")
+router.register("maintenance", asset_views.MaintenanceViewSet, basename="maintenance")
+router.register("audit", asset_views.AuditLogViewSet, basename="audit")
+
+api = [
+    path("auth/login/", account_views.login, name="login"),
+    path("auth/me/", account_views.me, name="me"),
+    path("auth/logout/", account_views.logout, name="logout"),
+    path("dashboard/", asset_views.dashboard, name="dashboard"),
+    re_path(r"^reports/assets\.csv/?$", asset_views.assets_csv, name="assets-csv"),
+    path("", include(router.urls)),
+]
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/", include(api)),
+]
