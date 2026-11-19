@@ -1,5 +1,4 @@
-import { ArrowUpRight, HandArrowDown, Wrench, Warning } from '@phosphor-icons/react'
-import { motion } from 'motion/react'
+import { ArrowUpRight, CheckCircle, Cube, HandArrowDown, HandArrowUp, Wrench, Warning } from '@phosphor-icons/react'
 import { Link } from 'react-router-dom'
 import { Area } from '@/components/charts/area'
 import { AreaChart } from '@/components/charts/area-chart'
@@ -12,30 +11,11 @@ import { RingCenter } from '@/components/charts/ring-center'
 import { RingChart } from '@/components/charts/ring-chart'
 import { ChartTooltip } from '@/components/charts/tooltip'
 import { XAxis } from '@/components/charts/x-axis'
-import { Counter, Page, PageHeader, Panel, Photo, Reveal, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { Counter, Metric, Page, PageHeader, Panel, Photo, Reveal, Skeleton, StatusMark, cx } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { ago, compact, shortDate } from '@/lib/format'
 import type { Asset, Assignment, Dashboard } from '@/lib/types'
 import { useData } from '@/lib/useData'
-
-function Stat({ label, value, tone = 'paper', delay = 0, to }: { label: string; value: number; tone?: 'paper' | 'ink' | 'mist'; delay?: number; to: string }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease, delay }}>
-      <Link
-        to={to}
-        className={cx(
-          'group flex h-28 flex-col items-center justify-center rounded-[1.5rem] transition-colors duration-300',
-          tone === 'ink' && 'bg-ink text-white',
-          tone === 'paper' && 'bg-white hover:bg-white/70',
-          tone === 'mist' && 'bg-canvas outline-2 outline-dashed -outline-offset-2 outline-fog hover:bg-white/50',
-        )}
-      >
-        <span className="text-[2rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} /></span>
-        <span className={cx('mt-2 text-xs', tone === 'ink' ? 'text-white/55' : 'text-smoke')}>{label}</span>
-      </Link>
-    </motion.div>
-  )
-}
 
 type Upcoming = { id: string; kind: 'care' | 'return'; date: string; title: string; detail: string; overdue: boolean; to: string }
 
@@ -98,13 +78,13 @@ export default function Overview() {
         <div className="min-w-0 space-y-4">
           {/* Stats */}
           {!t ? (
-            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28" />)}</div>
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}</div>
           ) : (
             <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-              <Stat label="Assets" value={t.assets} to="/assets" />
-              <Stat label="In use" value={t.assigned} tone="ink" delay={0.05} to="/assets?status=assigned" />
-              <Stat label="Available" value={t.available} delay={0.1} to="/assets?status=available" />
-              <Stat label="Overdue care" value={t.overdue_maintenance} tone="mist" delay={0.15} to="/maintenance" />
+              <Link to="/assets"><Metric label="Assets" value={t.assets} icon={<Cube size={15} />} hint={`₦${compact(t.purchase_value)} purchase value`} /></Link>
+              <Link to="/assets?status=assigned"><Metric label="In use" value={t.assigned} tone="ink" icon={<HandArrowUp size={15} />} hint={`${Math.round((t.assigned / Math.max(1, t.assets - t.retired)) * 100)}% of active`} delay={0.05} /></Link>
+              <Link to="/assets?status=available"><Metric label="Available" value={t.available} icon={<CheckCircle size={15} />} hint="Ready to assign" delay={0.1} /></Link>
+              <Link to="/maintenance"><Metric label="Overdue jobs" value={t.overdue_maintenance} icon={<Warning size={15} />} hint={`${t.maintenance} in progress`} delay={0.15} /></Link>
             </div>
           )}
 

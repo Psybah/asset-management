@@ -1,12 +1,12 @@
-import { Copy, DownloadSimple } from '@phosphor-icons/react'
+import { ChartBar, Copy, DownloadSimple, Gauge, Pulse, Users } from '@phosphor-icons/react'
 import { Bar } from '@/components/charts/bar'
 import { BarChart } from '@/components/charts/bar-chart'
 import { BarXAxis } from '@/components/charts/bar-x-axis'
 import { Grid } from '@/components/charts/grid'
 import { ChartTooltip } from '@/components/charts/tooltip'
 import { useToast } from '@/components/Toast'
-import { Button, Counter, Empty, IconButton, Page, PageHeader, Panel, Reveal, Skeleton, cx } from '@/components/ui'
-import { API_URL, token } from '@/lib/api'
+import { Button, Empty, Metric, IconButton, Page, PageHeader, Panel, Reveal, Skeleton } from '@/components/ui'
+import { API_URL, publicOrigin, token } from '@/lib/api'
 import { useData } from '@/lib/useData'
 
 type Share = { value: string; label: string; count: number; percent: number }
@@ -41,7 +41,7 @@ function Shares({ rows }: { rows: Share[] }) {
 export default function Insights() {
   const { data: r } = useData<Results>('/survey/results/')
   const toast = useToast()
-  const link = `${location.origin}/survey`
+  const link = `${publicOrigin}/survey`
 
   return (
     <Page>
@@ -55,7 +55,7 @@ export default function Insights() {
       />
 
       {!r ? (
-        <div className="grid gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-28" />)}</div>
+        <div className="grid gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}</div>
       ) : r.n === 0 ? (
         <Panel title="No responses yet" bodyClassName="p-6">
           <p className="max-w-md text-sm leading-relaxed text-smoke">Share <span className="text-ink">{link}</span> with participants. Results appear here as responses arrive and fill Tables 4.5–4.11 of the report.</p>
@@ -63,17 +63,10 @@ export default function Insights() {
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-            {[
-              { k: 'Responses', v: r.n, d: 0, ink: false },
-              { k: `Mean SUS (benchmark ${r.benchmark})`, v: r.mean ?? 0, d: 1, ink: true },
-              { k: 'Median', v: r.median ?? 0, d: 1, ink: false },
-              { k: 'Std. deviation', v: r.sd ?? 0, d: 1, ink: false },
-            ].map((s) => (
-              <div key={s.k} className={cx('flex h-28 flex-col items-center justify-center rounded-[1.5rem]', s.ink ? 'bg-ink text-white' : 'bg-white')}>
-                <span className="text-[2rem] font-medium leading-none tracking-[-0.04em]"><Counter value={s.v} format={(n) => n.toFixed(s.d)} /></span>
-                <span className={cx('mt-2 text-center text-xs', s.ink ? 'text-white/55' : 'text-smoke')}>{s.k}</span>
-              </div>
-            ))}
+            <Metric label="Responses" value={r.n} icon={<Users size={15} />} hint="participants" />
+            <Metric label="Mean SUS score" value={r.mean ?? 0} format={(n) => n.toFixed(1)} tone="ink" icon={<Gauge size={15} />} hint={`Benchmark ${r.benchmark}`} delay={0.05} />
+            <Metric label="Median" value={r.median ?? 0} format={(n) => n.toFixed(1)} icon={<ChartBar size={15} />} hint={`Range ${fmt(r.min)}–${fmt(r.max)}`} delay={0.1} />
+            <Metric label="Std. deviation" value={r.sd ?? 0} format={(n) => n.toFixed(1)} icon={<Pulse size={15} />} hint="sample SD" delay={0.15} />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">

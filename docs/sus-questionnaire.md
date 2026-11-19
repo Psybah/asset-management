@@ -22,7 +22,7 @@ Questionnaire No.: ______ Date: ____ / ____ / ______
 Please tick (✓) one box for each question.
 
 **A1. Department / unit**
-☐ Engineering ☐ Product & Design ☐ Operations ☐ Compliance & Risk ☐ Finance ☐ Growth & Partnerships ☐ People & Culture ☐ Other: ____________
+☐ Engineering ☐ Product & Design ☐ Operations ☐ Compliance & Risk ☐ Finance ☐ Growth & Partnerships ☐ People & Culture ☐ Internal Audit ☐ Other: ____________
 
 **A2. Your role in relation to office assets**
 ☐ I manage or record assets (e.g. store officer, admin officer, IT support)

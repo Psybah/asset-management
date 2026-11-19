@@ -1,88 +1,160 @@
-import { ArrowRight, Check } from '@phosphor-icons/react'
+import { CalendarBlank, CheckCircle, CircleDashed, DotsSixVertical, Plus, Spinner, Warning } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useState, type DragEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { Sheet } from '@/components/Sheet'
 import { useToast } from '@/components/Toast'
-import { Page, PageHeader, Skeleton, cx, ease } from '@/components/ui'
+import { Button, Field, FieldGroup, IconButton, Page, PageHeader, Photo, SelectField, Skeleton, cx, ease } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
-import { compact, shortDate } from '@/lib/format'
-import type { Maintenance as M } from '@/lib/types'
+import { compact, shortDate, today } from '@/lib/format'
+import type { Asset, Maintenance as M } from '@/lib/types'
 import { invalidate, useData } from '@/lib/useData'
 
-const lanes: { key: M['status']; label: string; next?: M['status'] }[] = [
-  { key: 'scheduled', label: 'Scheduled', next: 'in_progress' },
-  { key: 'in_progress', label: 'In progress', next: 'done' },
-  { key: 'done', label: 'Done' },
+type Status = M['status']
+const columns: { key: Status; label: string; icon: ReactNode }[] = [
+  { key: 'scheduled', label: 'Scheduled', icon: <CircleDashed size={15} /> },
+  { key: 'in_progress', label: 'In progress', icon: <Spinner size={15} /> },
+  { key: 'done', label: 'Done', icon: <CheckCircle size={15} /> },
 ]
+
+function Card({ m, photo, canDrag, onDragStart }: { m: M; photo?: Asset; canDrag: boolean; onDragStart: (e: DragEvent, m: M) => void }) {
+  return (
+    <motion.article
+      layout
+      layoutId={`job-${m.id}`}
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }}
+      transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+      draggable={canDrag}
+      // motion's onDragStart is for its own drag gestures; use the native event for HTML5 DnD.
+      {...({ onDragStartCapture: (e: DragEvent) => onDragStart(e, m) } as object)}
+      className={cx('group rounded-[1.15rem] p-1', m.overdue ? 'bg-ink text-white' : 'bg-white', canDrag && 'cursor-grab active:cursor-grabbing')}
+    >
+      <div className="flex items-start gap-2 px-2.5 pb-2 pt-2">
+        <div className="min-w-0 flex-1">
+          <p className={cx('text-sm leading-snug', m.status === 'done' && 'text-smoke')}>{m.title}</p>
+        </div>
+        {canDrag && <DotsSixVertical size={16} className={cx('mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100', m.overdue ? 'text-white/50' : 'text-ash')} />}
+      </div>
+      <Link to={`/assets/${m.asset}`} draggable={false} className={cx('flex items-center gap-2 rounded-[0.9rem] p-1 pr-3 transition-colors', m.overdue ? 'bg-white/[0.07] hover:bg-white/10' : 'bg-mist hover:bg-fog')}>
+        <Photo src={photo?.image_url} icon={photo?.category_icon} alt="" className="size-8 shrink-0 rounded-[0.65rem]" iconSize={14} />
+        <span className="min-w-0 flex-1 truncate text-xs">{m.asset_name}</span>
+        <span className={cx('shrink-0 text-[10px] tabular', m.overdue ? 'text-white/50' : 'text-ash')}>{m.asset_tag}</span>
+      </Link>
+      <div className={cx('flex items-center gap-1.5 px-2 pb-1.5 pt-2 text-[11px]', m.overdue ? 'text-white/60' : 'text-ash')}>
+        <span className="flex items-center gap-1">{m.overdue ? <Warning size={12} weight="fill" /> : <CalendarBlank size={12} />}{shortDate(m.completed_date ?? m.scheduled_date)}</span>
+        <span>·</span>
+        <span className="capitalize">{m.kind}</span>
+        {m.cost ? <span className="ml-auto tabular">₦{compact(m.cost)}</span> : null}
+      </div>
+    </motion.article>
+  )
+}
 
 export default function Maintenance() {
   const { data, reload } = useData<M[]>('/maintenance/')
+  const { data: assets } = useData<Asset[]>('/assets/')
   const { canWrite } = useAuth()
   const toast = useToast()
-  const overdue = data?.filter((m) => m.overdue).length ?? 0
+  const [jobs, setJobs] = useState<M[] | undefined>()
+  const [over, setOver] = useState<Status | null>(null)
+  const [dragging, setDragging] = useState<M | null>(null)
+  const [adding, setAdding] = useState(false)
+  const [form, setForm] = useState<Record<string, string>>({})
+  const [busy, setBusy] = useState(false)
 
-  const advance = async (m: M, status: M['status']) => {
-    try { await api.patch(`/maintenance/${m.id}/`, { status }); invalidate(); reload(); toast(status === 'done' ? 'Marked done' : 'Started') } catch (e) { toast((e as Error).message) }
+  useEffect(() => { setJobs(data) }, [data])
+  const byId = new Map((assets ?? []).map((a) => [a.id, a]))
+  const overdue = jobs?.filter((m) => m.overdue).length ?? 0
+
+  const move = async (m: M, status: Status) => {
+    if (m.status === status) return
+    setJobs((js) => js?.map((j) => (j.id === m.id ? { ...j, status, overdue: status === 'done' ? false : j.overdue } : j)))
+    try { await api.patch(`/maintenance/${m.id}/`, { status }); invalidate(); reload(); toast(status === 'done' ? 'Marked done' : status === 'in_progress' ? 'Started' : 'Moved back') } catch (e) { setJobs(data); toast((e as Error).message) }
   }
+
+  const create = async () => {
+    setBusy(true)
+    try {
+      await api.post('/maintenance/', { asset: Number(form.asset), title: form.title, kind: form.kind ?? 'preventive', scheduled_date: form.date || today(), vendor: form.vendor ?? '', cost: form.cost ? Number(form.cost) : null, status: 'scheduled', notes: '' })
+      invalidate(); reload(); setAdding(false); setForm({}); toast('Scheduled')
+    } catch (e) { toast((e as Error).message) } finally { setBusy(false) }
+  }
+  const set = (k: string) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   return (
     <Page>
-      <PageHeader eyebrow={overdue ? `${overdue} overdue` : 'All on schedule'} title="Maintenance" />
-      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
-        {lanes.map((lane, li) => {
-          const items = (data ?? [])
-            .filter((m) => m.status === lane.key)
-            .sort((a, b) => (lane.key === 'done' ? b.scheduled_date.localeCompare(a.scheduled_date) : a.scheduled_date.localeCompare(b.scheduled_date)))
+      <PageHeader
+        eyebrow={overdue ? `${overdue} overdue` : 'All on schedule'}
+        title="Maintenance"
+        actions={canWrite && <Button onClick={() => setAdding(true)}><Plus size={15} /> New job</Button>}
+      />
+
+      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+        {columns.map((col, ci) => {
+          const items = (jobs ?? [])
+            .filter((m) => m.status === col.key)
+            .sort((a, b) => (col.key === 'done' ? b.scheduled_date.localeCompare(a.scheduled_date) : Number(b.overdue) - Number(a.overdue) || a.scheduled_date.localeCompare(b.scheduled_date)))
+          const isOver = over === col.key && dragging?.status !== col.key
           return (
             <motion.section
-              key={lane.key}
-              initial={{ opacity: 0, y: 24 }}
+              key={col.key}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease, delay: 0.08 * li }}
-              className="w-[82vw] shrink-0 snap-center rounded-[1.6rem] bg-white p-1.5 md:w-auto"
+              transition={{ duration: 0.6, ease, delay: ci * 0.06 }}
+              onDragOver={(e) => { if (canWrite) { e.preventDefault(); setOver(col.key) } }}
+              onDragLeave={() => setOver((o) => (o === col.key ? null : o))}
+              onDrop={(e) => { e.preventDefault(); setOver(null); if (dragging) move(dragging, col.key); setDragging(null) }}
+              className={cx('flex min-h-[60vh] w-[82vw] shrink-0 snap-center flex-col rounded-[1.6rem] p-1.5 transition-colors duration-200 md:w-auto', isOver ? 'bg-fog' : 'bg-white/60')}
             >
-              <header className="flex items-center justify-between px-3 pb-2 pt-1.5">
-                <h2 className="text-[13px] font-medium text-smoke">{lane.label}</h2>
-                <span className="grid h-6 min-w-6 place-items-center rounded-full bg-mist px-1.5 text-[11px] font-medium tabular">{items.length}</span>
+              <header className="flex items-center gap-2 px-2.5 pb-2.5 pt-2">
+                <span className="text-smoke">{col.icon}</span>
+                <h2 className="text-[13px] font-medium">{col.label}</h2>
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1.5 text-[11px] font-medium tabular">{items.length}</span>
+                {canWrite && col.key === 'scheduled' && <IconButton label="New job" size="icon-sm" className="ml-auto" onClick={() => setAdding(true)}><Plus size={13} /></IconButton>}
               </header>
-              <div className="flex flex-col gap-1">
-                {!data && [0, 1, 2].map((i) => <Skeleton key={i} className="h-24 bg-mist" />)}
+              <div className="flex flex-1 flex-col gap-1.5">
+                {!jobs && [0, 1, 2].map((i) => <Skeleton key={i} className="h-28 bg-white" />)}
                 <AnimatePresence mode="popLayout">
-                  {items.slice(0, lane.key === 'done' ? 10 : 50).map((m) => (
-                    <motion.article
-                      key={m.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
-                      transition={{ type: 'spring', stiffness: 320, damping: 30 }}
-                      className={cx('rounded-[1.15rem] p-4', m.overdue ? 'bg-ink text-white' : 'bg-mist')}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className={cx('text-sm leading-snug', lane.key === 'done' && 'text-smoke')}>{m.title}</p>
-                          <Link to={`/assets/${m.asset}`} className={cx('mt-1 block truncate text-xs hover:underline', m.overdue ? 'text-white/50' : 'text-ash')}>{m.asset_tag} · {m.asset_name}</Link>
-                        </div>
-                        {canWrite && lane.next && (
-                          <motion.button whileTap={{ scale: 0.9 }} onClick={() => advance(m, lane.next!)} aria-label={lane.next === 'done' ? 'Mark done' : 'Start'} className={cx('grid size-8 shrink-0 place-items-center rounded-full', m.overdue ? 'bg-white text-ink' : 'bg-white')}>
-                            {lane.next === 'done' ? <Check size={14} /> : <ArrowRight size={14} />}
-                          </motion.button>
-                        )}
-                      </div>
-                      <div className={cx('mt-4 flex items-center gap-1.5 text-[11px]', m.overdue ? 'text-white/60' : 'text-ash')}>
-                        <span className={cx('rounded-full px-2 py-0.5', m.overdue ? 'bg-white/10' : 'bg-white')}>{m.overdue ? 'Overdue · ' : ''}{shortDate(m.completed_date ?? m.scheduled_date)}</span>
-                        <span className={cx('rounded-full px-2 py-0.5 capitalize', m.overdue ? 'bg-white/10' : 'bg-white')}>{m.kind}</span>
-                        {m.cost ? <span className="ml-auto tabular">₦{compact(m.cost)}</span> : null}
-                      </div>
-                    </motion.article>
+                  {items.slice(0, col.key === 'done' ? 12 : 60).map((m) => (
+                    <Card key={m.id} m={m} photo={byId.get(m.asset)} canDrag={canWrite} onDragStart={(e, job) => { e.dataTransfer.effectAllowed = 'move'; setDragging(job) }} />
                   ))}
                 </AnimatePresence>
-                {data && items.length === 0 && <p className="px-3 py-6 text-center text-xs text-ash">Nothing here</p>}
+                {jobs && items.length === 0 && (
+                  <div className={cx('grid flex-1 place-items-center rounded-[1.15rem] text-xs text-ash outline-2 -outline-offset-2 outline-dashed', isOver ? 'outline-ash' : 'outline-transparent')}>
+                    {canWrite ? 'Drop a job here' : 'Nothing here'}
+                  </div>
+                )}
               </div>
             </motion.section>
           )
         })}
       </div>
+      {canWrite && <p className="mt-3 px-1 text-[11px] text-ash">Drag cards between columns to update their status.</p>}
+
+      <Sheet open={adding} onClose={() => setAdding(false)} title="New maintenance job">
+        <FieldGroup>
+          <SelectField label="Asset" value={form.asset ?? ''} onChange={set('asset')}>
+            <option value="">Choose an asset…</option>
+            {(assets ?? []).filter((a) => a.status !== 'retired').map((a) => <option key={a.id} value={a.id}>{a.tag} · {a.name}</option>)}
+          </SelectField>
+          <Field label="What needs doing" value={form.title ?? ''} onChange={set('title')} />
+          <div className="grid grid-cols-2 gap-0.5">
+            <SelectField label="Type" value={form.kind ?? 'preventive'} onChange={set('kind')}>
+              <option value="preventive">Preventive</option>
+              <option value="corrective">Corrective</option>
+            </SelectField>
+            <Field label="Date" type="date" value={form.date ?? today()} onChange={set('date')} />
+          </div>
+          <div className="grid grid-cols-2 gap-0.5">
+            <Field label="Vendor" value={form.vendor ?? ''} onChange={set('vendor')} />
+            <Field label="Cost (₦)" inputMode="numeric" value={form.cost ?? ''} onChange={set('cost')} />
+          </div>
+        </FieldGroup>
+        <Button size="lg" className="mt-5 w-full" disabled={busy || !form.asset || !form.title} onClick={create}>{busy ? 'Saving…' : 'Schedule'}</Button>
+      </Sheet>
     </Page>
   )
 }

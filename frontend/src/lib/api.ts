@@ -1,5 +1,5 @@
-// Same host as the page by default, so phones on the LAN reach the API too.
-export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? `${location.protocol}//${location.hostname}:8000/api`
+// Relative by default: the Vite server proxies /api to Django, so this works on any host.
+export const API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '/api'
 
 const KEY = 'ledger.token'
 
@@ -84,5 +84,9 @@ export async function uploadImage<T = import('./types').Asset>(id: number, file:
   return data as T
 }
 
-export const qrUrl = (id: number) => `${API_URL}/assets/${id}/qr/`
+/** QR codes are drawn in the browser so they always point at the address the app is open on. */
+declare const __LAN_ORIGIN__: string
+const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)
+export const publicOrigin = isLocal && __LAN_ORIGIN__ ? __LAN_ORIGIN__ : location.origin
+export const scanUrl = (tag: string) => `${publicOrigin}/scan/${encodeURIComponent(tag)}`
 export const csvUrl = (q?: Query) => `${API_URL}/reports/assets.csv${qs({ ...q, token: token.get() })}`

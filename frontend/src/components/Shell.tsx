@@ -4,7 +4,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { csvUrl } from '@/lib/api'
+import { csvUrl, publicOrigin } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import type { Dashboard } from '@/lib/types'
 import { useData } from '@/lib/useData'
@@ -103,7 +103,7 @@ function Sidebar({ onSearch }: { onSearch: () => void }) {
           <Item id="bell" icon={Bell} label={`${overdue} overdue`} onClick={() => nav('/maintenance')} />
           {overdue > 0 && <span className="pointer-events-none absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[10px] font-medium text-white">{overdue}</span>}
         </div>
-        <Item id="survey" icon={ChatCircleDots} label="Usability survey" onClick={() => window.open('/survey', '_blank')} />
+        <Item id="survey" icon={ChatCircleDots} label="Usability survey" onClick={() => window.open(`${publicOrigin}/survey`, '_blank')} />
       </motion.div>
     </aside>
   )
@@ -162,13 +162,11 @@ export function Shell({ children, onSearch }: { children: ReactNode; onSearch: (
   return (
     <div className="h-dvh p-2 md:p-3">
       <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-canvas md:rounded-[2.25rem]">
-        {/* Logo tab dipping in from the frame */}
-        <Notch edge="top" className="left-9 md:left-14" bodyClassName="flex h-12 items-center px-2 md:h-14">
-          <Link to="/" className="flex items-center gap-2.5">
-            <span className="relative grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
-            <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
-          </Link>
-        </Notch>
+        {/* Floating logo */}
+        <Link to="/" className="absolute left-3 top-3 z-40 flex h-11 items-center gap-2.5 rounded-full bg-ink pl-3 pr-4 text-white md:left-4 md:top-4">
+          <span className="grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
+          <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
+        </Link>
         <Profile />
         <Sidebar onSearch={onSearch} />
         <ScrollArea className="h-full">

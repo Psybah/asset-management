@@ -1,5 +1,6 @@
 import { animate, motion, useInView, useMotionValue, useTransform } from 'motion/react'
 import { BorderBeam } from 'border-beam'
+import { Eye, EyeSlash } from '@phosphor-icons/react'
 import {
   useEffect, useId, useRef, useState,
   type ButtonHTMLAttributes, type CSSProperties, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes,
@@ -99,6 +100,16 @@ export function Field({ label, id, className, value, onFocus, onBlur, trailing, 
   const gen = useId()
   const fid = id ?? gen
   const [focused, setFocused] = useState(false)
+  const [reveal, setReveal] = useState(false)
+  if (type === 'password') {
+    trailing = (
+      <button type="button" onClick={() => setReveal((r) => !r)} aria-label={reveal ? 'Hide password' : 'Show password'} aria-pressed={reveal}
+        className="grid size-9 place-items-center rounded-full text-ash transition-colors hover:bg-white hover:text-ink">
+        {reveal ? <EyeSlash size={17} /> : <Eye size={17} />}
+      </button>
+    )
+    type = reveal ? 'text' : 'password'
+  }
   const raised = focused || String(value ?? '').length > 0 || type === 'date'
   return (
     <div className={cn('relative rounded-2xl', className)}>
@@ -162,6 +173,31 @@ export function PageHeader({ eyebrow, title, actions }: { eyebrow?: ReactNode; t
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/* Metric card — label left, icon top-right, value at the bottom        */
+/* ------------------------------------------------------------------ */
+
+export function Metric({ label, value, icon, tone = 'paper', format, hint, delay = 0 }: {
+  label: string; value: number; icon: ReactNode; tone?: 'paper' | 'ink'; format?: (n: number) => string; hint?: ReactNode; delay?: number
+}) {
+  const ink = tone === 'ink'
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease, delay }}
+      className={cn('flex h-32 flex-col rounded-[1.5rem] p-4', ink ? 'bg-ink text-white' : 'bg-white')}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <p className={cn('min-w-0 truncate text-[13px] font-medium', ink ? 'text-white/70' : 'text-smoke')}>{label}</p>
+        <span className={cn('grid size-8 shrink-0 place-items-center rounded-full', ink ? 'bg-white/12 text-white' : 'bg-mist text-ink')}>{icon}</span>
+      </div>
+      <p className="mt-auto text-[1.75rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} format={format} /></p>
+      {hint ? <p className={cn('mt-1.5 truncate text-[11px]', ink ? 'text-white/45' : 'text-ash')}>{hint}</p> : null}
+    </motion.div>
   )
 }
 

@@ -21,6 +21,7 @@ DEMOGRAPHICS = [
             ("finance", "Finance"),
             ("growth_partnerships", "Growth & Partnerships"),
             ("people_culture", "People & Culture"),
+            ("internal_audit", "Internal Audit"),
             ("other", "Other"),
         ),
         "other_field": "department_other",

@@ -43,7 +43,9 @@ npm run dev       # starts the API (http://localhost:8000) and the web app (http
 
 Other root commands: `npm run seed` (reset demo data; survey responses are kept), `npm test` (backend tests), `npm run build` (production build of the web app).
 
-The usability survey for participants is at http://localhost:5173/survey (no login). To let colleagues on the same Wi-Fi answer it from their phones, open `http://<your-laptop-ip>:5173/survey` and run the API with `cd backend && .venv/bin/python manage.py runserver 0.0.0.0:8000`.
+**Phones (QR scanning, usability survey):** `npm run dev` already serves the app on your network. Connect the phone to the **same Wi-Fi** as the laptop and open `http://<laptop-ip>:5173` (`npm run dev:lan` prints the exact address). The web server forwards `/api` to Django, so nothing else needs configuring, and QR codes automatically encode the laptop's network address. If the phone still can't connect, allow incoming connections for Node in macOS System Settings → Network → Firewall, or check that the Wi-Fi doesn't isolate devices (common on guest/office networks — use a phone hotspot instead).
+
+The survey for participants is at `/survey` (no login).
 
 <details><summary>Running the two servers separately</summary>
 

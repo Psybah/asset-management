@@ -1,6 +1,6 @@
 import { ArrowLeft, HandArrowDown, HandArrowUp, PencilSimple, Printer, QrCode, Trash, Wrench } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AssetForm } from '@/components/AssetForm'
 import { Avatar } from '@/components/Avatar'
@@ -12,7 +12,8 @@ import { XAxis } from '@/components/charts/x-axis'
 import { Sheet } from '@/components/Sheet'
 import { useToast } from '@/components/Toast'
 import { Button, Counter, Field, FieldGroup, IconButton, Page, Panel, Photo, Reveal, SelectField, Skeleton, StatusMark, cx, ease } from '@/components/ui'
-import { api, qrUrl } from '@/lib/api'
+import QRCode from 'qrcode'
+import { api, scanUrl } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { ago, compact, date, label, naira, today } from '@/lib/format'
 import type { Asset, DepRow, TimelineItem, User } from '@/lib/types'
@@ -33,6 +34,10 @@ export default function AssetDetail() {
   const [act, setAct] = useState<Action>(null)
   const [form, setForm] = useState<Record<string, string>>({})
   const [busy, setBusy] = useState(false)
+  const [qr, setQr] = useState('')
+  useEffect(() => {
+    if (a) QRCode.toDataURL(scanUrl(a.tag), { margin: 1, width: 480, color: { dark: '#0a0a0a', light: '#00000000' } }).then(setQr)
+  }, [a])
 
   const open = (x: Action, init: Record<string, string> = {}) => { setForm(init); setAct(x) }
   const set = (k: string) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -57,7 +62,7 @@ export default function AssetDetail() {
   const printLabel = () => {
     const w = window.open('', '_blank', 'width=420,height=520')
     if (!w) return
-    w.document.write(`<html><head><title>${a.tag}</title><style>body{font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0}div{text-align:center}img{width:220px;height:220px}p{margin:4px 0}</style></head><body><div><img src="${qrUrl(a.id)}" onload="setTimeout(()=>print(),200)"/><p style="font-size:22px">${a.tag}</p><p style="color:#888;font-size:13px">${a.name}</p></div></body></html>`)
+    w.document.write(`<html><head><title>${a.tag}</title><style>body{font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0}div{text-align:center}img{width:220px;height:220px}p{margin:4px 0}</style></head><body><div><img src="${qr}" onload="setTimeout(()=>print(),200)"/><p style="font-size:22px">${a.tag}</p><p style="color:#888;font-size:13px">${a.name}</p></div></body></html>`)
     w.document.close()
   }
 
@@ -90,7 +95,8 @@ export default function AssetDetail() {
               </div>
               <div className="grid flex-1 place-items-center rounded-[1.35rem] bg-mist">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={qrUrl(a.id)} alt={`QR ${a.tag}`} className="w-48 mix-blend-multiply" />
+                  {qr && <img src={qr} alt={`QR ${a.tag}`} className="w-48" />}
+                  <span className="max-w-56 truncate text-[10px] text-ash">{scanUrl(a.tag)}</span>
                   <span className="text-sm font-medium tabular">{a.tag}</span>
                   <Button tone="paper" size="sm" beam={false} onClick={printLabel}><Printer size={14} /> Print label</Button>
                 </div>

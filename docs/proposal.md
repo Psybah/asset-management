@@ -153,7 +153,7 @@ The system will be verified with functional test cases, each comparing the expec
 
 # 7. EXPECTED DELIVERABLES
 
-1. A working web-based asset management system: a Django REST API and a React front end, with source code on GitHub ([GITHUB REPOSITORY LINK]).
+1. A working web-based asset management system: a Django REST API and a React front end, with source code on GitHub (https://github.com/Psybah/asset-management).
 2. A full project report (write-up) following the departmental template.
 3. Design documents: requirements, architecture, use case, ERD, class, sequence and activity diagrams.
 4. A test report and a usability evaluation report (SUS results).

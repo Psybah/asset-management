@@ -57,7 +57,7 @@ Prof. B. F. Oladejo                Date
 &nbsp;
 
 …………………………………………                …………………………
-[HOD NAME (Title Lastname Initials)]                Date
+Prof. B. F. Oladejo                Date
 (Head of Department)
 
 # DEDICATION
@@ -72,7 +72,7 @@ We acknowledge the sustaining power of the Almighty God, who gave us the wisdom,
 
 We sincerely appreciate our supervisor, Prof. B. F. Oladejo, for the guidance, patience and constructive criticism that shaped this project from proposal to completion.
 
-We thank the Head of Department, [HOD NAME], and all the academic and non-academic staff of the Department of Computer Science, University of Ibadan, for the knowledge and support they gave us throughout our stay in the department.
+We thank the Head of Department, Prof. B. F. Oladejo, and all the academic and non-academic staff of the Department of Computer Science, University of Ibadan, for the knowledge and support they gave us throughout our stay in the department.
 
 We are grateful to Squad by HabariPay, where our Team Leader is an intern, for the opportunity to observe a working fintech office at first hand, and to the members of staff who took part in the usability evaluation.
 
@@ -1345,7 +1345,7 @@ Table 4.1 lists the tools and technologies used to implement the system and the 
 | Icons and visual details | Phosphor Icons; 21st.dev "Icon Folder" component; React Bits animated background | Category icons; category folders that show asset photographs; animated background on the login page |
 | Seed photographs | Images from Wikimedia Commons under free licences | Realistic photographs for the illustrative fintech-office seed data |
 | Developer workflow | Single root command `npm run dev` | Starts the Django API and the Vite development server together |
-| Version control | Git and GitHub | Collaboration, history and code submission ([GITHUB REPOSITORY LINK]) |
+| Version control | Git and GitHub | Collaboration, history and code submission (https://github.com/Psybah/asset-management) |
 | Hardware used | [e.g. laptop specification: processor, RAM, OS] | Development and testing machine(s) |
 
 Table 4.1 shows that the system uses only free and open-source components. No licence cost is passed on to the adopting office, which addresses one of the barriers identified in Table 2.3.
@@ -1959,7 +1959,7 @@ Yaqin, M. A., Ariyanto, S. A., Amtini, L. S., and Zhalianti, F. N. (2024). Devel
 
 ## APPENDIX A: INSTALLATION AND DEMONSTRATION GUIDE
 
-**Source code:** [GITHUB REPOSITORY LINK]
+**Source code:** https://github.com/Psybah/asset-management
 
 **Requirements:**
 
