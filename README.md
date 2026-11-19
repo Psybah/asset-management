@@ -77,6 +77,10 @@ cd backend && source .venv/bin/activate && python manage.py test
 
 See [docs/API.md](docs/API.md).
 
+## Deployment
+
+See [DEPLOY.md](DEPLOY.md) — a one-click Render blueprint (`render.yaml`) for the database, API and web app.
+
 ## Team
 
 | Name | Matric No. | Role |

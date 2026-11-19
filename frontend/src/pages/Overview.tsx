@@ -80,7 +80,7 @@ export default function Overview() {
           {!t ? (
             <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}</div>
           ) : (
-            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2 rounded-[1.9rem] bg-[#e2e2e2] p-2 md:grid-cols-4">
               <Link to="/assets"><Metric label="Assets" value={t.assets} icon={<Cube size={15} />} hint={`₦${compact(t.purchase_value)} purchase value`} /></Link>
               <Link to="/assets?status=assigned"><Metric label="In use" value={t.assigned} tone="ink" icon={<HandArrowUp size={15} />} hint={`${Math.round((t.assigned / Math.max(1, t.assets - t.retired)) * 100)}% of active`} delay={0.05} /></Link>
               <Link to="/assets?status=available"><Metric label="Available" value={t.available} icon={<CheckCircle size={15} />} hint="Ready to assign" delay={0.1} /></Link>

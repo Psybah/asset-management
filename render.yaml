@@ -1,0 +1,51 @@
+# Render Blueprint — deploys the whole system (database + API + web app) in one go.
+# Dashboard → New → Blueprint → pick this repo. See DEPLOY.md.
+databases:
+  - name: ledger-db
+    plan: free
+    databaseName: ledger
+    user: ledger
+
+services:
+  # Django REST API
+  - type: web
+    name: ledger-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    # migrate, then seed demo data only if the database is empty (never wipes live data)
+    startCommand: python manage.py migrate --noinput && python manage.py seed --if-empty && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    healthCheckPath: /api/survey/form/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ledger-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: FRONTEND_URL # set after the web app's URL is known, e.g. https://ledger-web.onrender.com
+        sync: false
+
+  # React web app (static files)
+  - type: web
+    name: ledger-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_API_URL # the API's URL + /api, e.g. https://ledger-api.onrender.com/api
+        sync: false

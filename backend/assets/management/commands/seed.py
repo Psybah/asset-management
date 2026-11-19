@@ -169,8 +169,17 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument("--seed", type=int, default=2026, help="Random seed (default 2026)")
+        parser.add_argument(
+            "--if-empty", action="store_true",
+            help="Deploy-safe: seed only when there are no assets yet; otherwise just restore any "
+                 "missing seed photos (hosts with ephemeral disks lose MEDIA_ROOT on restart).",
+        )
 
     def handle(self, *args, **opts):
+        if opts["if_empty"] and Asset.objects.exists():
+            restored = self.restore_seed_photos()
+            self.stdout.write(f"Data already present; seed skipped. Restored {restored} missing seed photo(s).")
+            return
         self.rng = random.Random(opts["seed"])
         self.today = timezone.localdate()
 
@@ -196,6 +205,17 @@ class Command(BaseCommand):
         ))
         self.stdout.write("Logins: admin/admin123 · oladejo/oladejo123 (supervisor) · manager/manager123 · staff/staff123 "
                           f"(other staff use {PASSWORD_DEFAULT})")
+
+    def restore_seed_photos(self):
+        """Copy back seed photos that are missing from MEDIA_ROOT, without touching uploads."""
+        target = Path(settings.MEDIA_ROOT) / SEED_MEDIA_DIR
+        target.mkdir(parents=True, exist_ok=True)
+        restored = 0
+        for src in SEED_IMAGES.iterdir():
+            if src.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"} and not (target / src.name).exists():
+                shutil.copyfile(src, target / src.name)
+                restored += 1
+        return restored
 
     # ------------------------------------------------------------------ helpers
     def install_images(self):

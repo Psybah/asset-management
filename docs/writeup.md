@@ -1382,7 +1382,7 @@ Every create, update and delete writes an audit entry.
 
 #### 4.2.3 QR code module
 
-For each asset, the endpoint `GET /api/assets/{id}/qr/` generates a PNG image of a QR code that encodes the URL `{FRONTEND_URL}/scan/{tag}`, for example `https://assets.example.com/scan/AST-0005`. The image needs no authentication, so it can be shown directly in an `<img>` element and printed as a label.
+For each asset, the endpoint `GET /api/assets/{id}/qr/` generates a PNG image of a QR code that encodes the URL `{FRONTEND_URL}/scan/{tag}`, for example `https://assets.example.com/scan/AST-0005`. The image needs no authentication, so it can be shown directly in an `<img>` element and printed as a label. In the web client, the same QR content is also generated directly in the browser (with the `qrcode` library) from the address the application is opened at. When the app runs on a laptop on the office network, the code therefore carries the laptop's network address rather than `localhost`, so a label printed there opens on staff phones; when deployed, it carries the public address.
 
 When a staff member points a phone camera at the label, the phone opens the URL. The SPA's `/scan/:tag` route then calls `GET /api/assets/by-tag/{tag}/` and redirects to the asset's detail page (FR7, FR8). The label holds a URL rather than raw data, so it never goes out of date: the page always shows the asset's live status, custodian and value.
 

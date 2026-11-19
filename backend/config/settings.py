@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serves /static/ in production
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -95,6 +96,10 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
 
 # Uploaded asset photos (served by Django itself only when DEBUG is on).
 MEDIA_URL = "/media/"
@@ -112,6 +117,12 @@ CORS_ALLOWED_ORIGINS = sorted(
         *[o for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",") if o],
     }
 )
+
+# Production behind a TLS-terminating proxy (Render, Railway, etc.).
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "https://*.onrender.com").split(",") if o]
+# Serve uploaded photos from Django itself (fine for a project-sized deployment).
+SERVE_MEDIA = env_bool("SERVE_MEDIA", True)
 
 # Development only: let phones on the same Wi-Fi reach the API (survey, QR scans).
 if DEBUG:
