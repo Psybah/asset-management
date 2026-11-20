@@ -2,12 +2,13 @@ import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransfo
 import { BorderBeam } from 'border-beam'
 import { Eye, EyeSlash } from '@phosphor-icons/react'
 import {
-  useEffect, useId, useRef, useState,
-  type ButtonHTMLAttributes, type CSSProperties, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes,
+  Children, isValidElement, useEffect, useId, useRef, useState,
+  type ButtonHTMLAttributes, type CSSProperties, type InputHTMLAttributes, type ReactNode,
 } from 'react'
 import { cn } from '@/lib/utils'
 import type { Status } from '@/lib/types'
 import { AssetIcon } from '@/lib/icons'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const cx = cn
 export const ease = [0.16, 1, 0.3, 1] as const
@@ -22,12 +23,12 @@ type Tone = 'ink' | 'paper' | 'ghost'
 type Size = 'sm' | 'md' | 'lg' | 'icon' | 'icon-sm'
 
 const rim: Record<Tone, string> = {
-  ink: 'bg-linear-to-b from-[#5a5a5a] to-ink',
+  ink: 'bg-linear-to-b from-[#635b5b] to-ink',
   paper: 'bg-linear-to-b from-white to-[#ebebeb]',
   ghost: 'bg-transparent',
 }
 const face: Record<Tone, string> = {
-  ink: 'bg-linear-to-b from-[#3a3a3a] to-ink text-white hover:brightness-125 active:brightness-110',
+  ink: 'bg-linear-to-b from-[#4d4444] to-ink text-white hover:brightness-125 active:brightness-110',
   paper: 'bg-linear-to-b from-white to-[#f1f1f1] text-ink hover:brightness-[0.97] active:brightness-[0.94]',
   ghost: 'text-ink hover:bg-white active:bg-mist',
 }
@@ -129,14 +130,36 @@ export function Field({ label, id, className, value, onFocus, onBlur, trailing, 
   )
 }
 
-export function SelectField({ label, id, className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { label: string }) {
-  const gen = useId()
-  const fid = id ?? gen
+/**
+ * Floating-label dropdown on the shadcn/Radix Select (no native <select>).
+ * Keeps the native-style API: pass <option value>label</option> children and an
+ * onChange that receives { target: { value } }. An option with value "" acts as
+ * "none" (shown as the placeholder when nothing is chosen).
+ */
+const NONE = '__none__'
+export function SelectField({ label, className, children, value, onChange, disabled }: {
+  label: string; className?: string; children: ReactNode; value?: string | number | readonly string[]; onChange?: (e: { target: { value: string } }) => void; disabled?: boolean
+}) {
+  const opts: { value: string; label: ReactNode }[] = []
+  Children.forEach(children, (c) => {
+    if (isValidElement<{ value?: string | number; children?: ReactNode }>(c) && c.type === 'option') opts.push({ value: String(c.props.value ?? ''), label: c.props.children })
+  })
+  const empty = opts.find((o) => o.value === '')
+  // "Choose…/Select…" is placeholder text only; any other empty option (e.g. "—") is a real "none" choice.
+  const placeholderOnly = !!empty && typeof empty.label === 'string' && /^(choose|select)/i.test(empty.label)
+  const none = placeholderOnly ? undefined : empty
+  const current = value === undefined || value === null || value === '' ? undefined : String(value)
   return (
     <div className={cn('relative rounded-2xl', className)}>
-      <select id={fid} className={cn(fieldBase, 'h-13 appearance-none pr-10 pt-4')} {...rest}>{children}</select>
-      <label htmlFor={fid} className={cn(labelBase, 'top-2 text-[10px] font-medium')}>{label}</label>
-      <svg className="pointer-events-none absolute right-4 top-1/2 size-3 -translate-y-1/2 text-ash" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      <Select value={current ?? (none ? NONE : '')} onValueChange={(v) => onChange?.({ target: { value: v === NONE ? '' : v } })} disabled={disabled}>
+        <SelectTrigger className="group h-13 pt-4">
+          <SelectValue placeholder={empty?.label ?? 'Choose…'} />
+        </SelectTrigger>
+        <SelectContent>
+          {opts.filter((o) => o.value || !placeholderOnly).map((o) => <SelectItem key={o.value || NONE} value={o.value || NONE} className={o.value ? '' : 'text-ash'}>{o.label}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      <span className="pointer-events-none absolute left-4 top-2 text-[10px] font-medium text-smoke">{label}</span>
     </div>
   )
 }

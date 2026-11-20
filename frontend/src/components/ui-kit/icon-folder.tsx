@@ -39,9 +39,9 @@ const THEMES = {
   dark: {
     ink: "#ffffff",
     // Opaque blacks so the folder reads on the app's light canvas.
-    back: "linear-gradient(180deg,#2c2c2c,#1a1a1a 60%)",
+    back: "linear-gradient(180deg,#3b3131,#1a1111 60%)",
     backEdge: "rgba(255,255,255,.08)",
-    front: "linear-gradient(160deg,#2e2e2e,#0f0f0f 55%,#201515)",
+    front: "linear-gradient(160deg,#3b3131,#1a1111 55%,#201515)",
     frontEdge: [
       "rgba(255,255,255,.38)",
       "rgba(255,255,255,.1)",
@@ -127,7 +127,7 @@ function Tile({
     <div
       className="relative grid h-full w-full place-items-center overflow-hidden rounded-[inherit]"
       style={{
-        background: icon.src ? undefined : (icon.background ?? "#2a2a2a"),
+        background: icon.src ? undefined : (icon.background ?? "#3b3131"),
         // No shadows in this app: tiles sit flat.
         outline: `1px solid ${ring}`, outlineOffset: -1,
       }}

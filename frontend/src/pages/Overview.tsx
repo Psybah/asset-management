@@ -19,8 +19,8 @@ import { ago, compact } from '@/lib/format'
 import type { Asset, Dashboard, Status } from '@/lib/types'
 import { useData } from '@/lib/useData'
 
-const GREYS = ['#201515', '#3a3a3a', '#5e5e5e', '#828282', '#a6a6a6', '#c6c6c6', '#e0e0e0']
-const STATUS_TONE: Record<Status, string> = { assigned: '#201515', available: '#8a8a8a', maintenance: '#c4c4c4', retired: '#e4e4e4' }
+const GREYS = ['#201515', '#4d4444', '#635b5b', '#847e7e', '#a6a1a1', '#c7c4c4', '#e2e1e1']
+const STATUS_TONE: Record<Status, string> = { assigned: '#201515', available: '#847e7e', maintenance: '#c7c4c4', retired: '#e2e1e1' }
 const STATUS_LABEL: Record<Status, string> = { assigned: 'In use', available: 'Available', maintenance: 'Maintenance', retired: 'Retired' }
 
 /** Thick segmented bar (after the alvastudio contributor progress bar). */
@@ -148,8 +148,8 @@ export default function Overview() {
                   baseInnerRadius={44}
                   data={[
                     { label: 'In use', value: t.assigned, maxValue: active, color: '#201515' },
-                    { label: 'Available', value: t.available, maxValue: active, color: '#8a8a8a' },
-                    { label: 'Maintenance', value: t.maintenance, maxValue: active, color: '#c4c4c4' },
+                    { label: 'Available', value: t.available, maxValue: active, color: '#847e7e' },
+                    { label: 'Maintenance', value: t.maintenance, maxValue: active, color: '#c7c4c4' },
                   ]}
                 >
                   <Ring index={0} />

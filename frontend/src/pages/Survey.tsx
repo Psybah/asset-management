@@ -1,15 +1,16 @@
 import { AddressBookTabs, ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Button, Field, ease } from '@/components/ui'
+import { Button, Field, SelectField, ease } from '@/components/ui'
 import { ApiError, api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 type Opt = { value: string; label: string }
+type Demographic = { id: string; code: string; label: string; options: Opt[]; other_field: string | null; allow_other: boolean; required: boolean }
 type Form = {
   title: string
   intro: string
-  demographics: { id: string; code: string; label: string; options: Opt[]; other_field: string | null; allow_other: boolean; required: boolean }[]
+  demographics: Demographic[]
   tasks: { id: string; text: string }[]
   task_outcomes: Opt[]
   sus: { instructions: string; source: string; scale: { value: number; label: string }[]; items: { item: number; field: string; text: string }[] }
@@ -19,30 +20,80 @@ type Form = {
 }
 type Answers = Record<string, string | number | undefined>
 
-function Choice({ options, value, onChange, cols }: { options: Opt[]; value?: string | number; onChange: (v: string) => void; cols?: string }) {
+/* ---------------- controls: each question gets the control that suits it ---------------- */
+
+/** Vertical radio list — for options with long labels. */
+function RadioList({ options, value, onChange }: { options: Opt[]; value?: string | number; onChange: (v: string) => void }) {
   return (
-    <div className={cn('flex flex-wrap gap-1.5', cols)}>
-      {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          onClick={() => onChange(o.value)}
-          className={cn('min-h-10 rounded-full px-4 py-2 text-left text-sm transition-colors duration-200', String(value) === o.value ? 'bg-ink text-white' : 'bg-white hover:bg-fog')}
-        >
-          {o.label}
-        </button>
-      ))}
+    <div role="radiogroup" className="stack [border-radius:0.9rem]">
+      {options.map((o) => {
+        const on = String(value) === o.value
+        return (
+          <button key={o.value} type="button" role="radio" aria-checked={on} onClick={() => onChange(o.value)}
+            className={cn('flex items-center gap-3 px-3.5 py-3 text-left text-sm transition-colors', on ? 'bg-white' : 'bg-white/60 hover:bg-white')}>
+            <span className={cn('grid size-[18px] shrink-0 place-items-center rounded-full transition-colors', on ? 'bg-ink' : 'bg-fog')}>
+              {on && <span className="size-1.5 rounded-full bg-white" />}
+            </span>
+            <span className={on ? 'text-ink' : 'text-smoke'}>{o.label}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }
 
-function Block({ code, label, children }: { code?: string; label: string; children: ReactNode }) {
+/** Compact segmented choice — for a few short options. */
+function Seg({ options, value, onChange }: { options: Opt[]; value?: string | number; onChange: (v: string) => void }) {
   return (
-    <div className="rounded-[1.5rem] bg-white p-1.5">
-      <p className="px-3 pb-3 pt-2.5 text-sm leading-snug">
-        {code && <span className="mr-2 text-xs text-ash tabular">{code}</span>}{label}
+    <div role="radiogroup" className="inline-flex max-w-full flex-wrap gap-0.5 rounded-[1rem] bg-white p-1">
+      {options.map((o) => {
+        const on = String(value) === o.value
+        return (
+          <button key={o.value} type="button" role="radio" aria-checked={on} onClick={() => onChange(o.value)}
+            className={cn('rounded-[0.75rem] px-3 py-1.5 text-xs font-medium transition-colors', on ? 'bg-ink text-white' : 'text-smoke hover:bg-mist hover:text-ink')}>
+            {o.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** 1–5 agreement scale as radio dots. */
+function Scale({ value, onChange, labels }: { value?: string | number; onChange: (v: number) => void; labels: { value: number; label: string }[] }) {
+  return (
+    <div role="radiogroup" className="flex shrink-0 gap-1">
+      {labels.map((s) => {
+        const on = Number(value) === s.value
+        return (
+          <button key={s.value} type="button" role="radio" aria-checked={on} aria-label={s.label} title={s.label} onClick={() => onChange(s.value)}
+            className={cn('grid size-9 place-items-center rounded-full text-xs font-medium tabular transition-colors', on ? 'bg-ink text-white' : 'bg-white text-smoke hover:bg-fog hover:text-ink')}>
+            {s.value}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** A grouped card of related questions. */
+function Group({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="rounded-[1.5rem] bg-white p-2">
+      <h2 className="px-2.5 pb-2 pt-1.5 text-[13px] font-medium text-smoke">{title}</h2>
+      <div className="stack [border-radius:1.1rem]">{children}</div>
+    </section>
+  )
+}
+
+/** One question row inside a group. `inline` puts the control beside the label on wide screens. */
+function Q({ code, label, children, inline }: { code?: string; label: string; children: ReactNode; inline?: boolean }) {
+  return (
+    <div className={cn('bg-mist p-3', inline && 'sm:flex sm:items-center sm:justify-between sm:gap-4')}>
+      <p className={cn('text-sm leading-snug', inline ? 'mb-2 sm:mb-0' : 'mb-2.5')}>
+        {code && <span className="mr-2 text-[11px] text-ash tabular">{code}</span>}{label}
       </p>
-      <div className="rounded-[1.15rem] bg-canvas/60 p-2">{children}</div>
+      {children}
     </div>
   )
 }
@@ -59,6 +110,7 @@ export default function Survey() {
   useEffect(() => { document.title = 'Usability survey · Ledger' }, [])
   useEffect(() => { api.get<Form>('/survey/form/').then(setForm).catch(() => setErr('Could not load the survey. Is the server running?')) }, [])
   const set = (k: string) => (v: string | number) => setA((s) => ({ ...s, [k]: v }))
+  const dm = (id: string) => form?.demographics.find((d) => d.id === id)
 
   const steps = useMemo(() => (form ? ['About you', 'Tasks', 'Usability', 'Overall'] : []), [form])
 
@@ -83,6 +135,26 @@ export default function Survey() {
     try { await api.post('/survey/', body); setDone(true) } catch (e) {
       setErr(e instanceof ApiError && e.status === 429 ? 'Too many submissions from this network. Try again later.' : (e as Error).message)
     } finally { setBusy(false) }
+  }
+
+  /** Renders a demographic question with the control that fits it. */
+  const demo = (id: string, kind: 'select' | 'radio' | 'seg', inline = false) => {
+    const d = dm(id)
+    if (!d) return null
+    const other = d.other_field && a[d.id] === 'other'
+    return (
+      <Q key={d.id} code={d.code} label={d.label} inline={inline && !other}>
+        {kind === 'select' && (
+          <SelectField label="Choose one" value={String(a[d.id] ?? '')} onChange={(e) => set(d.id)(e.target.value)} className="bg-white [&_[data-slot=select-trigger]]:bg-white">
+            <option value="">Select…</option>
+            {d.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </SelectField>
+        )}
+        {kind === 'radio' && <RadioList options={d.options} value={a[d.id]} onChange={set(d.id)} />}
+        {kind === 'seg' && <Seg options={d.options} value={a[d.id]} onChange={set(d.id)} />}
+        {other && <Field label="Please specify" className="mt-2 [&_input]:bg-white" value={String(a[d.other_field!] ?? '')} onChange={(e) => set(d.other_field!)(e.target.value)} />}
+      </Q>
+    )
   }
 
   return (
@@ -117,62 +189,78 @@ export default function Survey() {
               <p className="mt-2 max-w-xs text-sm text-ash">Your response has been recorded anonymously.</p>
             </motion.div>
           ) : form && (
-            <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.4, ease }} className="flex-1 space-y-2.5">
+            <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.4, ease }} className="flex-1 space-y-2">
               <h1 className="px-1 pb-2 text-2xl font-medium tracking-[-0.03em]">{steps[step]}</h1>
+
               {step === 0 && (
                 <>
-                  {form.demographics.map((d) => (
-                    <Block key={d.id} code={d.code} label={d.label}>
-                      <Choice options={d.options} value={a[d.id]} onChange={set(d.id)} />
-                      {d.other_field && a[d.id] === 'other' && <Field label="Please specify" className="mt-2" value={String(a[d.other_field] ?? '')} onChange={(e) => set(d.other_field!)(e.target.value)} />}
-                    </Block>
-                  ))}
+                  <Group title="Your work">
+                    {demo('department', 'select')}
+                    {demo('role', 'radio')}
+                  </Group>
+                  <Group title="Background">
+                    {demo('age_group', 'select')}
+                    {demo('computer_use', 'seg')}
+                    {demo('prior_software', 'seg', true)}
+                    {demo('current_method', 'radio')}
+                  </Group>
+                  <Group title="This session">
+                    {demo('device', 'seg', true)}
+                  </Group>
                 </>
               )}
-              {step === 1 && form.tasks.map((t) => (
-                <Block key={t.id} code={t.id} label={t.text}>
-                  <Choice options={form.task_outcomes} value={tasks[t.id]} onChange={(v) => setTasks((s) => ({ ...s, [t.id]: v }))} />
-                </Block>
-              ))}
+
+              {step === 1 && (
+                <Group title="How did each task go?">
+                  {form.tasks.map((t) => (
+                    <Q key={t.id} code={t.id} label={t.text}>
+                      <Seg options={form.task_outcomes} value={tasks[t.id]} onChange={(v) => setTasks((s) => ({ ...s, [t.id]: v }))} />
+                    </Q>
+                  ))}
+                </Group>
+              )}
+
               {step === 2 && (
-                <>
-                  <p className="px-1 pb-2 text-sm text-smoke">{form.sus.instructions}</p>
+                <Group title="How much do you agree?">
+                  <div className="flex items-center justify-between bg-mist px-3 py-2 text-[11px] text-ash">
+                    <span>{form.sus.scale[0]?.value} = {form.sus.scale[0]?.label}</span>
+                    <span>{form.sus.scale[form.sus.scale.length - 1]?.value} = {form.sus.scale[form.sus.scale.length - 1]?.label}</span>
+                  </div>
                   {form.sus.items.map((i) => (
-                    <Block key={i.field} code={String(i.item)} label={i.text}>
-                      <div className="grid grid-cols-5 gap-1">
-                        {form.sus.scale.map((s) => (
-                          <button
-                            key={s.value}
-                            type="button"
-                            onClick={() => set(i.field)(s.value)}
-                            className={cn('flex h-14 flex-col items-center justify-center rounded-[1rem] transition-colors', Number(a[i.field]) === s.value ? 'bg-ink text-white' : 'bg-white hover:bg-fog')}
-                          >
-                            <span className="text-sm font-medium">{s.value}</span>
-                            <span className={cn('hidden text-[9px] sm:block', Number(a[i.field]) === s.value ? 'text-white/60' : 'text-ash')}>{s.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </Block>
+                    <div key={i.field} className="flex flex-col gap-2.5 bg-mist p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                      <p className="text-sm leading-snug"><span className="mr-2 text-[11px] text-ash tabular">{i.item}</span>{i.text}</p>
+                      <Scale value={a[i.field]} onChange={set(i.field)} labels={form.sus.scale} />
+                    </div>
                   ))}
-                  <p className="px-1 text-[11px] text-ash">1 = {form.sus.scale[0]?.label} · 5 = {form.sus.scale[form.sus.scale.length - 1]?.label}. {form.sus.source}</p>
-                </>
+                </Group>
               )}
+
               {step === 3 && (
                 <>
-                  <Block code={form.adjective.code} label={form.adjective.label}><Choice options={form.adjective.options} value={a.adjective} onChange={set('adjective')} /></Block>
-                  <Block code={form.comparison.code} label={form.comparison.label}><Choice options={form.comparison.options} value={a.comparison} onChange={set('comparison')} /></Block>
-                  {form.open_questions.map((q) => (
-                    <Block key={q.id} code={q.code} label={q.label}>
-                      <textarea
-                        value={String(a[q.id] ?? '')}
-                        maxLength={q.max_length}
-                        onChange={(e) => set(q.id)(e.target.value)}
-                        rows={3}
-                        placeholder="Optional"
-                        className="w-full resize-none rounded-[0.9rem] bg-white px-4 py-3 text-sm placeholder:text-ash"
-                      />
-                    </Block>
-                  ))}
+                  <Group title="Overall">
+                    <Q code={form.adjective.code} label={form.adjective.label}>
+                      <SelectField label="Rating" value={String(a.adjective ?? '')} onChange={(e) => set('adjective')(e.target.value)} className="[&_[data-slot=select-trigger]]:bg-white">
+                        <option value="">Select…</option>
+                        {form.adjective.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                      </SelectField>
+                    </Q>
+                    <Q code={form.comparison.code} label={form.comparison.label}>
+                      <Seg options={form.comparison.options} value={a.comparison} onChange={set('comparison')} />
+                    </Q>
+                  </Group>
+                  <Group title="Comments (optional)">
+                    {form.open_questions.map((q) => (
+                      <Q key={q.id} code={q.code} label={q.label}>
+                        <textarea
+                          value={String(a[q.id] ?? '')}
+                          maxLength={q.max_length}
+                          onChange={(e) => set(q.id)(e.target.value)}
+                          rows={3}
+                          className="w-full resize-none rounded-[0.9rem] bg-white px-4 py-3 text-sm placeholder:text-ash"
+                        />
+                      </Q>
+                    ))}
+                  </Group>
                 </>
               )}
             </motion.div>

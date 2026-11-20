@@ -52,6 +52,8 @@
 *::-webkit-scrollbar-thumb { background: rgb(32 21 21 / 0.25); border-radius: 9999px; }
 *::-webkit-scrollbar-thumb:hover { background: rgb(32 21 21 / 0.45); }
 
+@keyframes select-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: none; } }
+
 @utility no-scrollbar {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
@@ -123,14 +125,14 @@ html.lenis, html.lenis body { height: auto; }
   --foreground: #201515;
   --popover: #ffffff;
   --popover-foreground: #201515;
-  --muted-foreground: #8a8a8a;
+  --muted-foreground: #847e7e;
   --border: #e6e6e6;
 
   --chart-1: #201515;
-  --chart-2: #8f8f8f;
-  --chart-3: #bdbdbd;
-  --chart-4: #d9d9d9;
-  --chart-5: #5c5c5c;
+  --chart-2: #847e7e;
+  --chart-3: #a6a1a1;
+  --chart-4: #c7c4c4;
+  --chart-5: #635b5b;
   --chart-positive: #201515;
   --chart-negative: #8f8f8f;
   --chart-background: transparent;
@@ -139,7 +141,7 @@ html.lenis, html.lenis body { height: auto; }
   --chart-line-primary: var(--chart-1);
   --chart-line-secondary: var(--chart-2);
   --chart-crosshair: #201515;
-  --chart-grid: #e2e2e2;
+  --chart-grid: #e2e1e1;
   --chart-brush-border: var(--chart-grid);
   --chart-tooltip-background: #201515;
   --chart-tooltip-foreground: #ffffff;
@@ -149,7 +151,7 @@ html.lenis, html.lenis body { height: auto; }
   --chart-marker-foreground: #201515;
   --chart-label: #9a9a9a;
   --chart-scale-mix: #ffffff;
-  --chart-scale-01: #ececec;
+  --chart-scale-01: #e2e1e1;
   --chart-scale-02: color-mix(in oklab, var(--chart-1) 35%, var(--chart-scale-mix));
   --chart-scale-03: color-mix(in oklab, var(--chart-1) 55%, var(--chart-scale-mix));
   --chart-scale-04: color-mix(in oklab, var(--chart-1) 78%, var(--chart-scale-mix));
@@ -166,7 +168,7 @@ html.lenis, html.lenis body { height: auto; }
 /* Charts on an ink panel */
 .on-ink {
   --chart-1: #ffffff;
-  --chart-2: #8a8a8a;
+  --chart-2: #847e7e;
   --chart-grid: rgb(255 255 255 / 0.08);
   --chart-label: rgb(255 255 255 / 0.45);
   --chart-crosshair: #ffffff;

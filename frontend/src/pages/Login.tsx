@@ -53,7 +53,7 @@ export default function Login() {
       <div className="grid min-h-dvh gap-2 p-2 md:h-dvh md:grid-cols-[1.15fr_1fr]">
         {/* Visual: React Bits Silk, monochrome */}
         <div className="relative hidden overflow-hidden rounded-[1.4rem] bg-ink md:block md:rounded-[1.75rem]">
-          <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />
+          <Silk color="#4a3434" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />
           <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-9 text-white">
             <div className="flex items-center gap-2.5">
               <AddressBookTabs size={20} weight="fill" />
