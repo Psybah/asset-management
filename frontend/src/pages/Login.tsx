@@ -1,9 +1,10 @@
 import { ArrowRight } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Silk from '@/components/bits/Silk'
 import { Button, Field, FieldGroup, ease } from '@/components/ui'
+import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 
 const demo = [
@@ -22,19 +23,34 @@ export default function Login() {
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
 
+  // Free hosting puts the API to sleep when idle; start waking it as soon as the page opens.
+  useEffect(() => { api.get('/survey/form/').catch(() => {}) }, [])
+
   const submit = async (u = username, p = password) => {
     setBusy(true); setErr('')
-    try {
-      await login(u, p)
-      nav(params.get('next') || '/', { replace: true })
-    } catch (e) {
-      setErr((e as Error).message || 'Try again')
-    } finally { setBusy(false) }
+    const started = Date.now()
+    for (;;) {
+      try {
+        await login(u, p)
+        nav(params.get('next') || '/', { replace: true })
+        break
+      } catch (e) {
+        // A network error (not a 4xx) means the server is still waking up: retry for ~75 s.
+        if (e instanceof TypeError && Date.now() - started < 75_000) {
+          setErr('Waking the server — this can take up to a minute on the free plan…')
+          await new Promise((r) => setTimeout(r, 4000))
+          continue
+        }
+        setErr(e instanceof TypeError ? 'Can’t reach the server. Check your connection and try again.' : (e as Error).message || 'Try again')
+        break
+      }
+    }
+    setBusy(false)
   }
 
   return (
-    <div className="h-dvh p-2 md:p-3">
-      <div className="grid h-full gap-2 overflow-hidden rounded-[1.75rem] bg-white p-2 md:grid-cols-[1.15fr_1fr] md:rounded-[2.25rem]">
+    <div className="min-h-dvh bg-white">
+      <div className="grid min-h-dvh gap-2 p-2 md:h-dvh md:grid-cols-[1.15fr_1fr]">
         {/* Visual: React Bits Silk, monochrome */}
         <div className="relative hidden overflow-hidden rounded-[1.4rem] bg-ink md:block md:rounded-[1.75rem]">
           <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />

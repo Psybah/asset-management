@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { api, token } from './api'
+import { ApiError, api, token } from './api'
 import type { User } from './types'
 
 interface AuthState {
@@ -18,7 +18,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!token.get()) { setReady(true); return }
-    api.get<User>('/auth/me/').then(setUser).catch(() => token.set(null)).finally(() => setReady(true))
+    // Only a 401 means the session is gone; a network error means the free server is
+    // still waking up, so keep the session and retry for up to ~75 s.
+    let cancelled = false
+    const started = Date.now()
+    const check = (): Promise<void> => api.get<User>('/auth/me/').then((u) => { if (!cancelled) setUser(u) }).catch((e) => {
+      if (e instanceof TypeError && Date.now() - started < 75_000 && !cancelled) return new Promise<void>((r) => setTimeout(r, 4000)).then(check)
+      if (e instanceof ApiError && e.status === 401) token.set(null)
+    })
+    check().finally(() => { if (!cancelled) setReady(true) })
+    return () => { cancelled = true }
   }, [])
 
   const login = useCallback(async (username: string, password: string) => {

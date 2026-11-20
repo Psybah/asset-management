@@ -1,16 +1,28 @@
 <!-- center -->
 
+![University of Ibadan logo](figures/ui-logo.png)
+
 **DESIGN AND IMPLEMENTATION OF A WEB-BASED ASSET MANAGEMENT SYSTEM FOR A CORPORATE OFFICE**
 
 PROJECT PROPOSAL
 
 BY
 
-OLUWAMUREWA, Abiodun (E052852) — Team Leader
+GROUP 27
 
-ABEGUNDE, Jimmy (E051739)
+&nbsp;
 
-MOSOBALAJE, Opeyemi (E051727)
+OLUWAMUREWA, Abiodun (Team Leader)<br>E052852
+
+&nbsp;
+
+ABEGUNDE, Jimmy<br>E051739
+
+&nbsp;
+
+MOSOBALAJE, Opeyemi<br>E051727
+
+&nbsp;
 
 SUBMITTED TO
 
@@ -20,11 +32,11 @@ FACULTY OF SCIENCE,
 
 UNIVERSITY OF IBADAN, IBADAN, NIGERIA
 
-IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE AWARD OF THE DEGREE OF BACHELOR OF SCIENCE (B.Sc.) IN COMPUTER SCIENCE
+COURSE: CSC 476
 
-SUPERVISOR: Prof. B. F. Oladejo
+LECTURER: Prof. B. F. Oladejo
 
-[DATE]
+NOVEMBER, 2026
 
 <!-- /center -->
 
@@ -172,7 +184,7 @@ The system will be verified with functional test cases, each comparing the expec
 | 4. Increment 3–4 | Check-out/check-in, audit trail, maintenance, disposal | 7–8 | OLUWAMUREWA |
 | 5. Increment 5 | Depreciation module, dashboard, CSV reports, survey page | 9 | OLUWAMUREWA |
 | 6. Testing and evaluation | Functional testing, SUS usability survey, bug fixing | 10–11 | OLUWAMUREWA, all members |
-| 7. Documentation and presentation | Final write-up, slides, defence | 12 | [SURNAME] (write-up), all members |
+| 7. Documentation and presentation | Final write-up, slides, defence | 12 | MOSOBALAJE (write-up), all members |
 
 Table 2 shows the planned phases. Phases 3 to 5 are Agile increments. Each ends with a review, and the feedback from each review shapes the next increment.
 

@@ -2,7 +2,7 @@
 
 A web-based system for tracking an office's physical assets across their whole lifecycle: registration, QR labelling, assignment to staff, maintenance, depreciation and disposal, with a full audit trail.
 
-> B.Sc. Computer Science final-year project, Department of Computer Science, University of Ibadan.
+> CSC 476 course project — Group 27, Department of Computer Science, University of Ibadan.
 
 ## Features
 

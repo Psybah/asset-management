@@ -13,7 +13,7 @@ const lanIp = Object.values(os.networkInterfaces()).flat()
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   define: { __LAN_ORIGIN__: JSON.stringify(lanIp ? `http://${lanIp}:5173` : '') },
-  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  resolve: { alias: { '@': path.resolve(import.meta.dirname, './src') } },
   server: {
     port: 5173,
     strictPort: true, // fail loudly instead of silently moving to 5174

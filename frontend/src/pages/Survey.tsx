@@ -85,8 +85,8 @@ export default function Survey() {
   }
 
   return (
-    <div className="min-h-dvh p-2 md:p-3">
-      <div className="mx-auto flex min-h-[calc(100dvh-1rem)] max-w-2xl flex-col rounded-[1.75rem] bg-canvas p-3 md:min-h-[calc(100dvh-1.5rem)] md:rounded-[2.25rem] md:p-6">
+    <div className="min-h-dvh bg-canvas">
+      <div className="mx-auto flex min-h-dvh max-w-2xl flex-col p-3 md:p-6">
         <header className="mb-6 flex items-center justify-between px-1 pt-1">
           <div className="flex items-center gap-2.5">
             <span className="grid size-5 place-items-center rounded-full bg-ink"><span className="size-2 rounded-full bg-white" /></span>

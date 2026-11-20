@@ -1,24 +1,30 @@
 <!-- center -->
 
+![University of Ibadan logo](figures/ui-logo.png)
+
 **DESIGN AND IMPLEMENTATION OF A WEB-BASED ASSET MANAGEMENT SYSTEM FOR A CORPORATE OFFICE**
+
+A COURSE PROJECT REPORT
 
 BY
 
-OLUWAMUREWA, Abiodun
+GROUP 27
 
-E052852
+&nbsp;
 
-ABEGUNDE, Jimmy
+OLUWAMUREWA, Abiodun (Team Leader)<br>E052852
 
-E051739
+&nbsp;
 
-MOSOBALAJE, Opeyemi
+ABEGUNDE, Jimmy<br>E051739
 
-E051727
+&nbsp;
 
-SUBMITTED
+MOSOBALAJE, Opeyemi<br>E051727
 
-TO
+&nbsp;
+
+SUBMITTED TO
 
 THE DEPARTMENT OF COMPUTER SCIENCE,
 
@@ -26,15 +32,17 @@ FACULTY OF SCIENCE,
 
 UNIVERSITY OF IBADAN, IBADAN, NIGERIA
 
-IN PARTIAL FULFILLMENT OF THE REQUIREMENTS FOR THE AWARD OF THE DEGREE OF BACHELOR OF SCIENCE (B.Sc.) IN COMPUTER SCIENCE.
+IN PARTIAL FULFILMENT OF THE REQUIREMENTS OF THE COURSE
 
-[MONTH, YEAR]
+CSC 476
+
+NOVEMBER, 2026
 
 <!-- /center -->
 
 # CERTIFICATION
 
-This is to certify that this project, **Design and Implementation of a Web-Based Asset Management System for a Corporate Office**, was carried out by us:
+This is to certify that this project, **Design and Implementation of a Web-Based Asset Management System for a Corporate Office**, was carried out by us, Group 27, as the course project for CSC 476:
 
 | Name | Matriculation Number |
 |---|---|
@@ -109,7 +117,7 @@ The resulting system provides:
 - automatic depreciation schedules and current book values;
 - a disposal workflow, an audit trail, a dashboard and CSV reports.
 
-The system was verified against 28 functional test cases. At the time of writing, 25 had passed and none had failed. Three are pending: scanning a printed label with a physical phone (TC9), and the tests of the asset photograph and survey features added in the final increment (TC27 and TC28) *[Team: update after TC9, TC27 and TC28]*. A System Usability Scale survey of [NUMBER] staff of Squad by HabariPay, collected through an in-app survey page, gave a mean score of [SUS SCORE], which is [ABOVE/BELOW] the commonly cited benchmark of 68. *[Placeholders: replace with the real test and survey results before submission.]* The system shows that a low-cost, web-based, QR-enabled solution can significantly improve accountability, maintenance and financial accuracy in managing office assets.
+The system was verified against 28 functional test cases. At the time of writing, 27 had passed and none had failed; the remaining test, scanning a printed label with a physical phone (TC9), is pending *[Team: update after TC9]*. A System Usability Scale survey of [NUMBER] staff of Squad by HabariPay, collected through an in-app survey page, gave a mean score of [SUS SCORE], which is [ABOVE/BELOW] the commonly cited benchmark of 68. *[Placeholders: replace with the real test and survey results before submission.]* The system shows that a low-cost, web-based, QR-enabled solution can significantly improve accountability, maintenance and financial accuracy in managing office assets.
 
 **Keywords:** asset management, QR code, web application, depreciation, Django REST Framework, React, System Usability Scale
 
@@ -123,48 +131,48 @@ The system was verified against 28 functional test cases. At the time of writing
 | Acknowledgement | iv |
 | Team Members' Participation | v |
 | Abstract | vi |
-| Table of Contents | vii |
-| List of Figures | ix |
-| List of Tables | x |
+| Table of Contents | viii |
+| List of Figures | x |
+| List of Tables | xi |
 | **CHAPTER ONE: INTRODUCTION** | 1 |
 | 1.1 Preamble | 1 |
 | 1.2 Statement of the Problem | 2 |
-| 1.3 Aim and Objectives | 3 |
+| 1.3 Aim and Objectives | 2 |
 | 1.4 Justification | 3 |
-| 1.5 Scope of the Study | 4 |
-| 1.6 Methodology | 5 |
-| 1.7 Organisation of the Report | 5 |
-| **CHAPTER TWO: REVIEW OF RELEVANT LITERATURE** | [ ] |
-| 2.1 Concept of Assets and Asset Management | [ ] |
-| 2.2 IT Asset Management | [ ] |
-| 2.3 Asset Identification and Tracking Technologies | [ ] |
-| 2.4 Depreciation Accounting and IAS 16 | [ ] |
-| 2.5 Review of Existing Systems | [ ] |
-| 2.6 Related Academic Works | [ ] |
-| 2.7 Usability Evaluation and the System Usability Scale | [ ] |
-| 2.8 Research Gap | [ ] |
-| **CHAPTER THREE: METHODOLOGY** | [ ] |
-| 3.1 Development Methodology | [ ] |
-| 3.2 Requirements Analysis | [ ] |
-| 3.3 System Architecture | [ ] |
-| 3.4 System Modelling (UML) | [ ] |
-| 3.5 Database Design | [ ] |
-| 3.6 API Design | [ ] |
-| 3.7 Evaluation Design | [ ] |
-| **CHAPTER FOUR: SYSTEM IMPLEMENTATION, TESTING AND RESULTS** | [ ] |
-| 4.1 Implementation Environment and Tools | [ ] |
-| 4.2 Module Implementation | [ ] |
-| 4.3 Key Algorithms | [ ] |
-| 4.4 User Interface | [ ] |
-| 4.5 System Testing | [ ] |
-| 4.6 Usability Evaluation | [ ] |
-| 4.7 Discussion of Results | [ ] |
-| **CHAPTER FIVE: SUMMARY, CONCLUSION AND RECOMMENDATIONS** | [ ] |
-| 5.1 Summary | [ ] |
-| 5.2 Conclusion | [ ] |
-| 5.3 Recommendations and Future Work | [ ] |
-| References | [ ] |
-| Appendix | [ ] |
+| 1.5 Scope of the Study | 3 |
+| 1.6 Methodology | 4 |
+| 1.7 Organisation of the Report | 4 |
+| **CHAPTER TWO: REVIEW OF RELEVANT LITERATURE** | 5 |
+| 2.1 Concept of Assets and Asset Management | 5 |
+| 2.2 IT Asset Management | 6 |
+| 2.3 Asset Identification and Tracking Technologies | 7 |
+| 2.4 Depreciation Accounting and IAS 16 | 8 |
+| 2.5 Review of Existing Systems | 10 |
+| 2.6 Related Academic Works | 11 |
+| 2.7 Usability Evaluation and the System Usability Scale | 12 |
+| 2.8 Research Gap | 13 |
+| **CHAPTER THREE: METHODOLOGY** | 14 |
+| 3.1 Development Methodology | 14 |
+| 3.2 Requirements Analysis | 14 |
+| 3.3 System Architecture | 17 |
+| 3.4 System Modelling (UML) | 19 |
+| 3.5 Database Design | 23 |
+| 3.6 API Design | 26 |
+| 3.7 Evaluation Design | 27 |
+| **CHAPTER FOUR: SYSTEM IMPLEMENTATION, TESTING AND RESULTS** | 28 |
+| 4.1 Implementation Environment and Tools | 28 |
+| 4.2 Module Implementation | 29 |
+| 4.3 Key Algorithms | 31 |
+| 4.4 User Interface | 33 |
+| 4.5 System Testing | 41 |
+| 4.6 Usability Evaluation | 44 |
+| 4.7 Discussion of Results | 47 |
+| **CHAPTER FIVE: SUMMARY, CONCLUSION AND RECOMMENDATIONS** | 49 |
+| 5.1 Summary | 49 |
+| 5.2 Conclusion | 49 |
+| 5.3 Recommendations and Future Work | 50 |
+| References | 52 |
+| Appendix | 55 |
 
 *(Page numbers to be completed after final formatting in Word. Use References → Table of Contents in Word to generate them automatically.)*
 
@@ -172,58 +180,58 @@ The system was verified against 28 functional test cases. At the time of writing
 
 | Figure | Page |
 |---|---|
-| 2.1 The asset lifecycle in a corporate office | [ ] |
-| 3.1 Agile incremental development model adopted for the project | [ ] |
-| 3.2 Three-tier architecture of the asset management system | [ ] |
-| 3.3 Use case diagram of the asset management system | [ ] |
-| 3.4 Entity–relationship diagram (ERD) | [ ] |
-| 3.5 Class diagram of the core domain | [ ] |
-| 3.6 Sequence diagram for asset check-out | [ ] |
-| 3.7 Activity diagram for maintenance scheduling and completion | [ ] |
-| 3.8 State diagram of asset status | [ ] |
-| 4.1 Login page | [ ] |
-| 4.2 Dashboard | [ ] |
-| 4.3 Asset register with search and filters | [ ] |
-| 4.4 Asset detail page with QR code, timeline and depreciation | [ ] |
-| 4.5 Printable QR label and mobile scan page | [ ] |
-| 4.6 Check-out and check-in dialogs | [ ] |
-| 4.7 Maintenance schedule showing an overdue job | [ ] |
-| 4.8 Audit log | [ ] |
-| 4.9 Reports page and exported CSV | [ ] |
-| 4.10 Distribution of individual SUS scores | [ ] |
+| 2.1 The asset lifecycle in a corporate office | 6 |
+| 3.1 Agile incremental development model adopted for the project | 14 |
+| 3.2 Three-tier architecture of the asset management system | 17 |
+| 3.3 Use case diagram of the asset management system | 19 |
+| 3.4 Entity–relationship diagram (ERD) | 19 |
+| 3.5 Class diagram of the core domain | 20 |
+| 3.6 Sequence diagram for asset check-out | 21 |
+| 3.7 Activity diagram for maintenance scheduling and completion | 22 |
+| 3.8 State diagram of asset status | 22 |
+| 4.1 Login page | 33 |
+| 4.2 Dashboard | 34 |
+| 4.3 Asset register with search and filters | 35 |
+| 4.4 Asset detail page with QR code, timeline and depreciation | 36 |
+| 4.5 Printable QR label and mobile scan page | 38 |
+| 4.6 Check-out and check-in dialogs | 39 |
+| 4.7 Maintenance schedule showing an overdue job | 40 |
+| 4.8 Audit log | 40 |
+| 4.9 Reports page and exported CSV | 41 |
+| 4.10 Distribution of individual SUS scores | 47 |
 
 # LIST OF TABLES
 
 | Table | Page |
 |---|---|
 | i Team members' participation | v |
-| 2.1 Comparison of asset identification technologies | [ ] |
-| 2.2 Worked example of straight-line and declining-balance depreciation | [ ] |
-| 2.3 Comparison of existing asset management approaches | [ ] |
-| 2.4 Summary of related academic works | [ ] |
-| 3.1 Functional requirements | [ ] |
-| 3.2 Non-functional requirements | [ ] |
-| 3.3 User roles and permissions | [ ] |
-| 3.4 Structure of the User table | [ ] |
-| 3.5 Structure of the Asset table | [ ] |
-| 3.6 Structure of the Assignment table | [ ] |
-| 3.7 Structure of the Maintenance table | [ ] |
-| 3.8 Structure of the Disposal table | [ ] |
-| 3.9 Structure of the AuditLog table | [ ] |
-| 3.10 Structure of the reference tables (Category, Location, Department) | [ ] |
-| 3.11 Summary of REST API endpoints | [ ] |
-| 4.1 Implementation tools and justification | [ ] |
-| 4.2 Depreciation schedule produced by the system for a sample asset | [ ] |
-| 4.3 Functional test cases and results | [ ] |
-| 4.4 System Usability Scale items and scoring rule | [ ] |
-| 4.5 Demographic profile of respondents | [ ] |
-| 4.6 Responses to "I thought the system was easy to use" (SUS item 3) | [ ] |
-| 4.7 Responses to "I think that I would like to use this system frequently" (SUS item 1) | [ ] |
-| 4.8 Responses to "I think that I would need the support of a technical person to be able to use this system" (SUS item 4) | [ ] |
-| 4.9 Mean response per SUS item | [ ] |
-| 4.10 Summary of SUS scores | [ ] |
-| 4.11 Task completion rates | [ ] |
-| 4.12 Achievement of project objectives | [ ] |
+| 2.1 Comparison of asset identification technologies | 8 |
+| 2.2 Worked example of straight-line and declining-balance depreciation | 9 |
+| 2.3 Comparison of existing asset management approaches | 11 |
+| 2.4 Summary of related academic works | 12 |
+| 3.1 Functional requirements | 16 |
+| 3.2 Non-functional requirements | 17 |
+| 3.3 User roles and permissions | 17 |
+| 3.4 Structure of the User table | 23 |
+| 3.5 Structure of the Asset table | 24 |
+| 3.6 Structure of the Assignment table | 24 |
+| 3.7 Structure of the Maintenance table | 25 |
+| 3.8 Structure of the Disposal table | 25 |
+| 3.9 Structure of the AuditLog table | 25 |
+| 3.10 Structure of the reference tables (Category, Location, Department) | 26 |
+| 3.11 Summary of REST API endpoints | 26 |
+| 4.1 Implementation tools and justification | 28 |
+| 4.2 Depreciation schedule produced by the system for a sample asset | 32 |
+| 4.3 Functional test cases and results | 41 |
+| 4.4 System Usability Scale items and scoring rule | 44 |
+| 4.5 Demographic profile of respondents | 45 |
+| 4.6 Responses to "I thought the system was easy to use" (SUS item 3) | 45 |
+| 4.7 Responses to "I think that I would like to use this system frequently" (SUS item 1) | 45 |
+| 4.8 Responses to "I think that I would need the support of a technical person to be able to use this system" (SUS item 4) | 46 |
+| 4.9 Mean response per SUS item | 46 |
+| 4.10 Summary of SUS scores | 46 |
+| 4.11 Task completion rates | 47 |
+| 4.12 Achievement of project objectives | 47 |
 
 
 # CHAPTER ONE
@@ -1300,8 +1308,10 @@ The back end exposes a REST API under `/api/`. Table 3.11 lists its main endpoin
 | POST (multipart) | /assets/{id}/image/ | Upload or replace an asset's photograph |
 | POST | /survey/ | Submit a survey response (no token required) |
 | GET | /survey/results/ | Computed SUS results: n, mean, median, standard deviation, per-item distributions and task completion |
+| DELETE | /assets/{id}/image/ | Remove an asset's photograph |
+| GET | /survey/form/ | Survey question definitions used to render the form (no token required) |
+| GET | /reports/survey.csv | Raw survey responses with computed SUS scores (manager or admin) |
 
-*[Team: confirm the photograph-upload and survey endpoint paths in Table 3.11 against the final code.]*
 
 ### 3.7 EVALUATION DESIGN
 
@@ -1520,7 +1530,7 @@ Both are computed when needed rather than stored, so they cannot become inconsis
 
 ### 4.4 USER INTERFACE
 
-This section presents the main screens of the implemented system. The interface follows shadcn/ui component conventions, with a small design system of textured buttons and floating-label input fields so that every form looks and behaves the same way. The screens show the illustrative seed data modelled on a fintech office (Section 3.2.1), not the case-study organisation's real records. *[Team: retake the screenshots with the current interface and seed data; keep the figure numbers and captions below.]*
+This section presents the main screens of the implemented system. The interface follows shadcn/ui component conventions, with a small design system of textured buttons and floating-label input fields so that every form looks and behaves the same way. The screens show the illustrative seed data modelled on a fintech office (Section 3.2.1), not the case-study organisation's real records.
 
 ![Figure 4.1](figures/fig-4-1.png)
 
@@ -1596,7 +1606,7 @@ Figure 4.9 shows the asset register exported as CSV and opened in a spreadsheet 
 
 The system was tested against the functional requirements of Table 3.1. Table 4.3 lists the test cases, the expected result of each and the actual result observed.
 
-The tests were executed on 19 November 2026 against the running system (Django development server with the seeded demonstration data). TC1–TC8, TC10–TC16 and TC21–TC25 were run through the REST API with a scripted HTTP client, TC17–TC20 by running the depreciation module directly, and TC26 in a browser at smartphone size. TC9 requires a printed label and a physical phone. These tests used the earlier generic-office version of the seed data (for example an IT department), which explains the department names in TC25; the seed data was later re-themed as a fintech office. TC27 and TC28 cover the asset photograph and survey features added in the final increment and are still to be run. *[Team: re-run TC24–TC25 on the fintech seed data if the figures should match the new screenshots.]*
+The tests were executed on 19 November 2026 against the running system (Django development server with the seeded demonstration data). TC1–TC8, TC10–TC16, TC21–TC25 and TC27 were run through the REST API with a scripted HTTP client against the fintech-office seed data, TC17–TC20 by running the depreciation module directly, TC26 in a browser at smartphone size, and TC28 through the automated back-end test suite (so that the live survey holds only real participants' responses). TC9 requires a printed label and a physical phone.
 
 **Table 4.3: Functional test cases and results**
 
@@ -1605,14 +1615,14 @@ The tests were executed on 19 November 2026 against the running system (Django d
 | TC1 | FR1 | Log in with valid credentials (manager / correct password) | Token returned; dashboard displayed | HTTP 200; token issued (40 chars); user role 'manager' | PASS |
 | TC2 | FR1 | Log in with a wrong password | Error message displayed; no token issued | HTTP 400: "Invalid username or password."; no token in response | PASS |
 | TC3 | FR1, NFR4 | Call GET /api/assets/ without a token | HTTP 401 Unauthorized | HTTP 401 | PASS |
-| TC4 | FR2 | Staff user attempts to create an asset | HTTP 403 "Your role is read-only…"; no asset created | HTTP 403: "Your role is read-only. Ask a manager or admin to make this change."; asset count unchanged (62) | PASS |
-| TC5 | FR4, FR5 | Manager creates a new asset without a tag | Asset saved with next sequential tag, e.g. AST-0026 | HTTP 201; tag AST-0063 (previous highest AST-0062) | PASS |
+| TC4 | FR2 | Staff user attempts to create an asset | HTTP 403 "Your role is read-only…"; no asset created | HTTP 403: "Your role is read-only. Ask a manager or admin to make this change."; asset count unchanged (69) | PASS |
+| TC5 | FR4, FR5 | Manager creates a new asset without a tag | Asset saved with next sequential tag, e.g. AST-0026 | HTTP 201; tag AST-0070 (previous highest AST-0069) | PASS |
 | TC6 | FR4 | Create asset with no useful life in a category whose default is 4 years | Asset's useful life set to 4 | Category 'Laptops' default 4 yrs; asset useful_life_years = 4 | PASS |
 | TC7 | FR6 | Search "EliteBook" and filter status = assigned | Only assigned assets matching "EliteBook" listed | 3 results, all assigned and named EliteBook: True | PASS |
-| TC8 | FR7 | Request GET /api/assets/{id}/qr/ | PNG image returned that decodes to {FRONTEND_URL}/scan/{tag} | HTTP 200, image/png; decodes to http://localhost:5173/scan/AST-0063 | PASS |
+| TC8 | FR7 | Request GET /api/assets/{id}/qr/ | PNG image returned that decodes to {FRONTEND_URL}/scan/{tag} | HTTP 200, image/png; decodes to http://localhost:5173/scan/AST-0070 | PASS |
 | TC9 | FR8, NFR3 | Scan the printed QR label with a smartphone | Asset detail page opens within 5 seconds | [TO BE RECORDED] | [PASS/FAIL] |
 | TC10 | FR9 | Check out an available asset to a staff member with a due date | Status becomes "assigned"; custodian shown; timeline and audit entry created | HTTP 200; status 'assigned'; custodian Aisha Bello; timeline top 'checkout'; audit top 'checkout' | PASS |
-| TC11 | FR9, NFR5 | Check out an asset that is already assigned | HTTP 400 "…is not available for checkout"; no change | HTTP 400: "AST-0063 is not available for checkout (status: assigned)."; status still 'assigned' | PASS |
+| TC11 | FR9, NFR5 | Check out an asset that is already assigned | HTTP 400 "…is not available for checkout"; no change | HTTP 400: "AST-0070 is not available for checkout (status: assigned)."; status still 'assigned' | PASS |
 | TC12 | FR10 | Check in an assigned asset with condition "fair" | Status "available"; condition "fair"; assignment closed | HTTP 200; status 'available'; condition 'fair'; assignment closed: True | PASS |
 | TC13 | FR11 | View assignments for an asset checked out and in twice | Two closed assignment records with dates and users | 2 assignment records, all closed: True; users: Aisha Bello, Aisha Bello | PASS |
 | TC14 | FR12, FR13 | Create a maintenance job dated yesterday with status "scheduled" | Job saved and flagged overdue = true; counted on dashboard | HTTP 201; overdue = True; dashboard overdue count 7 → 8 | PASS |
@@ -1623,18 +1633,18 @@ The tests were executed on 19 November 2026 against the running system (Django d
 | TC19 | NFR7 | Salvage value greater than cost (cost ₦100,000, salvage ₦150,000, life 3) | Salvage capped at cost; no negative depreciation | All three annual charges ₦0.00; book value stays ₦100,000 | PASS |
 | TC20 | FR15 | Current value of the sample laptop (straight-line) bought 19 Nov 2024, valued on 19 Nov 2026 | ≈ ₦850,000 − 2 × ₦200,000 = ₦450,000 (prorated by days) | Module: ₦450,273.79 (730 days ÷ 365.25 = 1.9986 years). [Confirm on asset detail page] | PASS (module) |
 | TC21 | FR17 | Dispose of an assigned asset as "sold" for ₦100,000 with reason | Status "retired"; assignment closed; disposal recorded; value frozen | HTTP 200; status 'retired'; active assignments 0; current value ₦840,143.74 | PASS |
-| TC22 | FR17 | Dispose of an already retired asset | HTTP 400 "…has already been disposed" | HTTP 400: "AST-0063 has already been disposed." | PASS |
+| TC22 | FR17 | Dispose of an already retired asset | HTTP 400 "…has already been disposed" | HTTP 400: "AST-0070 has already been disposed." | PASS |
 | TC23 | FR18, FR19 | Perform create, check-out, check-in on an asset; open its timeline | All three events listed, newest first, with actor names | Timeline types (newest first): maintenance, maintenance, maintenance, checkin, checkout, checkin, checkout, created; sorted newest-first: True; actor names present: True | PASS |
-| TC24 | FR20 | Open the dashboard | Totals equal the counts and sums in the register | Dashboard assets 63 = register 63; status counts match: True; purchase value ₦234,000,000 = register sum ₦234,000,000 | PASS |
-| TC25 | FR21 | Export CSV with filter department = ICT | CSV downloaded containing only ICT assets | HTTP 200, text/csv; charset=utf-8; 17 rows, all department = IT: True | PASS |
+| TC24 | FR20 | Open the dashboard | Totals equal the counts and sums in the register | Dashboard assets 70 = register 70; status counts match: True; purchase value ₦176,470,000 = register sum ₦176,470,000 | PASS |
+| TC25 | FR21 | Export CSV with filter department = Engineering | CSV downloaded containing only Engineering assets | HTTP 200, text/csv; charset=utf-8; 28 rows, all department = Engineering: True | PASS |
 | TC26 | NFR2 | Open the register and asset pages on a smartphone browser | Layout adapts to the small screen; all actions usable | Verified in Chrome device emulation at 390×844 px: grids collapse to 1–2 columns, navigation fits the screen, dialogs open as bottom sheets. [Team: confirm on a physical phone] | PASS |
-| TC27 | FR22 | Manager uploads a photograph for an asset; open the register, the asset detail page and the category folder | Photograph shown in all three places; staff account cannot upload | [TO BE RECORDED] | [PASS/FAIL] |
-| TC28 | FR23, NFR4 | Submit a completed questionnaire at /survey without logging in, then request the survey results | Response saved; n increases by one; mean, median, SD, item distributions and task completion include the new response | [TO BE RECORDED] | [PASS/FAIL] |
+| TC27 | FR22 | Manager uploads a photograph for an asset; open the register, the asset detail page and the category folder | Photograph shown in all three places; staff account cannot upload | Staff upload → HTTP 403; manager upload → HTTP 200; image_url served (200, image/jpeg); photo present in register list: True | PASS |
+| TC28 | FR23, NFR4 | Submit a completed questionnaire at /survey without logging in, then request the survey results | Response saved; n increases by one; mean, median, SD, item distributions and task completion include the new response | Verified by the automated tests in backend/survey/tests.py: an anonymous submission returns 201 with its computed SUS score, and the results endpoint recomputes n, mean, median, SD, item distributions and task completion (49 of 49 backend tests pass). Not run against the live survey, so that it holds only real participants’ responses. | PASS |
 
 Table 4.3 covers every functional requirement (FR1–FR23) and the key non-functional requirements for security, integrity, accuracy and responsiveness.
 
 - TC17 to TC20 confirm that the depreciation module reproduces the hand-computed results and respects the salvage constraint.
-- Of the original 26 test cases, 25 passed on first execution and none failed; TC9 (physical QR scan) is pending, as are TC27 and TC28 for the features added in the final increment. *[Team: update once TC9, TC27 and TC28 have been run.]*
+- Of the 28 test cases, 27 passed on first execution and none failed; TC9 (physical QR scan) is pending. *[Team: update once TC9 has been run.]*
 - Access control behaved as designed: requests without a token were rejected (TC3), and a staff account could read but not modify data (TC4).
 - State rules held: an assigned asset could not be checked out again (TC11), and a retired asset could not be disposed of twice (TC22).
 
@@ -1988,13 +1998,13 @@ npm install
 npm run dev                      (application at the URL printed by Vite)
 ```
 
-**Both servers with one command:** once the back end has been set up as above (its virtual environment must be in `backend/.venv`) and `npm install` has been run in the project root, the following command, run from the project root, starts the Django API and the Vite front end together. *[Team: confirm against the final README; the root package also offers `npm run setup` for the one-time installation.]*
+**Both servers with one command:** once the back end has been set up as above (its virtual environment must be in `backend/.venv`) and `npm install` has been run in the project root, the following command, run from the project root, starts the Django API and the Vite front end together. The root package also provides `npm run setup` for the one-time installation.
 
 ```text
 npm run dev
 ```
 
-**Seed data:** the seed command loads illustrative data modelled on a fintech office, with the departments Engineering, Product & Design, Operations, Compliance & Risk, Finance, Growth & Partnerships and People & Culture. It is not the case-study organisation's real data. The asset photographs come from Wikimedia Commons under free licences. *[Team: list the source page and licence of each seed photograph here, or point to the file in the repository that records them.]*
+**Seed data:** the seed command loads illustrative data modelled on a fintech office, with the departments Engineering, Product & Design, Operations, Compliance & Risk, Finance, Growth & Partnerships and People & Culture. It is not the case-study organisation's real data. The asset photographs come from Wikimedia Commons under free licences. The source page, author and licence of every seed photograph (Wikimedia Commons; CC0, public domain, CC BY or CC BY-SA) are recorded in `backend/assets/seed_images/CREDITS.md` in the repository.
 
 **Demonstration accounts (created by the seed command):**
 

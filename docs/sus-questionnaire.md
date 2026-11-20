@@ -5,7 +5,7 @@
 
 Dear Respondent,
 
-We are final-year students of the Department of Computer Science, University of Ibadan. As part of our B.Sc. project we have built a web-based asset management system that keeps an office's asset register, prints QR code labels, records check-out and check-in, schedules maintenance and calculates depreciation. Please use the system to complete the short tasks in Section B, then answer the questions below.
+We are students of the Department of Computer Science, University of Ibadan (CSC 476, Group 27). As part of our course project we have built a web-based asset management system that keeps an office's asset register, prints QR code labels, records check-out and check-in, schedules maintenance and calculates depreciation. Please use the system to complete the short tasks in Section B, then answer the questions below.
 
 The same questionnaire is built into the system as a survey page at `/survey` (no login needed); you may answer it there or on paper, but not both.
 

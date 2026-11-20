@@ -19,7 +19,10 @@ import Survey from './pages/Survey'
 function Splash() {
   return (
     <div className="grid h-dvh place-items-center">
-      <motion.span className="size-3 rounded-full bg-white" animate={{ scale: [1, 1.6, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />
+      <div className="flex flex-col items-center gap-5">
+        <motion.span className="size-3 rounded-full bg-white" animate={{ scale: [1, 1.6, 1] }} transition={{ duration: 1.2, repeat: Infinity }} />
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4 }} className="text-xs text-white/50">Waking the server — up to a minute on the free plan</motion.p>
+      </div>
     </div>
   )
 }

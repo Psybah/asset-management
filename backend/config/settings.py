@@ -118,6 +118,13 @@ CORS_ALLOWED_ORIGINS = sorted(
     }
 )
 
+# Render: the web app's URL gets a random suffix (ledger-web-xxxx.onrender.com); accept it
+# even if FRONTEND_URL was not set. Extra patterns via CORS_ALLOWED_ORIGIN_REGEXES.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://ledger-web[a-z0-9-]*\.onrender\.com$",
+    *[r for r in os.environ.get("CORS_ALLOWED_ORIGIN_REGEXES", "").split(",") if r],
+]
+
 # Production behind a TLS-terminating proxy (Render, Railway, etc.).
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "https://*.onrender.com").split(",") if o]
@@ -128,6 +135,7 @@ SERVE_MEDIA = env_bool("SERVE_MEDIA", True)
 if DEBUG:
     ALLOWED_HOSTS = [*ALLOWED_HOSTS, "*"]
     CORS_ALLOWED_ORIGIN_REGEXES = [
+        *CORS_ALLOWED_ORIGIN_REGEXES,
         r"^http://(192\.168|10)\.\d{1,3}\.\d{1,3}(\.\d{1,3})?:5173$",
         r"^http://172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}:5173$",
     ]
