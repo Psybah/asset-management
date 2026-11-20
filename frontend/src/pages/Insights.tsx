@@ -1,4 +1,5 @@
 import { ChartBar, Copy, DownloadSimple, Gauge, Pulse, Users } from '@phosphor-icons/react'
+import { useEffect, useState } from 'react'
 import { Bar } from '@/components/charts/bar'
 import { BarChart } from '@/components/charts/bar-chart'
 import { BarXAxis } from '@/components/charts/bar-x-axis'
@@ -39,14 +40,22 @@ function Shares({ rows }: { rows: Share[] }) {
 }
 
 export default function Insights() {
-  const { data: r } = useData<Results>('/survey/results/')
+  const { data: r, reload } = useData<Results>('/survey/results/')
+  // Live while open: new survey responses appear without a reload.
+  const [updated, setUpdated] = useState(() => Date.now())
+  const [, tick] = useState(0)
+  useEffect(() => {
+    const poll = setInterval(() => { if (document.visibilityState === 'visible') { reload(); setUpdated(Date.now()) } }, 15000)
+    const clock = setInterval(() => tick((n) => n + 1), 5000)
+    return () => { clearInterval(poll); clearInterval(clock) }
+  }, [reload])
   const toast = useToast()
   const link = `${publicOrigin}/survey`
 
   return (
     <Page>
       <PageHeader
-        eyebrow="System Usability Scale"
+        eyebrow={<span className="flex items-center gap-1.5"><span className="relative flex size-1.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-ink/40" /><span className="relative inline-flex size-1.5 rounded-full bg-ink" /></span>Live · updated {Math.max(0, Math.round((Date.now() - updated) / 1000))}s ago</span>}
         title="Usability"
         actions={<>
           <IconButton label="Download responses (CSV)" onClick={() => window.open(`${API_URL}/reports/survey.csv?token=${token.get()}`, '_blank')}><DownloadSimple size={16} /></IconButton>

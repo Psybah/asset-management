@@ -98,14 +98,34 @@ function Q({ code, label, children, inline }: { code?: string; label: string; ch
   )
 }
 
+const DRAFT = 'ledger.survey.draft'
+type Draft = { a: Answers; tasks: Record<string, string>; step: number; savedAt: number }
+function loadDraft(): Draft | null {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT) || 'null') as Draft | null
+    return d && Date.now() - d.savedAt < 864e5 ? d : null
+  } catch { return null }
+}
+
 export default function Survey() {
   const [form, setForm] = useState<Form | null>(null)
-  const [step, setStep] = useState(0)
-  const [a, setA] = useState<Answers>({})
-  const [tasks, setTasks] = useState<Record<string, string>>({})
+  const [draft] = useState(loadDraft)
+  const [step, setStep] = useState<number>(draft?.step ?? 0)
+  const [a, setA] = useState<Answers>(draft?.a ?? {})
+  const [tasks, setTasks] = useState<Record<string, string>>(draft?.tasks ?? {})
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const [done, setDone] = useState(false)
+  const [restored, setRestored] = useState(() => Object.keys(draft?.a ?? {}).length > 0)
+
+  // Answers are kept in this browser while the survey is in progress, so a refresh or an
+  // accidental back-swipe doesn't lose them (read once at start; cleared on submit; 1-day expiry).
+  useEffect(() => {
+    if (done) return
+    try { localStorage.setItem(DRAFT, JSON.stringify({ a, tasks, step, savedAt: Date.now() })) } catch { /* storage unavailable */ }
+  }, [a, tasks, step, done])
+  const clearDraft = () => { try { localStorage.removeItem(DRAFT) } catch { /* noop */ } }
+  const startOver = () => { clearDraft(); setA({}); setTasks({}); setStep(0); setDone(false); setRestored(false) }
 
   useEffect(() => { document.title = 'Usability survey · Ledger' }, [])
   useEffect(() => { api.get<Form>('/survey/form/').then(setForm).catch(() => setErr('Could not load the survey. Is the server running?')) }, [])
@@ -132,7 +152,7 @@ export default function Survey() {
       tasks_with_help: form.tasks.filter((t) => tasks[t.id] === 'with_help').map((t) => t.id),
       ...Object.fromEntries(form.sus.items.map((i) => [i.field, Number(a[i.field])])),
     }
-    try { await api.post('/survey/', body); setDone(true) } catch (e) {
+    try { await api.post('/survey/', body); clearDraft(); setDone(true) } catch (e) {
       setErr(e instanceof ApiError && e.status === 429 ? 'Too many submissions from this network. Try again later.' : (e as Error).message)
     } finally { setBusy(false) }
   }
@@ -187,10 +207,17 @@ export default function Survey() {
               <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }} className="mb-5 grid size-14 place-items-center rounded-full bg-ink text-white"><Check size={22} /></motion.span>
               <h1 className="text-2xl font-medium tracking-[-0.03em]">Thank you</h1>
               <p className="mt-2 max-w-xs text-sm text-ash">Your response has been recorded anonymously.</p>
+              <Button tone="paper" beam={false} className="mt-6" onClick={startOver}>Start a new response</Button>
             </motion.div>
           ) : form && (
             <motion.div key={step} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.4, ease }} className="flex-1 space-y-2">
               <h1 className="px-1 pb-2 text-2xl font-medium tracking-[-0.03em]">{steps[step]}</h1>
+              {restored && (
+                <div className="flex items-center justify-between gap-3 rounded-full bg-white py-1 pl-4 pr-1 text-xs text-smoke">
+                  <span>Your earlier answers were restored.</span>
+                  <button type="button" onClick={startOver} className="rounded-full px-3 py-1.5 font-medium text-ink hover:bg-mist">Start over</button>
+                </div>
+              )}
 
               {step === 0 && (
                 <>
