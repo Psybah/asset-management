@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
  * an SVG path sized to the content.
  * `edge="top"` hangs from the top edge; `edge="bottom"` rises from the bottom.
  */
-export function Notch({ edge, children, className, bodyClassName, slant = 68 }: { edge: 'top' | 'bottom'; children: ReactNode; className?: string; bodyClassName?: string; slant?: number }) {
+export function Notch({ edge, children, className, bodyClassName, slant = 72 }: { edge: 'top' | 'bottom'; children: ReactNode; className?: string; bodyClassName?: string; slant?: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
 
@@ -23,14 +23,15 @@ export function Notch({ edge, children, className, bodyClassName, slant = 68 }: 
   const s = slant
   // Outer width = content + a slant on each side. Curves: flat at the frame edge, flat at the tab face.
   const W = w + s * 2
-  // Each side is one smooth S-curve: it leaves the frame edge tangentially (a soft
-  // concave fillet into the straight line) and arrives at the face tangentially (a
-  // generously rounded convex corner). A wide slant keeps both curves gentle.
-  const k1 = 0.55 // pull at the frame edge
-  const k2 = 0.42 // pull at the face — smaller = rounder top corner
+  // Each side: a soft concave fillet off the frame edge, a straight slant, then a wide
+  // convex radius into the face, so the face corners read as properly rounded.
+  const left = (y0: number, y1: number) =>
+    `Q${s * 0.32} ${y0} ${s * 0.42} ${y0 + (y1 - y0) * 0.36} L${s * 0.56} ${y0 + (y1 - y0) * 0.7} Q${s * 0.68} ${y1} ${s} ${y1}`
+  const right = (y0: number, y1: number) =>
+    `Q${W - s * 0.68} ${y1} ${W - s * 0.56} ${y0 + (y1 - y0) * 0.7} L${W - s * 0.42} ${y0 + (y1 - y0) * 0.36} Q${W - s * 0.32} ${y0} ${W} ${y0}`
   const d = edge === 'top'
-    ? `M0 0 L${W} 0 C${W - s * k1} 0 ${W - s * (1 - k2)} ${h} ${W - s} ${h} L${s} ${h} C${s * (1 - k2)} ${h} ${s * k1} 0 0 0 Z`
-    : `M0 ${h} L${W} ${h} C${W - s * k1} ${h} ${W - s * (1 - k2)} 0 ${W - s} 0 L${s} 0 C${s * (1 - k2)} 0 ${s * k1} ${h} 0 ${h} Z`
+    ? `M0 0 ${left(0, h)} L${W - s} ${h} ${right(0, h)} Z`
+    : `M0 ${h} ${left(h, 0)} L${W - s} 0 ${right(h, 0)} Z`
 
   return (
     <div className={cn('absolute z-30 text-white', edge === 'top' ? 'top-0' : 'bottom-0', className)}>

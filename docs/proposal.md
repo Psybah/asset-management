@@ -14,11 +14,7 @@ GROUP 27
 
 OLUWAMUREWA, Abiodun (Team Leader)<br>E052852
 
-&nbsp;
-
 ABEGUNDE, Jimmy<br>E051739
-
-&nbsp;
 
 MOSOBALAJE, Opeyemi<br>E051727
 

@@ -1,16 +1,15 @@
 import {
-  Bell, ChatCircleDots, Cube, DownloadSimple, MagnifyingGlass, Plus, Pulse, SignOut, SquaresFour, Stack, Users, Wrench, ChartPieSlice, type Icon,
+  AddressBookTabs, ChatCircleDots, Cube, DownloadSimple, MagnifyingGlass, Plus, Pulse, SignOut, SquaresFour, Stack, Users, Wrench, ChartPieSlice, type Icon,
 } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { csvUrl, publicOrigin } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
-import type { Dashboard } from '@/lib/types'
-import { useData } from '@/lib/useData'
 import { cn } from '@/lib/utils'
 import { Avatar } from './Avatar'
 import { Notch } from './Notch'
+import { UpcomingButton } from './Upcoming'
 import { ScrollArea } from './SmoothScroll'
 import { spring } from './ui'
 
@@ -75,8 +74,6 @@ function Sidebar({ onSearch }: { onSearch: () => void }) {
   const { canWrite } = useAuth()
   const nav = useNavigate()
   const [hover, setHover] = useState<string | null>(null)
-  const { data } = useData<Dashboard>('/dashboard/')
-  const overdue = data?.totals.overdue_maintenance ?? 0
 
   const Item = ({ id, icon: I, label, onClick, dark }: { id: string; icon: Icon; label: string; onClick: () => void; dark?: boolean }) => (
     <button
@@ -99,10 +96,6 @@ function Sidebar({ onSearch }: { onSearch: () => void }) {
         <Item id="csv" icon={DownloadSimple} label="Export register" onClick={() => window.open(csvUrl(), '_blank')} />
       </motion.div>
       <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ ...spring, delay: 0.3 }} className="flex flex-col gap-1 rounded-full bg-white p-1.5">
-        <div className="relative">
-          <Item id="bell" icon={Bell} label={`${overdue} overdue`} onClick={() => nav('/maintenance')} />
-          {overdue > 0 && <span className="pointer-events-none absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[10px] font-medium text-white">{overdue}</span>}
-        </div>
         <Item id="survey" icon={ChatCircleDots} label="Usability survey" onClick={() => window.open(`${publicOrigin}/survey`, '_blank')} />
       </motion.div>
     </aside>
@@ -120,12 +113,12 @@ function Profile() {
     return () => window.removeEventListener('mousedown', close)
   }, [])
   return (
-    <div ref={ref} className="absolute right-3 top-3 z-40 md:right-4 md:top-4">
+    <div ref={ref} className="relative">
       <motion.button
         whileTap={{ scale: 0.94 }}
         onClick={() => setOpen((o) => !o)}
         aria-label="Account"
-        className="size-11 overflow-hidden rounded-full bg-white p-0.5"
+        className="size-11 overflow-hidden rounded-full bg-ink"
       >
         <Avatar name={user?.name} className="size-full" />
       </motion.button>
@@ -164,10 +157,13 @@ export function Shell({ children, onSearch }: { children: ReactNode; onSearch: (
       <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-canvas md:rounded-[2.25rem]">
         {/* Floating logo */}
         <Link to="/" className="absolute left-3 top-3 z-40 flex h-11 items-center gap-2.5 rounded-full bg-ink pl-3 pr-4 text-white md:left-4 md:top-4">
-          <span className="grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
+          <AddressBookTabs size={20} weight="bold" />
           <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
         </Link>
-        <Profile />
+        <div className="absolute right-3 top-3 z-40 flex items-center gap-2 md:right-4 md:top-4">
+          <UpcomingButton />
+          <Profile />
+        </div>
         <Sidebar onSearch={onSearch} />
         <ScrollArea className="h-full">
           <div className="mx-auto max-w-[1180px] px-4 pb-36 pt-20 md:px-8 md:pt-24 lg:pl-24">{children}</div>

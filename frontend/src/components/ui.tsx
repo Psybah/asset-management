@@ -162,7 +162,8 @@ export function Panel({ title, action, children, className, bodyClassName, tone 
   )
 }
 
-export function PageHeader({ eyebrow, title, actions }: { eyebrow?: ReactNode; title: string; actions?: ReactNode }) {
+export function PageHeader({ eyebrow, title, actions, docTitle }: { eyebrow?: ReactNode; title: string; actions?: ReactNode; docTitle?: string }) {
+  useEffect(() => { document.title = `${docTitle ?? title} · Ledger` }, [title, docTitle])
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
       <div className="min-w-0">
@@ -189,7 +190,7 @@ export function Metric({ label, value, icon, tone = 'paper', format, hint, delay
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease, delay }}
-      className={cn('flex h-32 flex-col rounded-[1.5rem] p-4', ink ? 'bg-ink text-white' : 'bg-white')}
+      className={cn('flex h-32 flex-col rounded-2xl p-4', ink ? 'bg-ink text-white' : 'bg-white')}
     >
       <div className="flex items-start justify-between gap-2">
         <p className={cn('min-w-0 truncate text-[13px] font-medium', ink ? 'text-white/70' : 'text-smoke')}>{label}</p>

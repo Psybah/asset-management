@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react'
+import { AddressBookTabs, ArrowLeft, ArrowRight, Check } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Button, Field, ease } from '@/components/ui'
@@ -56,6 +56,7 @@ export default function Survey() {
   const [err, setErr] = useState('')
   const [done, setDone] = useState(false)
 
+  useEffect(() => { document.title = 'Usability survey · Ledger' }, [])
   useEffect(() => { api.get<Form>('/survey/form/').then(setForm).catch(() => setErr('Could not load the survey. Is the server running?')) }, [])
   const set = (k: string) => (v: string | number) => setA((s) => ({ ...s, [k]: v }))
 
@@ -89,7 +90,7 @@ export default function Survey() {
       <div className="mx-auto flex min-h-dvh max-w-2xl flex-col p-3 md:p-6">
         <header className="mb-6 flex items-center justify-between px-1 pt-1">
           <div className="flex items-center gap-2.5">
-            <span className="grid size-5 place-items-center rounded-full bg-ink"><span className="size-2 rounded-full bg-white" /></span>
+            <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="bold" /></span>
             <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
           </div>
           {form && !done && <span className="text-xs text-ash tabular">{step + 1} / {steps.length}</span>}

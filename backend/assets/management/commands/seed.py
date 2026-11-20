@@ -261,7 +261,8 @@ class Command(BaseCommand):
         for username, first, last, role, dept, password in USERS:
             u = User(username=username, first_name=first, last_name=last, role=role,
                      department=depts[dept] if dept else None,
-                     email=f"{first.replace('Prof. ', '').replace('. ', '').replace('.', '')}.{last}@example.com".lower(),
+                     # fictional staff at the case-study company's domain; the supervisor has no company email
+                     email=f"{first}.{last}@habaripay.com".lower() if dept else "",
                      is_staff=role == "admin", is_superuser=role == "admin",
                      date_joined=self.at(today - timedelta(days=5 * 365 + 60)))
             u.set_password(password or PASSWORD_DEFAULT)

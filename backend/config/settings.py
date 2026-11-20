@@ -76,7 +76,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # SQLite by default; DATABASE_URL (e.g. postgres://...) overrides it.
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600, conn_health_checks=True
     )
 }
 

@@ -14,11 +14,7 @@ GROUP 27
 
 OLUWAMUREWA, Abiodun (Team Leader)<br>E052852
 
-&nbsp;
-
 ABEGUNDE, Jimmy<br>E051739
-
-&nbsp;
 
 MOSOBALAJE, Opeyemi<br>E051727
 
@@ -70,9 +66,7 @@ Prof. B. F. Oladejo                Date
 
 # DEDICATION
 
-This project work is dedicated to the Almighty God, the giver of life and wisdom, and to our parents and guardians for their love, sacrifice and constant support throughout our study.
-
-[TEAM MAY EDIT THIS DEDICATION]
+This work is dedicated to the store officers, administrators and IT support staff who quietly keep track of the things every office runs on, and to our families, whose patience and encouragement carried us through the long nights of building and writing it.
 
 # ACKNOWLEDGEMENT
 

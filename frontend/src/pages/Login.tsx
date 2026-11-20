@@ -1,4 +1,4 @@
-import { ArrowRight } from '@phosphor-icons/react'
+import { AddressBookTabs, ArrowRight } from '@phosphor-icons/react'
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -24,7 +24,7 @@ export default function Login() {
   const [busy, setBusy] = useState(false)
 
   // Free hosting puts the API to sleep when idle; start waking it as soon as the page opens.
-  useEffect(() => { api.get('/survey/form/').catch(() => {}) }, [])
+  useEffect(() => { document.title = 'Sign in · Ledger'; api.get('/survey/form/').catch(() => {}) }, [])
 
   const submit = async (u = username, p = password) => {
     setBusy(true); setErr('')
@@ -56,7 +56,7 @@ export default function Login() {
           <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />
           <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-9 text-white">
             <div className="flex items-center gap-2.5">
-              <span className="grid size-5 place-items-center rounded-full bg-white"><span className="size-2 rounded-full bg-ink" /></span>
+              <AddressBookTabs size={20} weight="bold" />
               <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
             </div>
             <motion.p
@@ -80,7 +80,7 @@ export default function Login() {
             className="mx-auto w-full max-w-sm"
           >
             <div className="mb-8 flex items-center gap-2.5 md:hidden">
-              <span className="grid size-5 place-items-center rounded-full bg-ink"><span className="size-2 rounded-full bg-white" /></span>
+              <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="bold" /></span>
               <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
             </div>
             <h1 className="text-2xl font-medium tracking-[-0.03em]">Sign in</h1>

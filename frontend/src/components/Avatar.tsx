@@ -8,12 +8,13 @@ const cache = new Map<string, string>()
 export function avatarUri(seed: string) {
   let uri = cache.get(seed)
   if (!uri) {
-    uri = createAvatar(notionists, { seed, backgroundColor: ['f1f1f1'], scale: 110 }).toDataUri()
+    uri = createAvatar(notionists, { seed, backgroundColor: ['ffffff'], scale: 110 }).toDataUri()
     cache.set(seed, uri)
   }
   return uri
 }
 
 export function Avatar({ name, className }: { name?: string | null; className?: string }) {
-  return <img src={avatarUri(name || '?')} alt="" className={cn('size-9 shrink-0 rounded-full bg-mist object-cover', className)} />
+  // Rendered white-on-black: DiceBear draws black line art on white, which is inverted here.
+  return <img src={avatarUri(name || '?')} alt="" className={cn('size-9 shrink-0 rounded-full object-cover invert', className)} />
 }

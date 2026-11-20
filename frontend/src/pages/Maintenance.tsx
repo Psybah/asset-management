@@ -30,20 +30,21 @@ function Card({ m, photo, canDrag, onDragStart }: { m: M; photo?: Asset; canDrag
       draggable={canDrag}
       // motion's onDragStart is for its own drag gestures; use the native event for HTML5 DnD.
       {...({ onDragStartCapture: (e: DragEvent) => onDragStart(e, m) } as object)}
-      className={cx('group rounded-[1.15rem] p-1', m.overdue ? 'bg-ink text-white' : 'bg-white', canDrag && 'cursor-grab active:cursor-grabbing')}
+      className={cx('group rounded-[1.15rem] bg-white p-1', canDrag && 'cursor-grab active:cursor-grabbing')}
     >
       <div className="flex items-start gap-2 px-2.5 pb-2 pt-2">
         <div className="min-w-0 flex-1">
           <p className={cx('text-sm leading-snug', m.status === 'done' && 'text-smoke')}>{m.title}</p>
         </div>
-        {canDrag && <DotsSixVertical size={16} className={cx('mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100', m.overdue ? 'text-white/50' : 'text-ash')} />}
+        {m.overdue && <span className="mt-0.5 flex shrink-0 items-center gap-1 rounded-full bg-ink px-2 py-0.5 text-[10px] font-medium text-white"><Warning size={10} weight="fill" />Overdue</span>}
+        {canDrag && !m.overdue && <DotsSixVertical size={16} className="mt-0.5 shrink-0 text-ash opacity-0 transition-opacity group-hover:opacity-100" />}
       </div>
-      <Link to={`/assets/${m.asset}`} draggable={false} className={cx('flex items-center gap-2 rounded-[0.9rem] p-1 pr-3 transition-colors', m.overdue ? 'bg-white/[0.07] hover:bg-white/10' : 'bg-mist hover:bg-fog')}>
+      <Link to={`/assets/${m.asset}`} draggable={false} className="flex items-center gap-2 rounded-[0.9rem] bg-mist p-1 pr-3 transition-colors hover:bg-fog">
         <Photo src={photo?.image_url} icon={photo?.category_icon} alt="" className="size-8 shrink-0 rounded-[0.65rem]" iconSize={14} />
         <span className="min-w-0 flex-1 truncate text-xs">{m.asset_name}</span>
-        <span className={cx('shrink-0 text-[10px] tabular', m.overdue ? 'text-white/50' : 'text-ash')}>{m.asset_tag}</span>
+        <span className="shrink-0 text-[10px] text-ash tabular">{m.asset_tag}</span>
       </Link>
-      <div className={cx('flex items-center gap-1.5 px-2 pb-1.5 pt-2 text-[11px]', m.overdue ? 'text-white/60' : 'text-ash')}>
+      <div className={cx('flex items-center gap-1.5 px-2 pb-1.5 pt-2 text-[11px]', m.overdue ? 'font-medium text-ink' : 'text-ash')}>
         <span className="flex items-center gap-1">{m.overdue ? <Warning size={12} weight="fill" /> : <CalendarBlank size={12} />}{shortDate(m.completed_date ?? m.scheduled_date)}</span>
         <span>·</span>
         <span className="capitalize">{m.kind}</span>

@@ -62,10 +62,10 @@ export default function Library() {
               <div key={c.id} className="flex flex-col items-center">
                 <IconFolder
                   title={c.name}
-                  theme="light"
+                  theme="dark"
                   spread={58}
                   showPill={false}
-                  icons={(c.cover_urls?.length ? c.cover_urls : [null]).slice(0, 4).map((src) => (src ? { src } : { node: <AssetIcon name={c.icon} size={40} weight="thin" />, background: '#f4f4f4' }))}
+                  icons={(c.cover_urls?.length ? c.cover_urls : [null]).slice(0, 4).map((src) => (src ? { src } : { node: <AssetIcon name={c.icon} size={40} weight="thin" className="text-white" />, background: '#1f1f1f' }))}
                 />
                 <div className="mt-2 flex w-full max-w-[420px] items-center justify-between px-2 text-xs text-ash">
                   <button onClick={() => nav(`/assets?category=${c.id}`)} className="hover:text-ink">{c.asset_count} {c.asset_count === 1 ? "asset" : "assets"} · {c.useful_life_years}-year life</button>

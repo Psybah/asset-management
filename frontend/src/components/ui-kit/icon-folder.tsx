@@ -38,10 +38,10 @@ export type IconFolderProps = {
 const THEMES = {
   dark: {
     ink: "#ffffff",
-    back: "linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 60%)",
-    backEdge: "rgba(255,255,255,.07)",
-    front:
-      "linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.015) 55%),rgba(12,12,12,.78)",
+    // Opaque blacks so the folder reads on the app's light canvas.
+    back: "linear-gradient(180deg,#2c2c2c,#1a1a1a 60%)",
+    backEdge: "rgba(255,255,255,.08)",
+    front: "linear-gradient(160deg,#2e2e2e,#0f0f0f 55%,#0a0a0a)",
     frontEdge: [
       "rgba(255,255,255,.38)",
       "rgba(255,255,255,.1)",
