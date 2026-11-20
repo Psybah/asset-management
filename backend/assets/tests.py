@@ -8,7 +8,7 @@ from pathlib import Path
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from rest_framework.authtoken.models import Token
+from accounts.models import AccessToken
 from rest_framework.test import APIClient
 
 from accounts.models import Department, User
@@ -82,7 +82,7 @@ class ApiTestCase(TestCase):
         self.client = APIClient()
 
     def as_user(self, user):
-        token, _ = Token.objects.get_or_create(user=user)
+        token = AccessToken.objects.create(user=user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
 
 
@@ -246,7 +246,7 @@ class DashboardQrCsvTests(ApiTestCase):
 
     def test_csv_with_query_token(self):
         self.assertEqual(self.client.get("/api/reports/assets.csv").status_code, 401)
-        token, _ = Token.objects.get_or_create(user=self.staff)
+        token = AccessToken.objects.create(user=self.staff)
         r = self.client.get(f"/api/reports/assets.csv?token={token.key}&status=available")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(r["Content-Type"].startswith("text/csv"))
@@ -457,3 +457,16 @@ class PublicAssetTests(ApiTestCase):
         for hidden in ("purchase_cost", "serial_number", "assigned_to_name", "current_value"):
             self.assertNotIn(hidden, r.data)
         self.assertEqual(self.client.get("/api/public/assets/AST-9999/").status_code, 404)
+
+
+class SessionTokenTests(ApiTestCase):
+    def test_signing_out_ends_only_that_session(self):
+        from rest_framework.test import APIClient
+        a, b = APIClient(), APIClient()
+        ta = a.post("/api/auth/login/", {"username": "manager", "password": "manager123"}, format="json").data["token"]
+        tb = b.post("/api/auth/login/", {"username": "manager", "password": "manager123"}, format="json").data["token"]
+        self.assertNotEqual(ta, tb)
+        a.credentials(HTTP_AUTHORIZATION=f"Token {ta}"); b.credentials(HTTP_AUTHORIZATION=f"Token {tb}")
+        self.assertEqual(a.post("/api/auth/logout/").status_code, 204)
+        self.assertEqual(a.get("/api/auth/me/").status_code, 401)
+        self.assertEqual(b.get("/api/auth/me/").status_code, 200)  # the other device is still signed in

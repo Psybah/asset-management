@@ -6,7 +6,7 @@ import type { Asset, Category, Department, Location } from '@/lib/types'
 import { invalidate, useData } from '@/lib/useData'
 import { Sheet } from './Sheet'
 import { useToast } from './Toast'
-import { Button, Field, FieldGroup, SelectField } from './ui'
+import { Button, Field, FieldGroup, MoneyField, SelectField } from './ui'
 
 const blank = {
   name: '', category: '', serial_number: '', vendor: '', purchase_date: today(), purchase_cost: '',
@@ -112,10 +112,10 @@ export function AssetForm({ open, onClose, asset, onSaved }: { open: boolean; on
         </div>
         <div className="grid grid-cols-2 gap-0.5">
           <Field label="Purchase date" type="date" value={f.purchase_date} onChange={set('purchase_date')} />
-          <Field label="Cost (₦)" inputMode="numeric" value={f.purchase_cost} onChange={set('purchase_cost')} />
+          <MoneyField label="Cost (₦)" value={f.purchase_cost} onChange={set('purchase_cost')} />
         </div>
         <div className="grid grid-cols-3 gap-0.5">
-          <Field label="Salvage (₦)" inputMode="numeric" value={f.salvage_value} onChange={set('salvage_value')} />
+          <MoneyField label="Salvage (₦)" value={f.salvage_value} onChange={set('salvage_value')} />
           <Field label="Life (years)" inputMode="numeric" value={f.useful_life_years} onChange={set('useful_life_years')} />
           <SelectField label="Method" value={f.depreciation_method} onChange={set('depreciation_method')}>
             <option value="straight_line">Straight line</option>

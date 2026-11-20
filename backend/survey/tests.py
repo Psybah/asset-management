@@ -1,6 +1,6 @@
 from django.core.cache import cache
 from django.test import TestCase
-from rest_framework.authtoken.models import Token
+from accounts.models import AccessToken
 from rest_framework.test import APIClient
 
 from accounts.models import User
@@ -57,7 +57,7 @@ class SurveyApiTestCase(TestCase):
         self.staff = User.objects.create_user("staff", password="staff123", role="staff")
 
     def as_user(self, user):
-        token, _ = Token.objects.get_or_create(user=user)
+        token = AccessToken.objects.create(user=user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
         return token
 
@@ -223,9 +223,9 @@ class SurveyResultsTests(SurveyApiTestCase):
     def test_csv(self):
         self.submit(WORKED_EXAMPLE, liked="=HYPERLINK(\"http://evil\")")
         self.assertEqual(self.client.get("/api/reports/survey.csv").status_code, 401)
-        staff_token = Token.objects.create(user=self.staff)
+        staff_token = AccessToken.objects.create(user=self.staff)
         self.assertEqual(self.client.get(f"/api/reports/survey.csv?token={staff_token.key}").status_code, 403)
-        token = Token.objects.create(user=self.manager)
+        token = AccessToken.objects.create(user=self.manager)
         r = self.client.get(f"/api/reports/survey.csv?token={token.key}")
         self.assertEqual(r.status_code, 200)
         self.assertTrue(r["Content-Type"].startswith("text/csv"))

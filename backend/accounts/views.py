@@ -1,14 +1,13 @@
 from django.contrib.auth import authenticate
 from django.db.models import Count
 from rest_framework import status, viewsets
-from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from assets.audit import AuditedModelViewSetMixin
 
-from .models import Department, User
+from .models import AccessToken, Department, User
 from .serializers import DepartmentSerializer, PersonSerializer, UserSerializer
 
 
@@ -21,7 +20,7 @@ def login(request):
     user = authenticate(request, username=username, password=password)
     if user is None or not user.is_active:
         return Response({"detail": "Invalid username or password."}, status=status.HTTP_400_BAD_REQUEST)
-    token, _ = Token.objects.get_or_create(user=user)
+    token = AccessToken.objects.create(user=user)  # a fresh token per sign-in
     return Response({"token": token.key, "user": UserSerializer(user).data})
 
 
@@ -34,7 +33,9 @@ def me(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def logout(request):
-    Token.objects.filter(user=request.user).delete()
+    # End only this session; other devices signed in to the same account stay signed in.
+    if isinstance(request.auth, AccessToken):
+        request.auth.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 

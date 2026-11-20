@@ -4,7 +4,7 @@ import { useEffect, useState, type DragEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Sheet } from '@/components/Sheet'
 import { useToast } from '@/components/Toast'
-import { Button, Field, FieldGroup, IconButton, Page, PageHeader, Photo, SelectField, Skeleton, cx, ease } from '@/components/ui'
+import { Button, Field, FieldGroup, IconButton, MoneyField, Page, PageHeader, Photo, SelectField, Skeleton, cx, ease } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { compact, shortDate, today } from '@/lib/format'
@@ -151,7 +151,7 @@ export default function Maintenance() {
           </div>
           <div className="grid grid-cols-2 gap-0.5">
             <Field label="Vendor" value={form.vendor ?? ''} onChange={set('vendor')} />
-            <Field label="Cost (₦)" inputMode="numeric" value={form.cost ?? ''} onChange={set('cost')} />
+            <MoneyField label="Cost (₦)" value={form.cost ?? ''} onChange={set('cost')} />
           </div>
         </FieldGroup>
         <Button size="lg" className="mt-5 w-full" disabled={busy || !form.asset || !form.title} onClick={create}>{busy ? 'Saving…' : 'Schedule'}</Button>

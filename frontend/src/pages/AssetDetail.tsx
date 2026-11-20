@@ -11,7 +11,7 @@ import { ChartTooltip } from '@/components/charts/tooltip'
 import { XAxis } from '@/components/charts/x-axis'
 import { Sheet } from '@/components/Sheet'
 import { useToast } from '@/components/Toast'
-import { Button, Counter, Field, FieldGroup, IconButton, Page, Panel, Photo, Reveal, SelectField, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { Button, Counter, Field, FieldGroup, IconButton, MoneyField, Page, Panel, Photo, Reveal, SelectField, Skeleton, StatusMark, cx, ease } from '@/components/ui'
 import QRCode from 'qrcode'
 import { api, scanUrl } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -226,7 +226,7 @@ export default function AssetDetail() {
           </div>
           <div className="grid grid-cols-2 gap-0.5">
             <Field label="Vendor" value={form.vendor ?? ''} onChange={set('vendor')} />
-            <Field label="Cost (₦)" inputMode="numeric" value={form.cost ?? ''} onChange={set('cost')} />
+            <MoneyField label="Cost (₦)" value={form.cost ?? ''} onChange={set('cost')} />
           </div>
         </FieldGroup>
         <Button size="lg" className="mt-5 w-full" disabled={busy || !form.title}
@@ -241,7 +241,7 @@ export default function AssetDetail() {
             {['sold', 'donated', 'scrapped', 'lost'].map((m) => <option key={m} value={m}>{label(m)}</option>)}
           </SelectField>
           <Field label="Reason" value={form.reason ?? ''} onChange={set('reason')} />
-          <Field label="Amount recovered (₦)" inputMode="numeric" value={form.value ?? ''} onChange={set('value')} />
+          <MoneyField label="Amount recovered (₦)" value={form.value ?? ''} onChange={set('value')} />
         </FieldGroup>
         <Button size="lg" className="mt-5 w-full" disabled={busy || !form.reason}
           onClick={() => run(() => api.post(`/assets/${a.id}/dispose/`, { method: form.method, reason: form.reason, value: form.value ? Number(form.value) : null }), 'Retired')}>

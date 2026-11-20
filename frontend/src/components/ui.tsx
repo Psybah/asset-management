@@ -137,6 +137,30 @@ export function Field({ label, id, className, value, onFocus, onBlur, trailing, 
  * "none" (shown as the placeholder when nothing is chosen).
  */
 const NONE = '__none__'
+/**
+ * Amount input: shows thousands separators while typing ("1,250,000") but reports the raw
+ * number string ("1250000") through the same event-shaped onChange as <Field>.
+ */
+export function MoneyField({ value, onChange, ...rest }: Omit<FieldProps, 'onChange' | 'value' | 'type'> & { value?: string; onChange?: (e: { target: { value: string } }) => void }) {
+  const raw = String(value ?? '')
+  const [int, dec] = raw.split('.')
+  const shown = int ? Number(int).toLocaleString('en-NG') + (dec !== undefined ? `.${dec}` : '') : dec !== undefined ? `0.${dec}` : ''
+  return (
+    <Field
+      {...rest}
+      inputMode="decimal"
+      value={shown}
+      onChange={(e) => {
+        let v = e.target.value.replace(/[^\d.]/g, '')
+        const i = v.indexOf('.')
+        if (i !== -1) v = v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '').slice(0, 2)
+        v = v.replace(/^0+(?=\d)/, '')
+        onChange?.({ target: { value: v } })
+      }}
+    />
+  )
+}
+
 export function SelectField({ label, className, children, value, onChange, disabled }: {
   label: string; className?: string; children: ReactNode; value?: string | number | readonly string[]; onChange?: (e: { target: { value: string } }) => void; disabled?: boolean
 }) {
