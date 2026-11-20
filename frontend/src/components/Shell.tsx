@@ -52,7 +52,7 @@ function Dock() {
   const items = nav.filter((n) => !n.manager || canWrite)
   const active = (to: string) => (to === '/' ? pathname === '/' : pathname.startsWith(to))
   return (
-    <Notch edge="bottom" className="left-1/2 -translate-x-1/2" bodyClassName="pb-2.5 pt-2.5 md:pt-3">
+    <Notch edge="bottom" className="left-1/2 -translate-x-1/2" bodyClassName="pb-1.5 pt-3.5 md:pt-4">
       <nav className="flex items-center gap-1 md:gap-1.5" onMouseLeave={() => setHover(null)}>
         {items.map(({ to, icon: I, label }) => {
           const on = active(to)
@@ -157,7 +157,7 @@ export function Shell({ children, onSearch }: { children: ReactNode; onSearch: (
       <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-canvas md:rounded-[2.25rem]">
         {/* Floating logo */}
         <Link to="/" className="absolute left-3 top-3 z-40 flex h-11 items-center gap-2.5 rounded-full bg-ink pl-3 pr-4 text-white md:left-4 md:top-4">
-          <AddressBookTabs size={20} weight="bold" />
+          <AddressBookTabs size={20} weight="fill" />
           <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
         </Link>
         <div className="absolute right-3 top-3 z-40 flex items-center gap-2 md:right-4 md:top-4">
@@ -166,7 +166,7 @@ export function Shell({ children, onSearch }: { children: ReactNode; onSearch: (
         </div>
         <Sidebar onSearch={onSearch} />
         <ScrollArea className="h-full">
-          <div className="mx-auto max-w-[1180px] px-4 pb-36 pt-20 md:px-8 md:pt-24 lg:pl-24">{children}</div>
+          <div className="mx-auto max-w-[1320px] px-4 pb-36 pt-[4.5rem] md:px-8 md:pt-20 lg:pl-24">{children}</div>
         </ScrollArea>
         <Dock />
       </div>

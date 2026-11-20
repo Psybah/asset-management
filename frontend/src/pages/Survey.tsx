@@ -90,7 +90,7 @@ export default function Survey() {
       <div className="mx-auto flex min-h-dvh max-w-2xl flex-col p-3 md:p-6">
         <header className="mb-6 flex items-center justify-between px-1 pt-1">
           <div className="flex items-center gap-2.5">
-            <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="bold" /></span>
+            <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="fill" /></span>
             <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
           </div>
           {form && !done && <span className="text-xs text-ash tabular">{step + 1} / {steps.length}</span>}
@@ -121,7 +121,6 @@ export default function Survey() {
               <h1 className="px-1 pb-2 text-2xl font-medium tracking-[-0.03em]">{steps[step]}</h1>
               {step === 0 && (
                 <>
-                  <p className="px-1 pb-2 text-sm leading-relaxed text-smoke">{form.intro}</p>
                   {form.demographics.map((d) => (
                     <Block key={d.id} code={d.code} label={d.label}>
                       <Choice options={d.options} value={a[d.id]} onChange={set(d.id)} />

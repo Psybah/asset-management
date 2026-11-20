@@ -71,6 +71,8 @@ Actions:
 
 - `GET /dashboard/value-trend/?months=12` → `[{date, value}]` month-end fleet book value for the last `months` months (6–120, default 12), plus today as the final point. Used by the date filter on the dashboard's book value chart.
 
+- `GET /public/assets/{tag}/` (public, no auth) → `{id, tag, name, category_name, category_icon, image_url, status, condition, location_name, department_name}` — what a scanned QR label shows to someone who is not signed in. No holder, cost or serial. Tag lookup is case-insensitive; 404 if unknown.
+
 ## Reports
 - `GET /reports/assets.csv` → CSV of the register (accepts the same filters as `/assets/`), token auth via `?token=` query param also accepted
 - `GET /reports/survey.csv` (manager+; `?token=` accepted) → CSV of raw survey responses, one row each: `id, created_at, department, role, age_group, computer_use, current_method, prior_software, device, department_other, role_other, tasks_completed, tasks_with_help, Q1..Q10, sus_score, adjective, comparison, liked, improvements` (task lists space-separated)

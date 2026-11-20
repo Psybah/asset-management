@@ -11,3 +11,10 @@ deliverables/
 backend/media/
 staticfiles/
 backend/staticfiles/
+
+# Coursework documents and deployment notes live outside the repo (software only)
+docs/
+literature/
+DEPLOY.md
+project.md
+template.md

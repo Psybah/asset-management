@@ -99,7 +99,7 @@ export default function Insights() {
                   <p className="text-sm"><span className="mr-2 text-xs text-ash tabular">{i.item}</span>{i.text}</p>
                   <div className="flex h-6 overflow-hidden rounded-full bg-white">
                     {['1', '2', '3', '4', '5'].map((k, j) => (
-                      i.percents[k] > 0 && <span key={k} title={`${k}: ${i.counts[k]} (${i.percents[k]}%)`} className="grid place-items-center text-[9px] text-white" style={{ width: `${i.percents[k]}%`, background: ['#d4d4d4', '#a8a8a8', '#7a7a7a', '#3d3d3d', '#0a0a0a'][j] }}>{i.percents[k] >= 10 ? k : ''}</span>
+                      i.percents[k] > 0 && <span key={k} title={`${k}: ${i.counts[k]} (${i.percents[k]}%)`} className="grid place-items-center text-[9px] text-white" style={{ width: `${i.percents[k]}%`, background: ['#d4d4d4', '#a8a8a8', '#7a7a7a', '#3d3d3d', '#201515'][j] }}>{i.percents[k] >= 10 ? k : ''}</span>
                     ))}
                   </div>
                   <span className="text-right text-sm tabular">{fmt(i.mean, 2)}</span>

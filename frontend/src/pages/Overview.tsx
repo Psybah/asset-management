@@ -13,14 +13,14 @@ import { RingCenter } from '@/components/charts/ring-center'
 import { RingChart } from '@/components/charts/ring-chart'
 import { ChartTooltip } from '@/components/charts/tooltip'
 import { XAxis } from '@/components/charts/x-axis'
-import { Counter, Metric, Page, PageHeader, Panel, Photo, Reveal, Segmented, Skeleton, cx } from '@/components/ui'
+import { Counter, Metric, Page, PageHeader, Panel, Photo, PillSelect, Reveal, Skeleton, cx } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { ago, compact } from '@/lib/format'
 import type { Asset, Dashboard, Status } from '@/lib/types'
 import { useData } from '@/lib/useData'
 
-const GREYS = ['#0a0a0a', '#3a3a3a', '#5e5e5e', '#828282', '#a6a6a6', '#c6c6c6', '#e0e0e0']
-const STATUS_TONE: Record<Status, string> = { assigned: '#0a0a0a', available: '#8a8a8a', maintenance: '#c4c4c4', retired: '#e4e4e4' }
+const GREYS = ['#201515', '#3a3a3a', '#5e5e5e', '#828282', '#a6a6a6', '#c6c6c6', '#e0e0e0']
+const STATUS_TONE: Record<Status, string> = { assigned: '#201515', available: '#8a8a8a', maintenance: '#c4c4c4', retired: '#e4e4e4' }
 const STATUS_LABEL: Record<Status, string> = { assigned: 'In use', available: 'Available', maintenance: 'Maintenance', retired: 'Retired' }
 
 /** Thick segmented bar (after the alvastudio contributor progress bar). */
@@ -87,7 +87,7 @@ function BookValue({ t }: { t?: Dashboard['totals'] }) {
       action={
         <div className="flex items-center gap-2">
           {t && <span className="hidden text-xs text-ash sm:inline">of ₦{compact(t.purchase_value)}</span>}
-          <Segmented id="bv-range" value={range} onChange={setRange} options={RANGES.map((r) => ({ value: r.value, label: r.label }))} />
+          <PillSelect value={range} onChange={setRange} options={RANGES.map((r) => ({ value: r.value, label: r.label }))} />
         </div>
       }
       bodyClassName="flex flex-col px-1 pb-1 pt-4"
@@ -147,7 +147,7 @@ export default function Overview() {
                   ringGap={4}
                   baseInnerRadius={44}
                   data={[
-                    { label: 'In use', value: t.assigned, maxValue: active, color: '#0a0a0a' },
+                    { label: 'In use', value: t.assigned, maxValue: active, color: '#201515' },
                     { label: 'Available', value: t.available, maxValue: active, color: '#8a8a8a' },
                     { label: 'Maintenance', value: t.maintenance, maxValue: active, color: '#c4c4c4' },
                   ]}

@@ -1,4 +1,4 @@
-import { animate, motion, useInView, useMotionValue, useTransform } from 'motion/react'
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform } from 'motion/react'
 import { BorderBeam } from 'border-beam'
 import { Eye, EyeSlash } from '@phosphor-icons/react'
 import {
@@ -216,6 +216,41 @@ export function Segmented<T extends string>({ value, options, onChange, id }: { 
         </button>
       ))}
     </div>
+  )
+}
+
+/** One pill showing the current choice; expands to every option on hover or tap, collapses on pick. */
+export function PillSelect<T extends string>({ value, options, onChange, className }: { value: T; options: { value: T; label: ReactNode }[]; onChange: (v: T) => void; className?: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <motion.div
+      layout
+      transition={spring}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      className={cn('inline-flex items-center gap-0.5 overflow-hidden rounded-full bg-white p-1', className)}
+    >
+      <AnimatePresence initial={false} mode="popLayout">
+        {options.filter((o) => open || o.value === value).map((o) => {
+          const active = o.value === value
+          return (
+            <motion.button
+              layout
+              key={o.value}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={spring}
+              onClick={() => { if (!open) { setOpen(true); return } onChange(o.value); setOpen(false) }}
+              className={cn('flex h-8 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3.5 text-xs font-medium capitalize transition-colors', active ? 'bg-ink text-white' : 'text-smoke hover:bg-mist hover:text-ink')}
+            >
+              {o.label}
+              {active && !open && <svg className="size-2.5 opacity-60" viewBox="0 0 12 12" fill="none"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+            </motion.button>
+          )
+        })}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 

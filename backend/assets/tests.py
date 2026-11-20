@@ -443,3 +443,17 @@ class ValueTrendTests(ApiTestCase):
         self.assertEqual(len(r.data), 7)  # six month-ends + today
         self.assertEqual(r.data[-1]["date"], timezone.localdate().isoformat())
         self.assertTrue(all(p["date"] < q["date"] for p, q in zip(r.data, r.data[1:])))
+
+
+class PublicAssetTests(ApiTestCase):
+    def test_public_scan_view_is_limited_and_anonymous(self):
+        from .models import Category
+        cat = Category.objects.create(name="Public scan test", icon="laptop", useful_life_years=4)
+        a = Asset.objects.create(name="Test laptop", category=cat, purchase_date=date(2025, 1, 1), purchase_cost=1000)
+        self.client.logout()
+        r = self.client.get(f"/api/public/assets/{a.tag.lower()}/")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.data["tag"], a.tag)
+        for hidden in ("purchase_cost", "serial_number", "assigned_to_name", "current_value"):
+            self.assertNotIn(hidden, r.data)
+        self.assertEqual(self.client.get("/api/public/assets/AST-9999/").status_code, 404)

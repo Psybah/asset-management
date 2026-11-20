@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { AssetForm } from '@/components/AssetForm'
-import { Button, Empty, IconButton, Page, PageHeader, Photo, Segmented, Skeleton, StatusMark, cx, ease } from '@/components/ui'
+import { Button, Empty, IconButton, Page, PageHeader, Photo, PillSelect, Segmented, Skeleton, StatusMark, cx, ease } from '@/components/ui'
 import { csvUrl } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { compact, naira } from '@/lib/format'
@@ -96,7 +96,7 @@ export default function Assets() {
           <MagnifyingGlass size={16} className="text-ash" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name, tag, serial" className="h-full flex-1 bg-transparent text-sm placeholder:text-ash" />
         </div>
-        <Segmented id="status" value={status} onChange={(v) => setParam('status', v)} options={statuses.map((s) => ({ value: s, label: s }))} />
+        <PillSelect value={status} onChange={(v) => setParam('status', v)} options={statuses.map((s) => ({ value: s, label: s === 'all' ? 'All statuses' : s }))} />
         <div className="md:ml-auto">
           <Segmented id="view" value={view} onChange={toggleView} options={[{ value: 'grid', label: <SquaresFour size={15} /> }, { value: 'list', label: <List size={15} /> }]} />
         </div>

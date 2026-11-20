@@ -36,7 +36,7 @@ export default function AssetDetail() {
   const [busy, setBusy] = useState(false)
   const [qr, setQr] = useState('')
   useEffect(() => {
-    if (a) QRCode.toDataURL(scanUrl(a.tag), { margin: 1, width: 480, color: { dark: '#0a0a0a', light: '#00000000' } }).then(setQr)
+    if (a) QRCode.toDataURL(scanUrl(a.tag), { margin: 1, width: 480, color: { dark: '#201515', light: '#00000000' } }).then(setQr)
   }, [a])
 
   const open = (x: Action, init: Record<string, string> = {}) => { setForm(init); setAct(x) }

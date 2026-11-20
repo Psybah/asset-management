@@ -30,7 +30,7 @@ function Card({ m, photo, canDrag, onDragStart }: { m: M; photo?: Asset; canDrag
       draggable={canDrag}
       // motion's onDragStart is for its own drag gestures; use the native event for HTML5 DnD.
       {...({ onDragStartCapture: (e: DragEvent) => onDragStart(e, m) } as object)}
-      className={cx('group rounded-[1.15rem] bg-white p-1', canDrag && 'cursor-grab active:cursor-grabbing')}
+      className={cx('group rounded-[1.15rem] p-1', m.status === 'done' ? 'bg-white/70' : 'bg-white', canDrag && 'cursor-grab active:cursor-grabbing')}
     >
       <div className="flex items-start gap-2 px-2.5 pb-2 pt-2">
         <div className="min-w-0 flex-1">
@@ -108,12 +108,12 @@ export default function Maintenance() {
               onDragOver={(e) => { if (canWrite) { e.preventDefault(); setOver(col.key) } }}
               onDragLeave={() => setOver((o) => (o === col.key ? null : o))}
               onDrop={(e) => { e.preventDefault(); setOver(null); if (dragging) move(dragging, col.key); setDragging(null) }}
-              className={cx('flex min-h-[60vh] w-[82vw] shrink-0 snap-center flex-col rounded-[1.6rem] p-2 transition-colors duration-200 md:w-auto', isOver ? 'bg-fog' : 'bg-white/60')}
+              className={cx('flex min-h-[60vh] w-[82vw] shrink-0 snap-center flex-col rounded-[1.6rem] p-2 transition-colors duration-200 md:w-auto', isOver ? 'bg-[#d6d2d2]' : 'bg-[#e1dede]')}
             >
               <header className="flex items-center gap-2 px-2.5 pb-2.5 pt-2">
                 <span className="text-smoke">{col.icon}</span>
                 <h2 className="text-[13px] font-medium">{col.label}</h2>
-                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1.5 text-[11px] font-medium tabular">{items.length}</span>
+                <span className="grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1.5 text-[11px] font-medium text-white tabular">{items.length}</span>
                 {canWrite && col.key === 'scheduled' && <IconButton label="New job" size="icon-sm" className="ml-auto" onClick={() => setAdding(true)}><Plus size={13} /></IconButton>}
               </header>
               <div className="flex flex-1 flex-col gap-2">

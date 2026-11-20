@@ -15,6 +15,7 @@ import Overview from './pages/Overview'
 import People from './pages/People'
 import Scan from './pages/Scan'
 import Survey from './pages/Survey'
+import PublicScan from './pages/PublicScan'
 
 function Splash() {
   return (
@@ -43,6 +44,15 @@ export default function App() {
   // The usability survey is public: participants don't need an account.
   if (location.pathname.startsWith('/survey')) return <Survey />
   if (!ready) return <Splash />
+
+  // QR labels open a public view for anyone who isn't signed in.
+  if (!user && location.pathname.startsWith('/scan/')) {
+    return (
+      <Routes>
+        <Route path="/scan/:tag" element={<PublicScan />} />
+      </Routes>
+    )
+  }
 
   if (!user) {
     const next = location.pathname === '/login' ? '' : `?next=${encodeURIComponent(location.pathname)}`

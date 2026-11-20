@@ -152,5 +152,5 @@ REST_FRAMEWORK = {
     "COERCE_DECIMAL_TO_STRING": False,
     "DATE_FORMAT": "%Y-%m-%d",
     # Public survey submissions are rate-limited per client IP.
-    "DEFAULT_THROTTLE_RATES": {"survey": os.environ.get("SURVEY_THROTTLE_RATE", "30/hour")},
+    "DEFAULT_THROTTLE_RATES": {"survey": os.environ.get("SURVEY_THROTTLE_RATE", "300/hour")},  # office Wi-Fi = one shared IP
 }

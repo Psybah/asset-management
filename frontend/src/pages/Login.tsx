@@ -56,7 +56,7 @@ export default function Login() {
           <Silk color="#3a3a3a" speed={3} scale={1.1} noiseIntensity={1.2} rotation={0.3} className="absolute inset-0" />
           <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-9 text-white">
             <div className="flex items-center gap-2.5">
-              <AddressBookTabs size={20} weight="bold" />
+              <AddressBookTabs size={20} weight="fill" />
               <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
             </div>
             <motion.p
@@ -80,7 +80,7 @@ export default function Login() {
             className="mx-auto w-full max-w-sm"
           >
             <div className="mb-8 flex items-center gap-2.5 md:hidden">
-              <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="bold" /></span>
+              <span className="grid size-8 place-items-center rounded-full bg-ink text-white"><AddressBookTabs size={17} weight="fill" /></span>
               <span className="text-[15px] font-medium tracking-[-0.03em]">Ledger</span>
             </div>
             <h1 className="text-2xl font-medium tracking-[-0.03em]">Sign in</h1>

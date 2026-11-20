@@ -41,7 +41,7 @@ const THEMES = {
     // Opaque blacks so the folder reads on the app's light canvas.
     back: "linear-gradient(180deg,#2c2c2c,#1a1a1a 60%)",
     backEdge: "rgba(255,255,255,.08)",
-    front: "linear-gradient(160deg,#2e2e2e,#0f0f0f 55%,#0a0a0a)",
+    front: "linear-gradient(160deg,#2e2e2e,#0f0f0f 55%,#201515)",
     frontEdge: [
       "rgba(255,255,255,.38)",
       "rgba(255,255,255,.1)",
@@ -55,11 +55,11 @@ const THEMES = {
     focus: "rgba(255,255,255,.4)",
   },
   light: {
-    ink: "#0a0a0a",
+    ink: "#201515",
     back: "linear-gradient(180deg,#ffffff,#f1f1f1)",
-    backEdge: "rgba(10,10,10,.08)",
+    backEdge: "rgba(32,21,21,.08)",
     front: "linear-gradient(160deg,#ffffff,#f6f6f6 55%,#efefef)",
-    frontEdge: ["rgba(255,255,255,1)", "rgba(10,10,10,.06)", "rgba(10,10,10,.04)"],
+    frontEdge: ["rgba(255,255,255,1)", "rgba(32,21,21,.06)", "rgba(32,21,21,.04)"],
     glow: "rgba(255,255,255,.18)",
     pillBg: "rgba(255,255,255,.8)",
     pillBorder: "rgba(0,0,0,.08)",

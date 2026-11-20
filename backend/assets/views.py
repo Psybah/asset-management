@@ -346,6 +346,33 @@ def fleet_value(assets, as_of):
 
 
 @api_view(["GET"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def public_asset(request, tag):
+    """What a QR label opens for someone who is not signed in.
+
+    Deliberately limited: what the item is, its photo, status and where it belongs.
+    No holder names, costs or serial numbers.
+    """
+    try:
+        a = Asset.objects.select_related("category", "location", "department").get(tag__iexact=tag)
+    except Asset.DoesNotExist:
+        return Response({"detail": f"No asset with tag {tag}."}, status=status.HTTP_404_NOT_FOUND)
+    return Response({
+        "id": a.id,
+        "tag": a.tag,
+        "name": a.name,
+        "category_name": a.category.name,
+        "category_icon": a.category.icon,
+        "image_url": request.build_absolute_uri(a.image.url) if a.image else None,
+        "status": a.status,
+        "condition": a.condition,
+        "location_name": a.location.name if a.location else None,
+        "department_name": a.department.name if a.department else None,
+    })
+
+
+@api_view(["GET"])
 def value_trend(request):
     """Month-end fleet book value for the last `months` months (6–120, default 12), ending today.
 

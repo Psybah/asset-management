@@ -13,7 +13,9 @@ A web-based system for tracking an office's physical assets across their whole l
 - **Depreciation:** straight-line and declining-balance methods (IAS 16), with a per-year schedule and current book value.
 - **Disposal:** retire an asset as sold, donated, scrapped or lost, with the reason and recovered value.
 - **Audit trail:** every change is recorded with who made it, what changed and when.
-- **Dashboard:** book value trend, utilisation, status split, departments, upcoming maintenance.
+- **Dashboard:** book value trend with date filter, utilisation, department split, status split, upcoming items.
+- **Photos:** a photograph per asset, shown in the register, detail page and category folders.
+- **Usability survey:** a public `/survey` page (SUS questionnaire) with computed results for managers.
 - **Roles:** `admin`, `manager` (read and write) and `staff` (read-only).
 - **Reports:** CSV export of the filtered register.
 
@@ -22,14 +24,13 @@ A web-based system for tracking an office's physical assets across their whole l
 | Layer | Tech |
 |---|---|
 | Backend | Python, Django, Django REST Framework, token auth, SQLite (Postgres via `DATABASE_URL`) |
-| Frontend | React, TypeScript, Vite, Tailwind CSS v4, Motion, Lenis, Phosphor Icons, Geist |
+| Frontend | React, TypeScript, Vite, Tailwind CSS v4, shadcn/ui conventions, Bklit charts, Motion, Lenis, Phosphor Icons, Geist |
 
 ```
 asset-management/
-├── backend/      Django REST API (see backend/README.md)
+├── backend/      Django REST API (see backend/README.md and backend/API.md)
 ├── frontend/     React single-page app
-├── docs/         API contract, proposal, writeup
-└── literature/   PDFs of every cited source
+└── render.yaml   Render blueprint used by the live deployment
 ```
 
 ## Run locally
@@ -75,11 +76,8 @@ cd backend && source .venv/bin/activate && python manage.py test
 
 ## API
 
-See [docs/API.md](docs/API.md).
+See [backend/API.md](backend/API.md).
 
-## Deployment
-
-See [DEPLOY.md](DEPLOY.md) — a one-click Render blueprint (`render.yaml`) for the database, API and web app.
 
 ## Team
 
