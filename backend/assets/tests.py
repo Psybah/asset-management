@@ -431,3 +431,15 @@ class SeedCommandTests(TempMediaMixin, TestCase):
                          {"available", "assigned", "maintenance", "retired"})
         # survey responses are real data and survive a reseed
         self.assertTrue(SurveyResponse.objects.filter(pk=kept.pk).exists())
+
+
+class ValueTrendTests(ApiTestCase):
+    def test_monthly_points_end_today(self):
+        from accounts.models import User
+        u = User.objects.create_user("v", password="x", role="staff")
+        self.client.force_authenticate(u)
+        r = self.client.get("/api/dashboard/value-trend/?months=6")
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(len(r.data), 7)  # six month-ends + today
+        self.assertEqual(r.data[-1]["date"], timezone.localdate().isoformat())
+        self.assertTrue(all(p["date"] < q["date"] for p, q in zip(r.data, r.data[1:])))

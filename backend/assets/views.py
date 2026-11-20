@@ -2,7 +2,7 @@ import csv
 import io
 import secrets
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 
 import qrcode
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -332,6 +332,42 @@ def _f(value):
     return round(float(value), 2)
 
 
+def fleet_value(assets, as_of):
+    """Total book value on `as_of` of every asset owned that day (bought, not yet disposed)."""
+    total = 0.0
+    for a in assets:
+        if a.purchase_date > as_of:
+            continue
+        disposal = getattr(a, "disposal", None) if a.status == Asset.Status.RETIRED else None
+        if disposal and disposal.disposed_on <= as_of:
+            continue
+        total += float(a.value_on(as_of))
+    return total
+
+
+@api_view(["GET"])
+def value_trend(request):
+    """Month-end fleet book value for the last `months` months (6–120, default 12), ending today.
+
+    Powers the date filter on the dashboard's book value chart.
+    """
+    try:
+        months = max(6, min(120, int(request.query_params.get("months", 12))))
+    except ValueError:
+        months = 12
+    today = timezone.localdate()
+    assets = list(asset_queryset())
+    points = []
+    for back in range(months, 0, -1):
+        y, m = divmod(today.year * 12 + today.month - 1 - back, 12)
+        m += 1
+        # last day of that month
+        nxt = date(y + (m == 12), (m % 12) + 1, 1)
+        points.append(nxt - timedelta(days=1))
+    points.append(today)
+    return Response([{"date": d.isoformat(), "value": _f(fleet_value(assets, d))} for d in points])
+
+
 @api_view(["GET"])
 def dashboard(request):
     """Fleet summary.
@@ -362,18 +398,10 @@ def dashboard(request):
         d["count"] += 1
         d["value"] += float(values[a.pk])
 
-    trend = []
-    for year in range(today.year - 5, today.year + 1):
-        as_of = today if year == today.year else date(year, 12, 31)
-        total = 0.0
-        for a in assets:
-            if a.purchase_date > as_of:
-                continue
-            disposal = getattr(a, "disposal", None) if a.status == Asset.Status.RETIRED else None
-            if disposal and disposal.disposed_on <= as_of:
-                continue
-            total += float(a.value_on(as_of))
-        trend.append({"year": year, "value": _f(total)})
+    trend = [
+        {"year": year, "value": _f(fleet_value(assets, today if year == today.year else date(year, 12, 31)))}
+        for year in range(today.year - 5, today.year + 1)
+    ]
 
     upcoming = (
         Maintenance.objects.select_related("asset").exclude(status=Maintenance.Status.DONE)

@@ -25,6 +25,7 @@ api = [
     path("auth/me/", account_views.me, name="me"),
     path("auth/logout/", account_views.logout, name="logout"),
     path("dashboard/", asset_views.dashboard, name="dashboard"),
+    path("dashboard/value-trend/", asset_views.value_trend, name="value-trend"),
     re_path(r"^reports/assets\.csv/?$", asset_views.assets_csv, name="assets-csv"),
     re_path(r"^reports/survey\.csv/?$", survey_views.survey_csv, name="survey-csv"),
     path("survey/", survey_views.survey_submit, name="survey-submit"),

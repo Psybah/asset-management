@@ -56,10 +56,10 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-.masonry { column-gap: 10px; columns: 2; }
+.masonry { column-gap: 8px; columns: 2; }
 @media (min-width: 900px) { .masonry { columns: 3; } }
 @media (min-width: 1200px) { .masonry { columns: 4; } }
-.masonry > * { break-inside: avoid; margin-bottom: 10px; }
+.masonry > * { break-inside: avoid; margin-bottom: 8px; }
 
 .grain {
   background-image: radial-gradient(#0a0a0a 0.6px, transparent 0.6px);

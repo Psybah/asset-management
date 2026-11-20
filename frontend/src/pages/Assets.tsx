@@ -19,7 +19,7 @@ const ratios = ['aspect-[4/5]', 'aspect-square', 'aspect-[5/6]', 'aspect-[3/4]',
 function Card({ a, i }: { a: Asset; i: number }) {
   return (
     <motion.div layout initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.7, ease, delay: Math.min(i, 12) * 0.03 }}>
-      <Link to={`/assets/${a.id}`} className={cx('group block rounded-[1.5rem] p-1.5 transition-colors duration-300', a.status === 'assigned' ? 'bg-ink text-white' : 'bg-white', a.status === 'retired' && 'opacity-50')}>
+      <Link to={`/assets/${a.id}`} className={cx('group block rounded-[1.5rem] p-2 transition-colors duration-300', a.status === 'assigned' ? 'bg-ink text-white' : 'bg-white', a.status === 'retired' && 'opacity-50')}>
         <div className="min-w-0 px-2.5 pb-2.5 pt-2">
           <p className="truncate text-[13px] font-medium leading-tight">{a.name}</p>
           <p className={cx('mt-0.5 truncate text-[11px]', a.status === 'assigned' ? 'text-white/45' : 'text-ash')}>{a.tag} · {a.assigned_to_name ?? a.location_name ?? '—'}</p>
@@ -91,7 +91,7 @@ export default function Assets() {
         </>}
       />
 
-      <div className="mb-3 flex flex-col gap-2 md:flex-row md:items-center">
+      <div className="mb-2 flex flex-col gap-2 md:flex-row md:items-center">
         <div className="flex h-11 flex-1 items-center gap-2.5 rounded-full bg-white px-4 md:max-w-xs">
           <MagnifyingGlass size={16} className="text-ash" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Filter by name, tag, serial" className="h-full flex-1 bg-transparent text-sm placeholder:text-ash" />
@@ -102,7 +102,7 @@ export default function Assets() {
         </div>
       </div>
 
-      <div className="no-scrollbar -mx-4 mb-5 flex gap-1.5 overflow-x-auto px-4 md:mx-0 md:px-0">
+      <div className="no-scrollbar -mx-4 mb-2 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
         {cats?.map((c) => {
           const on = category === String(c.id)
           return (
@@ -124,7 +124,7 @@ export default function Assets() {
           <AnimatePresence mode="popLayout">{list?.map((a, i) => <Card key={a.id} a={a} i={i} />)}</AnimatePresence>
         </div>
       ) : (
-        <div className="rounded-[1.5rem] bg-white p-1.5"><div className="stack">{list?.map((a) => <Row key={a.id} a={a} />)}</div></div>
+        <div className="rounded-[1.5rem] bg-white p-2"><div className="stack">{list?.map((a) => <Row key={a.id} a={a} />)}</div></div>
       )}
 
       <AssetForm open={adding} onClose={closeForm} onSaved={(a) => nav(`/assets/${a.id}`)} />

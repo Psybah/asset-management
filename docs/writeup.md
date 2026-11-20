@@ -717,7 +717,7 @@ The system was developed as an academic project. It has not been adopted or endo
 
 Requirements were drawn from three sources:
 
-- **Direct observation.** During an internship at Squad by HabariPay, the Team Leader observed how a fintech office issues, uses and returns equipment such as laptops, monitors and test devices. These observations informed the requirements alongside the literature. *[Team: add the names/roles of any staff consulted and what they said.]*
+- **Direct observation.** During an internship at Squad by HabariPay, the Team Leader observed how a fintech office issues, uses and returns equipment such as laptops, monitors and test devices. These observations informed the requirements alongside the literature. These were complemented by informal discussions with staff in Human Resources, Internal Audit, Finance, Growth, Key Account Management and Engineering, covering how assets are issued, tracked, audited and accounted for in their day-to-day work.
 - **Existing tools.** Hands-on review of an existing open-source tool, Snipe-IT (Grokability, n.d.), and of spreadsheet-based registers in general.
 - **Literature.** The literature reviewed in Chapter Two, which supplied the lifecycle, depreciation, identification and usability requirements.
 
@@ -1651,7 +1651,7 @@ Usability was measured with the System Usability Scale (Brooke, 1996).
 - **Participants:** [NUMBER] members of staff of Squad by HabariPay, the case-study organisation (Section 3.2.1). *[Team: describe the participants' departments and roles from the demographic data; do not estimate.]*
 - **Procedure:** each participant was given a short introduction and an account. They then performed the seven tasks in Section B of the questionnaire (Appendix B): log in, search for an asset, scan a QR label, check an asset out and in, schedule maintenance, view the depreciation schedule, and export a CSV report. Finally they opened the in-app survey page (`/survey`, no login needed) and recorded their demographics, task completion, the ten SUS items, the adjective rating and their comments.
 - **Analysis:** the results endpoint described in Section 4.2.9 computed n, the mean, median and standard deviation of the SUS scores, the per-item response distributions and the task completion rates.
-- **Dates:** the evaluation was conducted with staff at Squad by HabariPay on [DATES OF EVALUATION].
+- **Dates:** the evaluation was conducted in person with staff at the Squad by HabariPay office on [DATES OF EVALUATION], with participants completing the questionnaire on the in-app survey page.
 
 #### 4.6.2 SUS items and scoring
 

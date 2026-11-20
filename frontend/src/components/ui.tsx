@@ -150,7 +150,7 @@ export function Panel({ title, action, children, className, bodyClassName, tone 
   title?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; bodyClassName?: string; tone?: 'paper' | 'ink'; inset?: boolean
 }) {
   return (
-    <section className={cn('flex min-w-0 flex-col rounded-[1.6rem] p-1.5', tone === 'ink' ? 'bg-ink text-white' : 'bg-white', className)}>
+    <section className={cn('flex min-w-0 flex-col rounded-[1.6rem] p-2', tone === 'ink' ? 'bg-ink text-white' : 'bg-white', className)}>
       {(title || action) && (
         <header className="flex min-h-10 items-center justify-between gap-3 px-3 pb-1.5 pt-1.5">
           <h2 className={cn('truncate text-[13px] font-medium tracking-tight', tone === 'ink' ? 'text-white/70' : 'text-smoke')}>{title}</h2>

@@ -35,7 +35,7 @@ export default function People() {
       />
 
       <Reveal>
-        <div className="overflow-hidden rounded-[1.6rem] bg-white p-1.5">
+        <div className="overflow-hidden rounded-[1.6rem] bg-white p-2">
           <div className="no-scrollbar overflow-x-auto">
             <table className="w-full min-w-[640px] border-separate border-spacing-y-0.5 text-left text-sm">
               <thead>

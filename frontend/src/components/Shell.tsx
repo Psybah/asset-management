@@ -89,7 +89,7 @@ function Sidebar({ onSearch }: { onSearch: () => void }) {
   )
 
   return (
-    <aside className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
+    <aside className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col gap-2 lg:flex">
       <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ ...spring, delay: 0.2 }} className="flex flex-col gap-1 rounded-full bg-white p-1.5">
         {canWrite && <Item id="new" icon={Plus} label="New asset" dark onClick={() => nav('/assets?new=1')} />}
         <Item id="search" icon={MagnifyingGlass} label="Search  ⌘K" onClick={onSearch} />

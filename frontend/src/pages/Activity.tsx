@@ -42,7 +42,7 @@ export default function Activity() {
 
       {!data && <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>}
 
-      <div className="space-y-4">
+      <div className="space-y-2">
         {groups.map(([day, items]) => (
           <Reveal key={day}>
             <section className="grid gap-x-6 rounded-[1.6rem] bg-white p-1.5 md:grid-cols-[150px_1fr]">

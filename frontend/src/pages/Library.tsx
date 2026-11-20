@@ -57,7 +57,7 @@ export default function Library() {
 
       <AnimatePresence mode="wait">
         {tab === 'categories' ? (
-          <motion.div key="cats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid gap-x-4 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
+          <motion.div key="cats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid gap-x-2 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
             {cats?.map((c) => (
               <div key={c.id} className="flex flex-col items-center">
                 <IconFolder

@@ -49,7 +49,7 @@ export default function AssetDetail() {
   if (!a) {
     return (
       <Page>
-        <div className="grid gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <div className="grid gap-2 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
           <Skeleton className="aspect-square" />
           <div className="space-y-3"><Skeleton className="h-10 w-2/3" /><Skeleton className="h-40" /><Skeleton className="h-60" /></div>
         </div>
@@ -72,7 +72,7 @@ export default function AssetDetail() {
         <ArrowLeft size={14} /> Assets
       </button>
 
-      <section className="grid items-start gap-4 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <section className="grid items-start gap-2 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         {/* Photo ↔ QR flip card */}
         <div className="md:sticky md:top-4" style={{ perspective: 1400 }}>
           <motion.div
@@ -105,7 +105,7 @@ export default function AssetDetail() {
           </motion.div>
         </div>
 
-        <div className="min-w-0 space-y-4">
+        <div className="min-w-0 space-y-2">
           <div className="rounded-[1.75rem] bg-white p-5 md:p-6">
             <div className="mb-3 flex items-center gap-2">
               <StatusMark status={a.status} onPaper />

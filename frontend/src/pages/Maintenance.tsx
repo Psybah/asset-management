@@ -93,7 +93,7 @@ export default function Maintenance() {
         actions={canWrite && <Button onClick={() => setAdding(true)}><Plus size={15} /> New job</Button>}
       />
 
-      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
+      <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
         {columns.map((col, ci) => {
           const items = (jobs ?? [])
             .filter((m) => m.status === col.key)
@@ -108,7 +108,7 @@ export default function Maintenance() {
               onDragOver={(e) => { if (canWrite) { e.preventDefault(); setOver(col.key) } }}
               onDragLeave={() => setOver((o) => (o === col.key ? null : o))}
               onDrop={(e) => { e.preventDefault(); setOver(null); if (dragging) move(dragging, col.key); setDragging(null) }}
-              className={cx('flex min-h-[60vh] w-[82vw] shrink-0 snap-center flex-col rounded-[1.6rem] p-1.5 transition-colors duration-200 md:w-auto', isOver ? 'bg-fog' : 'bg-white/60')}
+              className={cx('flex min-h-[60vh] w-[82vw] shrink-0 snap-center flex-col rounded-[1.6rem] p-2 transition-colors duration-200 md:w-auto', isOver ? 'bg-fog' : 'bg-white/60')}
             >
               <header className="flex items-center gap-2 px-2.5 pb-2.5 pt-2">
                 <span className="text-smoke">{col.icon}</span>
@@ -116,7 +116,7 @@ export default function Maintenance() {
                 <span className="grid h-5 min-w-5 place-items-center rounded-full bg-white px-1.5 text-[11px] font-medium tabular">{items.length}</span>
                 {canWrite && col.key === 'scheduled' && <IconButton label="New job" size="icon-sm" className="ml-auto" onClick={() => setAdding(true)}><Plus size={13} /></IconButton>}
               </header>
-              <div className="flex flex-1 flex-col gap-1.5">
+              <div className="flex flex-1 flex-col gap-2">
                 {!jobs && [0, 1, 2].map((i) => <Skeleton key={i} className="h-28 bg-white" />)}
                 <AnimatePresence mode="popLayout">
                   {items.slice(0, col.key === 'done' ? 12 : 60).map((m) => (

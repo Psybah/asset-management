@@ -55,13 +55,13 @@ export default function Insights() {
       />
 
       {!r ? (
-        <div className="grid gap-2.5 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}</div>
+        <div className="grid gap-2 md:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32" />)}</div>
       ) : r.n === 0 ? (
         <Panel title="No responses yet" bodyClassName="p-6">
           <p className="max-w-md text-sm leading-relaxed text-smoke">Share <span className="text-ink">{link}</span> with participants. Results appear here as responses arrive and fill Tables 4.5–4.11 of the report.</p>
         </Panel>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="grid grid-cols-2 gap-2 rounded-[1.4rem] bg-[#e2e2e2] p-2 md:grid-cols-4">
             <Metric label="Responses" value={r.n} icon={<Users size={15} />} hint="participants" />
             <Metric label="Mean SUS score" value={r.mean ?? 0} format={(n) => n.toFixed(1)} icon={<Gauge size={15} />} hint={`Benchmark ${r.benchmark}`} delay={0.05} />
@@ -69,7 +69,7 @@ export default function Insights() {
             <Metric label="Std. deviation" value={r.sd ?? 0} format={(n) => n.toFixed(1)} icon={<Pulse size={15} />} hint="sample SD" delay={0.15} />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+          <div className="grid gap-2 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <Reveal>
               <Panel title="Distribution of SUS scores" action={<span className="text-xs text-ash">min {fmt(r.min)} · max {fmt(r.max)}</span>} bodyClassName="px-1 pt-3">
                 <BarChart data={r.histogram.map((h) => ({ name: `${h.start}–${h.end}`, count: h.count }))} xDataKey="name" aspectRatio="auto" className="h-56" margin={{ top: 12, right: 12, bottom: 30, left: 12 }} barGap={0.25}>
@@ -108,7 +108,7 @@ export default function Insights() {
             </Panel>
           </Reveal>
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-2 lg:grid-cols-2">
             <Reveal>
               <Panel title="Task completion" inset={false} bodyClassName="stack">
                 {r.tasks.map((t) => (
@@ -124,7 +124,7 @@ export default function Insights() {
             </Reveal>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
             {Object.entries(r.demographics).map(([k, rows]) => (
               <Reveal key={k}><Panel title={k.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase())} inset={false}><Shares rows={rows} /></Panel></Reveal>
             ))}

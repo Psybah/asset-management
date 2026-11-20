@@ -120,7 +120,7 @@ The project will follow an Agile, incremental approach. The system will be deliv
 
 Requirements will be gathered by:
 
-- direct observation of how equipment is issued, used and returned at the case-study organisation, by the Team Leader during an internship there *[Team: add the names/roles of any staff consulted and what they said]*;
+- direct observation of how equipment is issued, used and returned at the case-study organisation, by the Team Leader during an internship there, complemented by informal discussions with staff in Human Resources, Internal Audit, Finance, Growth, Key Account Management and Engineering, covering how assets are issued, tracked, audited and accounted for in their day-to-day work.;
 - review of existing systems such as the open-source Snipe-IT (Grokability, n.d.) and of spreadsheet-based registers;
 - review of the literature on web-based, QR and RFID asset tracking.
 
