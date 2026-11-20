@@ -96,6 +96,35 @@ function useSankey(r?: Results) {
   }, [r, rows])
 }
 
+/** Task completion as large concentric rings; the centre shows the hovered task (or the average). */
+function TaskRings({ tasks, n }: { tasks: Results['tasks']; n: number }) {
+  const [hi, setHi] = useState<number | null>(null)
+  const pct = (v: number) => Math.round((v / Math.max(1, n)) * 100)
+  const avg = Math.round(tasks.reduce((a, t) => a + pct(t.without_help), 0) / Math.max(1, tasks.length))
+  const t = hi !== null ? tasks[hi] : null
+  const name = (x: Results['tasks'][number]) => x.text.split(' with the')[0].split(' using')[0]
+  return (
+    <div className="relative aspect-square w-full max-w-[330px]">
+      <RingChart
+        strokeWidth={12}
+        ringGap={4}
+        baseInnerRadius={68}
+        hoveredIndex={hi}
+        onHoverChange={setHi}
+        data={tasks.map((x, i) => ({ label: `${x.id} ${name(x)}`, value: x.without_help, maxValue: n, color: RAMP[Math.min(i, RAMP.length - 2)] }))}
+      >
+        {tasks.map((_, i) => <Ring key={i} index={i} />)}
+      </RingChart>
+      <div className="pointer-events-none absolute inset-0 grid place-items-center">
+        <div className="w-[6.75rem] text-center">
+          <p className="text-[1.75rem] font-medium leading-none tracking-[-0.04em] tabular">{t ? pct(t.without_help) : avg}%</p>
+          <p className="mt-1 line-clamp-2 text-[10px] leading-tight text-ash">{t ? `${t.id} · ${name(t)}` : 'average, all tasks'}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Insights() {
   const { data: r, reload } = useData<Results>('/survey/results/')
   // Live while open: new survey responses appear without a reload.
@@ -167,8 +196,8 @@ export default function Insights() {
             </Panel>
           </Reveal>
           <Reveal delay={0.08} className="col-span-12 lg:col-span-4">
-            <Panel title="Score distribution" action={<span className="text-xs text-ash">respondents per band</span>} className="h-full" bodyClassName="px-1 pt-3">
-              <BarChart data={r.histogram.filter((h) => h.start >= 30).map((h) => ({ name: `${h.start}s`, count: h.count }))} xDataKey="name" aspectRatio="auto" className="h-60" margin={{ top: 16, right: 12, bottom: 30, left: 12 }} barGap={0.3}>
+            <Panel title="Score distribution" action={<span className="text-xs text-ash">respondents per band</span>} className="h-full" bodyClassName="flex flex-col px-1 pt-3">
+              <BarChart data={r.histogram.filter((h) => h.start >= 30).map((h) => ({ name: `${h.start}s`, count: h.count }))} xDataKey="name" aspectRatio="auto" className="min-h-56 flex-1" margin={{ top: 16, right: 12, bottom: 30, left: 12 }} barGap={0.3}>
                 <Grid horizontal numTicksRows={3} />
                 <Bar dataKey="count" fill="#201515" lineCap="round" />
                 <BarXAxis showAllLabels />
@@ -190,32 +219,8 @@ export default function Insights() {
             </Panel>
           </Reveal>
           <Reveal delay={0.04} className="col-span-12 lg:col-span-4">
-            <Panel title="Tasks done without help" className="h-full" bodyClassName="flex flex-col items-center gap-3 p-4">
-              <div className="relative">
-              <div className="pointer-events-none absolute inset-0 z-10 grid place-items-center text-center">
-                <div>
-                  <p className="text-2xl font-medium tracking-[-0.04em] tabular">{Math.round((r.tasks.reduce((a, t) => a + t.without_help, 0) / (r.tasks.length * Math.max(1, n))) * 100)}%</p>
-                  <p className="text-[10px] text-ash">average</p>
-                </div>
-              </div>
-              <RingChart
-                size={230}
-                strokeWidth={9}
-                ringGap={4}
-                baseInnerRadius={40}
-                data={r.tasks.map((t, i) => ({ label: `${t.id} ${t.text.split(' with the')[0].split(' using')[0]}`, value: t.without_help, maxValue: n, color: RAMP[Math.min(i, RAMP.length - 2)] }))}
-              >
-                {r.tasks.map((_, i) => <Ring key={i} index={i} />)}
-              </RingChart>
-              </div>
-              <div className="grid w-full grid-cols-2 gap-x-3 gap-y-1">
-                {r.tasks.map((t, i) => (
-                  <span key={t.id} className="flex items-center gap-1.5 truncate text-[11px] text-smoke">
-                    <span className="size-2 shrink-0 rounded-full" style={{ background: RAMP[Math.min(i, RAMP.length - 2)] }} />
-                    {t.id} <span className="ml-auto font-medium text-ink tabular">{Math.round((t.without_help / Math.max(1, n)) * 100)}%</span>
-                  </span>
-                ))}
-              </div>
+            <Panel title="Tasks done without help" action={<span className="text-xs text-ash">hover a ring</span>} className="h-full" bodyClassName="grid place-items-center p-3">
+              <TaskRings tasks={r.tasks} n={n} />
             </Panel>
           </Reveal>
 

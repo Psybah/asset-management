@@ -228,23 +228,25 @@ export function PageHeader({ eyebrow, title, actions, docTitle }: { eyebrow?: Re
 /* Metric card — label left, icon top-right, value at the bottom        */
 /* ------------------------------------------------------------------ */
 
-export function Metric({ label, value, icon, tone = 'paper', format, hint, delay = 0 }: {
+/** Metric card: accent shell with label + icon on top, value and hint on a white inset. */
+export function Metric({ label, value, icon, format, hint, delay = 0 }: {
   label: string; value: number; icon: ReactNode; tone?: 'paper' | 'ink'; format?: (n: number) => string; hint?: ReactNode; delay?: number
 }) {
-  const ink = tone === 'ink'
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease, delay }}
-      className={cn('flex h-32 flex-col rounded-2xl p-4', ink ? 'bg-ink text-white' : 'bg-white')}
+      className="flex h-full flex-col rounded-[1.15rem] bg-ink p-1"
     >
-      <div className="flex items-start justify-between gap-2">
-        <p className={cn('min-w-0 truncate text-[13px] font-medium', ink ? 'text-white/70' : 'text-smoke')}>{label}</p>
-        <span className={cn('grid size-8 shrink-0 place-items-center rounded-full', ink ? 'bg-white/12 text-white' : 'bg-mist text-ink')}>{icon}</span>
+      <div className="flex items-center justify-between gap-2 px-3 pb-1.5 pt-1.5 text-white">
+        <p className="min-w-0 truncate text-[12px] font-medium text-white/85">{label}</p>
+        <span className="shrink-0 text-white/85 [&_svg]:size-[15px]">{icon}</span>
       </div>
-      <p className="mt-auto text-[1.75rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} format={format} /></p>
-      {hint ? <p className={cn('mt-1.5 truncate text-[11px]', ink ? 'text-white/45' : 'text-ash')}>{hint}</p> : null}
+      <div className="flex flex-1 flex-col justify-center rounded-[0.9rem] bg-white px-4 py-3">
+        <p className="text-[1.6rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} format={format} /></p>
+        {hint ? <p className="mt-2 truncate text-[11px] text-smoke">{hint}</p> : null}
+      </div>
     </motion.div>
   )
 }
