@@ -123,7 +123,7 @@ export default function Overview() {
 
       <div className="space-y-2">
         {/* Metrics: full width, one group */}
-        <div className="grid grid-cols-2 gap-2 rounded-[1.4rem] bg-[#e2e2e2] p-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-1.5 lg:grid-cols-4">
           {!t ? [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
             <Link to="/assets"><Metric label="Assets" value={t.assets} icon={<Cube size={15} />} hint={`₦${compact(t.purchase_value)} purchase value`} /></Link>
             <Link to="/assets?status=assigned"><Metric label="In use" value={t.assigned} icon={<HandArrowUp size={15} />} hint={`${Math.round((t.assigned / Math.max(1, active)) * 100)}% of active`} delay={0.05} /></Link>

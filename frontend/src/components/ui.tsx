@@ -243,9 +243,9 @@ export function Metric({ label, value, icon, format, hint, delay = 0 }: {
         <p className="min-w-0 truncate text-[12px] font-medium text-white/85">{label}</p>
         <span className="shrink-0 text-white/85 [&_svg]:size-[15px]">{icon}</span>
       </div>
-      <div className="flex flex-1 flex-col justify-center rounded-[0.9rem] bg-white px-4 py-3">
+      <div className="flex min-h-24 flex-1 flex-col justify-center rounded-[0.9rem] bg-white px-5 py-5">
         <p className="text-[1.6rem] font-medium leading-none tracking-[-0.04em]"><Counter value={value} format={format} /></p>
-        {hint ? <p className="mt-2 truncate text-[11px] text-smoke">{hint}</p> : null}
+        {hint ? <p className="mt-2.5 truncate text-[11px] text-smoke">{hint}</p> : null}
       </div>
     </motion.div>
   )

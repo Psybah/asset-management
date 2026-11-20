@@ -164,7 +164,7 @@ export default function Insights() {
         </Panel>
       ) : (
         <div className="grid grid-cols-12 gap-2">
-          <div className="col-span-12 grid grid-cols-2 gap-2 rounded-[1.4rem] bg-[#e2e1e1] p-2 lg:grid-cols-4">
+          <div className="col-span-12 grid grid-cols-2 gap-1.5 lg:grid-cols-4">
             <Metric label="Responses" value={r.n} icon={<Users size={15} />} hint={n < 12 ? 'aim for 15–20' : 'participants'} />
             <Metric label="Mean SUS score" value={r.mean ?? 0} format={(x) => x.toFixed(1)} icon={<GaugeIcon size={15} />} hint={`95% CI ${fmt(ci[0], 0)}–${fmt(ci[1], 0)}`} delay={0.05} />
             <Metric label="Median" value={r.median ?? 0} format={(x) => x.toFixed(1)} icon={<ChartBar size={15} />} hint={`Range ${fmt(r.min, 0)}–${fmt(r.max, 0)}`} delay={0.1} />
