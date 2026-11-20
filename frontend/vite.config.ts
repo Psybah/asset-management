@@ -22,8 +22,8 @@ export default defineConfig({
     // The browser only ever talks to this server; it forwards API and media calls to Django.
     // Works the same on localhost, a LAN IP or a tunnel — no CORS, no hard-coded hosts.
     proxy: {
-      '/api': { target: api, changeOrigin: false },
-      '/media': { target: api, changeOrigin: false },
+      '/api': { target: api, changeOrigin: api.startsWith('https') },
+      '/media': { target: api, changeOrigin: api.startsWith('https') },
     },
   },
   preview: { proxy: { '/api': api, '/media': api } },
